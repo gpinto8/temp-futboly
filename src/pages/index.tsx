@@ -11,7 +11,7 @@ const apiFootball = async (path: string, queryParams: string, season?: string) =
   const data = await fetch(url, {
     'method': 'GET',
     'headers': {
-      'x-apisports-key': "8dd0a5d11a104b46b67907c925572de8",
+      'x-apisports-key': '8dd0a5d11a104b46b67907c925572de8',
     },
     'mode': 'cors',
   }).then(response => response.json());
@@ -172,9 +172,10 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
   const handleFixtures = async () => {
     const fixtures = await apiFootball('fixtures', 'live=all', '2024');
     // const asdf = fixtures.response.filter((fixture: any) => fixture.teams.away.id === 30);
-    // console.log({ fixtures, asdf });
+    const euro = fixtures.response.filter((fixture: any) => fixture.league.name === 'Euro Championship');
+    // console.log({ fixtures, euro });
     // setFixtures(asdf);
-    setFixtures(fixtures.response);
+    setFixtures(euro || fixtures.response);
   };
 
   return (
