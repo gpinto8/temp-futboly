@@ -70,6 +70,8 @@ const apiFootball = async (path: string, queryParams: string, season?: string) =
 //     })
 //   );
 
+// TEST
+
 //   return boh[0];
 // };
 
