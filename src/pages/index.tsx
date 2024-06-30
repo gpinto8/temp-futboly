@@ -1,5 +1,6 @@
 'use client';
 
+import RootLayout from '@/app/layout';
 import { useEffect, useState } from 'react';
 
 const apiFootball = async (path: string, queryParams: string, season?: string) => {
@@ -288,7 +289,7 @@ export default function Home() {
   }, [player1, player2]);
 
   return (
-    <div>
+    <RootLayout>
       <h1>FUTBOLY</h1>
       <br />
       <br />
@@ -307,6 +308,6 @@ export default function Home() {
       <Player player={FAKE_TEAM} theOther={false} setPlayer1={setPlayer1} setPlayer2={setPlayer2} />
       <hr />
       <Player player={FAKE_TEAM2} theOther={true} setPlayer1={setPlayer1} setPlayer2={setPlayer2} />
-    </div>
+    </RootLayout>
   );
 }
