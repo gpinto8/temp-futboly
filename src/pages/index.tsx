@@ -11,7 +11,7 @@ const apiFootball = async (path: string, queryParams: string, season?: string) =
   const data = await fetch(url, {
     'method': 'GET',
     'headers': {
-      'x-apisports-key': process.env.NEXT_PUBLIC_API_FOOTBALL_KEY || (process.env.API_FOOTBALL_KEY as any),
+      'x-apisports-key': "8dd0a5d11a104b46b67907c925572de8",
     },
     'mode': 'cors',
   }).then(response => response.json());
