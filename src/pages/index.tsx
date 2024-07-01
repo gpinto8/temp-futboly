@@ -173,9 +173,9 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
     const fixtures = await apiFootball('fixtures', 'live=all', '2024');
     // const asdf = fixtures.response.filter((fixture: any) => fixture.teams.away.id === 30);
     const euro = fixtures.response.filter((fixture: any) => fixture.league.name === 'Euro Championship');
-    // console.log({ fixtures, euro });
+    console.log({ fixtures, euro });
     // setFixtures(asdf);
-    setFixtures(euro || fixtures.response);
+    setFixtures((euro?.length && euro) || fixtures.response);
   };
 
   return (
