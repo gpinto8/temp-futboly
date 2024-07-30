@@ -1,0 +1,7 @@
+.root * {
+  @apply border-gray !important;
+}
+
+.errorBorder * {
+  @apply border-error !important;
+}

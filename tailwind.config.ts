@@ -1,20 +1,32 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
-const config: Config = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+export const tailwindConfig: Config = {
+  content: ['./components/**/*.{js,ts,jsx,tsx,mdx}', './app/**/*.{js,ts,jsx,tsx,mdx}'],
+  
+  // do the sizes
+
   theme: {
-    extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
+    colors: {
+      white: '#fff', // generic colors
+      black: '#000',
+      error: '#ff0000',
+      main: '#F03ED7', // custom colors
+      mainDark: '#d837c1',
+      lightGray: '#EBEBEB',
+      gray: '#9E9D9D',
     },
   },
   plugins: [],
+  important: true,
+  mode: 'jit',
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+    ],
+  },
 };
-export default config;
+
+export default tailwindConfig;

@@ -133,7 +133,10 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
     // console.log({ teamId, fixtureId });
     const allPlayers = await getAllPlayersByLeagueId(undefined, teamId);
     // console.log({ allPlayers });
-    const playerStatistics = await apiFootball('fixtures/players', `fixture=${fixtureId}&team=${teamId}`);
+    const playerStatistics = await apiFootball(
+      'fixtures/players',
+      `fixture=${fixtureId}&team=${teamId}`
+    );
     // console.log({ playerStatistics });
     // console.log({
     //   allPlayers,
@@ -172,8 +175,10 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
   const handleFixtures = async () => {
     const fixtures = await apiFootball('fixtures', 'live=all', '2024');
     // const asdf = fixtures.response.filter((fixture: any) => fixture.teams.away.id === 30);
-    const euro = fixtures.response.filter((fixture: any) => fixture.league.name === 'Euro Championship');
-    console.log({ fixtures, euro });
+    const euro = fixtures.response.filter(
+      (fixture: any) => fixture.league.name === 'Euro Championship'
+    );
+    // console.log({ fixtures, euro });
     // setFixtures(asdf);
     setFixtures((euro?.length && euro) || fixtures.response);
   };
@@ -203,7 +208,8 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
                 </div>
                 <div>-------- {fixture.fixture.status.elapsed} --------</div>
                 <div>
-                  <strong>FIXTURE: </strong> {fixture.fixture.id} | {new Date(fixture.fixture.date.toString()).toLocaleString().replaceAll('/', '-')}{' '}
+                  <strong>FIXTURE: </strong> {fixture.fixture.id} |{' '}
+                  {new Date(fixture.fixture.date.toString()).toLocaleString().replaceAll('/', '-')}{' '}
                   | {fixture.fixture.status.long}
                 </div>
               </div>
@@ -226,15 +232,21 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
               <div key={player.player.id + Date.now()} className="flex gap-2">
                 <img src={player.player.photo} alt={player.player.firstname} />
                 <div>
-                  <strong>PLAYER: </strong> {player.player.id} | {player.player.firstname} {player.player.lastname} | {player.player.age} |{' '}
-                  {player.player.nationality}
+                  <strong>PLAYER: </strong> {player.player.id} | {player.player.firstname}{' '}
+                  {player.player.lastname} | {player.player.age} | {player.player.nationality}
                 </div>
                 <div> RATING: {player.playerRating}</div>
                 <br />
                 <br />
                 <div>
-                  <strong>TEAM: </strong> {player.statistics[0].team.id} | {player.statistics[0].team.name} |
-                  <img src={player.statistics[0].team.logo} alt={player.player.firstname} width={20} height={10} />
+                  <strong>TEAM: </strong> {player.statistics[0].team.id} |{' '}
+                  {player.statistics[0].team.name} |
+                  <img
+                    src={player.statistics[0].team.logo}
+                    alt={player.player.firstname}
+                    width={20}
+                    height={10}
+                  />
                 </div>
               </div>
             </>
@@ -245,7 +257,7 @@ const Player: any = ({ player, theOther, setPlayer1, setPlayer2 }: any): any => 
   );
 };
 
-export default function Home() {
+export const Test = () => {
   // useEffect(() => {
   //   console.log({ players });
   // }, [players]);
@@ -290,7 +302,7 @@ export default function Home() {
   }, [player1, player2]);
 
   return (
-    <RootLayout>
+    <div>
       <h1>FUTBOLY</h1>
       <br />
       <br />
@@ -299,16 +311,18 @@ export default function Home() {
       <br />
       <div>CLASSIFICA: </div>
       <div>
-        {FAKE_TEAM.name}: {total?.totalPlayer1?.reduce((a: any, b: any) => a + b, 0)} ({total?.totalPlayer1?.map((a: any) => a + ', ')})
+        {FAKE_TEAM.name}: {total?.totalPlayer1?.reduce((a: any, b: any) => a + b, 0)} (
+        {total?.totalPlayer1?.map((a: any) => a + ', ')})
       </div>
       <div>
-        {FAKE_TEAM2.name}: {total?.totalPlayer2?.reduce((a: any, b: any) => a + b, 0)} ({total?.totalPlayer2?.map((a: any) => a + ', ')})
+        {FAKE_TEAM2.name}: {total?.totalPlayer2?.reduce((a: any, b: any) => a + b, 0)} (
+        {total?.totalPlayer2?.map((a: any) => a + ', ')})
       </div>
       <br />
       <br />
       <Player player={FAKE_TEAM} theOther={false} setPlayer1={setPlayer1} setPlayer2={setPlayer2} />
       <hr />
       <Player player={FAKE_TEAM2} theOther={true} setPlayer1={setPlayer1} setPlayer2={setPlayer2} />
-    </RootLayout>
+    </div>
   );
-}
+};
