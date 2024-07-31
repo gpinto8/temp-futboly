@@ -4,18 +4,22 @@ import { clientConfig, serverConfig } from '@/firebase/config';
 import { APP_ROUTES } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 
-export default async function Page() {
-  cookies().getAll();
-  const tokens = await getTokens(cookies(), {
-    apiKey: clientConfig.apiKey,
-    cookieName: serverConfig.cookieName,
-    cookieSignatureKeys: serverConfig.cookieSignatureKeys,
-    serviceAccount: serverConfig.serviceAccount,
-  });
+const RootPage = async () => {
+  let tokens;
+  try {
+    tokens = await getTokens(cookies(), {
+      apiKey: clientConfig.apiKey,
+      cookieName: serverConfig.cookieName,
+      cookieSignatureKeys: serverConfig.cookieSignatureKeys,
+      serviceAccount: serverConfig.serviceAccount,
+    });
+  } catch (error) {}
 
   if (tokens) {
     redirect(APP_ROUTES.HOME);
   } else {
     redirect(APP_ROUTES.SIGNIN);
   }
-}
+};
+
+export default RootPage;
