@@ -14,7 +14,6 @@ export const InputPassword = ({ resetValue, handleChange }: InputPasswordProps) 
 
   return (
     <CustomInput
-      id="input-password"
       label="Password"
       handleChange={handleChange}
       type={showPassword ? 'text' : 'password'}

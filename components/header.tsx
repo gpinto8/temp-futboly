@@ -11,16 +11,12 @@ export const Header = () => {
   const user = useAppSelector(state => state.user);
 
   return (
-    <>
+    <div className="flex bg-gray">
       <div className="bg-error">HOMEPAGE - LOGGED</div>
-      <br />
-      <br />
       <button className="bg-black text-white" onClick={handleLogout}>
         Logout
       </button>
-      <br />
-      <br />
       <h1>USERNAME: {user?.username}</h1>
-    </>
+    </div>
   );
 };

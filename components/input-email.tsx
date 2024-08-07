@@ -10,7 +10,6 @@ export const InputEmail = ({ resetValue, handleChange }: InputEmailProps) => {
 
   return (
     <CustomInput
-      id="input-email"
       label="Email"
       handleChange={handleChange}
       endAdorment={{ img: 'AT_LOGO' }}

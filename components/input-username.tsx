@@ -8,7 +8,6 @@ type InputUserProps = {
 export const InputUsername = ({ resetValue, handleChange }: InputUserProps) => {
   return (
     <CustomInput
-      id="input-user"
       label="Username"
       handleChange={handleChange}
       endAdorment={{ img: 'USER_LOGO' }}

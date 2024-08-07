@@ -5,9 +5,8 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import './custom-input.scss';
 
 export type InputProps = {
-  id: string;
   label: string;
-  handleChange: (data: { value: string; isValid?: boolean }) => void;
+  handleChange?: (data: { value: string; isValid?: boolean }) => void;
   type?: string;
   pattern?: RegExp;
   endAdorment?: {
@@ -21,9 +20,7 @@ export type InputProps = {
 };
 
 export const CustomInput = ({
-  id,
   label,
-  // value,
   type = 'text',
   pattern,
   handleChange,
@@ -34,6 +31,7 @@ export const CustomInput = ({
   const [error, setError] = useState(false);
   const { img, button } = endAdorment || {};
 
+  const id = `${label.toLowerCase()}-${Date.now()}`;
   const imageWidth = 25;
   const imageHeight = 25;
 
@@ -49,7 +47,7 @@ export const CustomInput = ({
     setValue(targetValue);
 
     if (!targetValue) {
-      handleChange({ value: '', isValid: false });
+      handleChange?.({ value: '', isValid: false });
       setError(false);
       return;
     }
@@ -61,7 +59,7 @@ export const CustomInput = ({
       else setError(true);
     }
 
-    handleChange({ value: targetValue, isValid });
+    handleChange?.({ value: targetValue, isValid });
   };
 
   return (
