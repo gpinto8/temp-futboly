@@ -4,22 +4,20 @@ import { AdminTabUsers } from './admin-tab-users';
 import { useSwitchComponents } from '@/utils/switch-components';
 import { AdminTabTeams } from './admin-tab-teams';
 import { AdminTabCompetitions } from './admin-tab-competitions';
-import { CustomButton } from './custom-button';
-import { CustomModal } from './custom-modal';
-import { CustomInput } from './custom-input';
-import { ColumnsProps, CustomTable, RowsProps } from './custom-table';
+import { CustomButton } from '../custom/custom-button';
+import { CustomModal } from '../custom/custom-modal';
+import { CustomInput } from '../custom/custom-input';
+import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
+
 type ColumnKeysProps = 'INDEX' | 'TEAM' | 'OWNER' | 'ACTIONS';
 
 export const AdminTab = () => {
   const { components, setComponentId, SwitchedComponent, isCurrentId, currentComponentId } =
-    useSwitchComponents(
-      [
-        { label: 'Teams', Component: AdminTabTeams },
-        { label: 'Competitions', Component: AdminTabCompetitions },
-        { label: 'Users', Component: AdminTabUsers },
-      ],
-      -1
-    );
+    useSwitchComponents([
+      { label: 'Teams', Component: AdminTabTeams },
+      { label: 'Competitions', Component: AdminTabCompetitions },
+      { label: 'Users', Component: AdminTabUsers },
+    ]);
 
   const rows: RowsProps<ColumnKeysProps> = [{ INDEX: 1, TEAM: 'Team1', OWNER: 'xd' }].map(row => ({
     ...row,

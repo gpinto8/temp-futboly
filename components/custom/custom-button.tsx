@@ -1,14 +1,15 @@
 import { Button } from '@mui/material';
-import { Loader } from './loader';
+import { Loader } from '../loader';
 
 export type CustomButtonProps = {
   label: string;
   style?: 'main' | 'error' | 'black';
-  handleClick?: () => void;
+  handleClick?: (event?: any) => void;
   className?: string;
   disabled?: boolean;
   type?: string;
   isLoading?: boolean;
+  ref?: any;
 };
 
 export const CustomButton = ({
@@ -19,6 +20,7 @@ export const CustomButton = ({
   type = 'button',
   isLoading,
   style = 'main',
+  ref,
 }: CustomButtonProps) => {
   const buttonStyles = {
     main: 'hover:bg-mainDark bg-main text-white',
@@ -27,7 +29,7 @@ export const CustomButton = ({
   };
 
   const classes = `${disabled ? '!bg-gray' : buttonStyles[style]} ${className}`;
-  console.log({ classes });
+  // console.log({ classes });
   return (
     <Button
       type={type as any}

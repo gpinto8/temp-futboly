@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomButton, CustomButtonProps } from './custom-button';
 import { CustomInput } from './custom-input';
 import { ColumnsProps, CustomTable, RowsProps } from './custom-table';
@@ -24,22 +24,43 @@ const cssStyles = {
 
 type CustomModalProps = {
   title: string;
+  notBoldTitle?: string;
   children: React.ReactNode;
   style?: CustomButtonProps['style'];
+  className?: string;
   buttonLabel: string;
   buttonClass?: string;
+  handleClick?: () => void;
 };
 
 export const CustomModal = ({
   title,
+  notBoldTitle,
   style = 'black',
   children,
   buttonClass,
   buttonLabel,
+  handleClick,
+  className,
 }: CustomModalProps) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // useEffect(() => {
+  //   console.log("custommodal")
+  //   // (async () => {
+  //   //   const data = await fetch('/api/hello', { next: { revalidate: 3600 } }).then(response =>
+  //   //     response.json()
+  //   //   );
+  //   //   console.log({ data: data.id });
+  //   // })();
+  // }, []);
+
+  const handleModalClick = () => {
+    handleClick?.();
+    handleOpen();
+  };
 
   return (
     <div>
@@ -47,7 +68,7 @@ export const CustomModal = ({
         label={buttonLabel}
         className={`w-fit h-10 ${buttonClass}`}
         style={style}
-        handleClick={handleOpen}
+        handleClick={handleModalClick}
       />
       <Modal
         aria-labelledby="transition-modal-title"
@@ -61,12 +82,14 @@ export const CustomModal = ({
             timeout: 500,
           },
         }}
-        keepMounted
       >
         <Fade in={open}>
-          <Box sx={cssStyles} className="w-[50vw] h-[60vh]">
+          <Box sx={cssStyles} className={`w-[50vw] h-[60vh] ${className}`}>
             <div className="flex flex-col gap-6">
-              <div className="flex justify-center font-bold text-3xl">{title}</div>
+              <div className="flex justify-center text-3xl">
+                <div className="font-bold">{title}</div>
+                {notBoldTitle}
+              </div>
               {children}
             </div>
           </Box>

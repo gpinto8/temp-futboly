@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { errorActions } from '../store/slices/error';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { errorActions } from '../../store/slices/error';
 
 export const CustomSnackbar = () => {
   const [open, setOpen] = useState(false);

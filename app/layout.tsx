@@ -1,6 +1,6 @@
 import './globals.css';
 import StoreProvider from '../store/store-provider';
-import { CustomSnackbar } from '@/components/custom-snackbar';
+import { CustomSnackbar } from '@/components/custom/custom-snackbar';
 
 export default function RootLayout({
   children,

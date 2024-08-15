@@ -1,0 +1,74 @@
+import { useEffect, useState } from 'react';
+import { ColumnsProps, CustomTable, RowsProps } from './custom/custom-table';
+import { IMG_URLS } from '@/utils/img-urls';
+import Image from 'next/image';
+import { Card, CardActions, CardContent, CardMedia } from '@mui/material';
+import { CustomButton } from './custom/custom-button';
+
+export const CompetitionsTab = () => {
+  useState();
+
+  const competitions = [
+    {
+      name: 'My Dummy Competition',
+      date: '23/07/2024 - 12/31/2024',
+      currentWeek: '4th week of 45',
+      totalPlayers: '45 players',
+    },
+    {
+      name: 'My Dummy Competition',
+      date: '23/07/2024 - 12/31/2024',
+      currentWeek: '4th week of 45',
+      totalPlayers: '45 players',
+    },
+    {
+      name: 'My Dummy Competition',
+      date: '23/07/2024 - 12/31/2024',
+      currentWeek: '4th week of 45',
+      totalPlayers: '45 players',
+    },
+    {
+      name: 'My Dummy Competition',
+      date: '23/07/2024 - 12/31/2024',
+      currentWeek: '4th week of 45',
+      totalPlayers: '45 players',
+    },
+    {
+      name: 'My Dummy Competition',
+      date: '23/07/2024 - 12/31/2024',
+      currentWeek: '4th week of 45',
+      totalPlayers: '45 players',
+    },
+    {
+      name: 'My Dummy Competition',
+      date: '23/07/2024 - 12/31/2024',
+      currentWeek: '4th week of 45',
+      totalPlayers: '45 players',
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {competitions.map(({ name, date, currentWeek, totalPlayers }) => (
+        <Card sx={{ maxWidth: 345 }} elevation={8}>
+          <CardMedia
+            sx={{ height: 140 }}
+            image={IMG_URLS.LOGIN_ILLUSTRATION.src}
+            title="green iguana"
+          />
+          <CardContent>
+            <div className="flex flex-col gap-2 items-center">
+              <div className="font-bold">{name}</div>
+              <div>{date}</div>
+              <div>{currentWeek}</div>
+              <div>{totalPlayers}</div>
+            </div>
+          </CardContent>
+          <CardActions>
+            <CustomButton label="Select" />
+          </CardActions>
+        </Card>
+      ))}
+    </div>
+  );
+};

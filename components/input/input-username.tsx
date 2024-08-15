@@ -1,4 +1,4 @@
-import { CustomInput, InputProps } from './custom-input';
+import { CustomInput, InputProps } from '../custom/custom-input';
 
 type InputUserProps = {
   resetValue: InputProps['resetValue'];
@@ -10,7 +10,7 @@ export const InputUsername = ({ resetValue, handleChange }: InputUserProps) => {
     <CustomInput
       label="Username"
       handleChange={handleChange}
-      endAdorment={{ img: 'USER_LOGO' }}
+      endAdorment={{ img: 'USER_ICON' }}
       resetValue={resetValue}
     />
   );

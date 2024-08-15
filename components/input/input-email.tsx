@@ -1,4 +1,4 @@
-import { CustomInput, InputProps } from './custom-input';
+import { CustomInput, InputProps } from '../custom/custom-input';
 
 type InputEmailProps = {
   resetValue: InputProps['resetValue'];
@@ -12,7 +12,7 @@ export const InputEmail = ({ resetValue, handleChange }: InputEmailProps) => {
     <CustomInput
       label="Email"
       handleChange={handleChange}
-      endAdorment={{ img: 'AT_LOGO' }}
+      endAdorment={{ img: 'AT_ICON' }}
       pattern={pattern}
       resetValue={resetValue}
     />

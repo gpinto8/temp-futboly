@@ -1,4 +1,4 @@
-import { IMG_URLS } from '../utils/img-urls';
+import { IMG_URLS } from '../../utils/img-urls';
 import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import Image from 'next/image';
 import { ChangeEvent, useEffect, useState } from 'react';

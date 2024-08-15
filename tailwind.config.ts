@@ -11,6 +11,7 @@ export const tailwindConfig: Config = {
       black: '#000',
       blackLight: '#343a40',
       error: '#ff0000', // custom colors
+      success: '#00ff00',
       errorDark: '#b20000',
       main: '#F03ED7',
       mainDark: '#d837c1',
@@ -19,7 +20,7 @@ export const tailwindConfig: Config = {
     },
   },
   plugins: [],
-  important: true,
+  // important: true,
   mode: 'jit',
   module: {
     rules: [

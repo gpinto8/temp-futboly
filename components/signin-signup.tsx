@@ -1,15 +1,15 @@
 'use client';
 
 import { FutbolyLogo } from './futboly-logo';
-import { InputEmail } from './input-email';
-import { InputPassword } from './input-password';
-import { InputUsername } from './input-username';
+import { InputEmail } from './input/input-email';
+import { InputPassword } from './input/input-password';
+import { InputUsername } from './input/input-username';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
-import { CustomButton } from './custom-button';
+import { CustomButton } from './custom/custom-button';
 import { IMG_URLS } from '../utils/img-urls';
-import { InputProps } from './custom-input';
+import { InputProps } from './custom/custom-input';
 
 export type SignInSignUpProps = {
   mapObject: {

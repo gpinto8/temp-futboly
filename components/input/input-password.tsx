@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CustomInput, InputProps } from './custom-input';
+import { CustomInput, InputProps } from '../custom/custom-input';
 
 type InputPasswordProps = {
   resetValue: InputProps['resetValue'];
@@ -20,7 +20,7 @@ export const InputPassword = ({ resetValue, handleChange }: InputPasswordProps) 
       endAdorment={{
         button: {
           onClick: togglePasword,
-          img: showPassword ? 'EYE_OPEN_LOGO' : 'EYE_CLOSE_LOGO',
+          img: showPassword ? 'EYE_OPEN_ICON' : 'EYE_CLOSE_ICON',
         },
       }}
       pattern={pattern}

@@ -1,5 +1,5 @@
-import { CustomButton } from './custom-button';
-import { ColumnsProps, CustomTable, RowsProps } from './custom-table';
+import { CustomButton } from '../custom/custom-button';
+import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
 
 type AdminColumnKeysProps = 'INDEX' | 'COMPETITION' | 'TYPE' | 'TEAMS' | 'STATUS' | 'ACTIONS';
 
