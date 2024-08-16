@@ -120,9 +120,9 @@ export const EditTeamModal = (row: any) => {
   // Whenever the players state changes we update the table rows here
   useEffect(() => {
     (async () => {
-      const rows: RowsProps<PlayersColumnKeysProps> = (players as any)?.map(
-        (player: any) => !selectedPlayerIds.includes(player.id) && mapPlayerRow(player)
-      );
+      const rows: RowsProps<PlayersColumnKeysProps> = (players as any)
+        ?.map((player: any) => !selectedPlayerIds.includes(player.id) && mapPlayerRow(player))
+        .filter(Boolean);
 
       setRows(rows);
     })();

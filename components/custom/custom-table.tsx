@@ -42,9 +42,9 @@ export function CustomTable<ColumnKeysProps>({
 }: CustomTableProps<ColumnKeysProps>) {
   const TableRow = ({ row, className }: { row?: any; className?: string }) => {
     return (
-      <div className="flex w-full gap-2 pb-2">
+      <div className="flex w-full gap-2 pb-2 items-center justify-center">
         {columns.map(({ id, label, centered, width }, index) => {
-          let classes = 'w-full text-black line-clamp-1 pb-1 ';
+          let classes = 'w-full text-black line-clamp-1 ';
           if (className) classes += className;
           if (centered) classes += ' flex justify-center items-center';
 
