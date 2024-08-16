@@ -2,11 +2,11 @@ import './globals.css';
 import StoreProvider from '../store/store-provider';
 import { CustomSnackbar } from '@/components/custom/custom-snackbar';
 
-export default function RootLayout({
+export default ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <html>
       <body>
@@ -17,4 +17,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};

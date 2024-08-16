@@ -29,7 +29,6 @@ export const CustomButton = ({
   };
 
   const classes = `${disabled ? '!bg-gray' : buttonStyles[style]} ${className}`;
-  // console.log({ classes });
   return (
     <Button
       type={type as any}

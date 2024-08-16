@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
 import { CustomButton } from '../custom/custom-button';
-import { CustomInput } from '../custom/custom-input';
-import { CustomModal } from '../custom/custom-modal';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
 import { EditTeamModal } from '../modal/edit-team-modal';
 
@@ -27,25 +24,6 @@ export const AdminTabTeams = () => {
     { label: 'Players', id: 'PLAYERS', centered: true },
     { label: 'Actions', id: 'ACTIONS', centered: true },
   ];
-
-  // // useEffect(() => {
-  // //   console.log('ONCEEE');
-  // // }, []);
-
-  // // useEffect(() => {
-  // //   fetch(
-  // //     `https://api.sportmonks.com/v3/football/players?api_token=9QudD8bREVydDeSDCCkPHerTQ3TrzmbP0YCOJqTmc0C37eLwRFVYSx7SExnA`,
-  // //     {
-  // //       mode: 'no-cors',
-  // //       cache: 'no-store',
-  // //       next: { revalidate: 3600 },
-  // //     }
-  // //   )
-  // //     .then(response => response?.formData())
-  // //     .then(data => {
-  // //       console.log({ data });
-  // //     });
-  // // }, []);
 
   return (
     <div>

@@ -1,6 +1,5 @@
 'use client';
 
-import { getFirestoreData } from '@/firebase/firestore/methods';
 import { getFirebaseAuthMethods } from '@/firebase/functions/authentication';
 import { useAppSelector } from '@/store/hooks';
 

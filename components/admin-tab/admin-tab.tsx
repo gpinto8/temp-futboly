@@ -1,5 +1,4 @@
 import { Chip } from '@mui/material';
-import { Component, MouseEvent, useEffect, useState } from 'react';
 import { AdminTabUsers } from './admin-tab-users';
 import { useSwitchComponents } from '@/utils/switch-components';
 import { AdminTabTeams } from './admin-tab-teams';
@@ -49,7 +48,7 @@ export const AdminTab = () => {
           ))}
         </div>
         {currentComponentId === 'COMPETITIONS' && (
-          <CustomModal buttonLabel="Add competition" title="Create a new competition">
+          <CustomModal openButton={{ label: 'Add competition' }} title="Create a new competition">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <CustomInput label="Name" />

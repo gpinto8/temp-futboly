@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ColumnsProps, CustomTable, RowsProps } from './custom/custom-table';
 import { IMG_URLS } from '@/utils/img-urls';
 import Image from 'next/image';
@@ -58,8 +58,8 @@ export const StandingsTab = () => {
       rows={rows}
       columns={columns}
       className="bg-lightGray"
-      customRows={{ hideHorizontalLine: true, className: 'py-2' }}
-      customColumns={{ className: 'border-b-gray' }}
+      customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
+      customizeColumns={{ className: 'border-b-gray' }}
     />
   );
 };

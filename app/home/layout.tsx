@@ -6,7 +6,7 @@ import { useAppDispatch } from '@/store/hooks';
 import { userActions } from '@/store/slices/user';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-const HomePageLayout = ({ children }: any) => {
+export default ({ children }: any) => {
   const dispatch = useAppDispatch();
   const auth = getAuth(app);
 
@@ -18,7 +18,5 @@ const HomePageLayout = ({ children }: any) => {
     }
   });
 
-  return <>{ children }</>;
+  return <>{children}</>;
 };
-
-export default HomePageLayout;

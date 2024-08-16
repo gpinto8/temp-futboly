@@ -4,7 +4,7 @@ import { clientConfig, serverConfig } from '@/firebase/config';
 import { APP_ROUTES } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 
-const RootPage = async () => {
+export default async () => {
   let tokens;
   try {
     tokens = await getTokens(cookies(), {
@@ -21,5 +21,3 @@ const RootPage = async () => {
     redirect(APP_ROUTES.SIGNIN);
   }
 };
-
-export default RootPage;

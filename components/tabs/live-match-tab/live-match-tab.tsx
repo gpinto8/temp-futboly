@@ -1,9 +1,4 @@
-import { useEffect, useState } from 'react';
-import { ColumnsProps, CustomTable, RowsProps } from '../../custom/custom-table';
-import { IMG_URLS } from '@/utils/img-urls';
-import Image from 'next/image';
-import { Card, CardActions, CardContent, CardMedia } from '@mui/material';
-import { CustomButton } from '../../custom/custom-button';
+import { useState } from 'react';
 import { LiveMatch } from './live-match';
 import { UpcomingMatches } from './upcoming-matches';
 

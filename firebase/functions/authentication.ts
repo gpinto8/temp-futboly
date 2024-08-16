@@ -2,7 +2,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
 } from 'firebase/auth';
 import { app } from '@/firebase/app';
 import { APP_ROUTES } from '../../utils/routes';
@@ -10,13 +10,10 @@ import { useRouter } from 'next/navigation';
 import { getFirebaseErrors } from '../utils/errors';
 import { LOGIN_URL, LOGOUT_URL } from '@/middleware';
 import { setFirestoreData } from '../firestore/methods';
-import { useAppDispatch } from '@/store/hooks';
-import { userActions } from '@/store/slices/user';
 
 export const getFirebaseAuthMethods = () => {
   const router = useRouter();
   const firebaseErrors = getFirebaseErrors();
-  const dispatch = useAppDispatch();
   const auth = getAuth(app);
 
   return {
