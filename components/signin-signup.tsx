@@ -28,6 +28,7 @@ export type SignInSignUpProps = {
   hideUserInput?: boolean;
 };
 
+// @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 
 export const SignInSignUp = ({ mapObject, hideUserInput, handleSubmit }: SignInSignUpProps) => {

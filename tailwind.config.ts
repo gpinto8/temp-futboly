@@ -17,11 +17,15 @@ export const tailwindColors = {
 };
 
 export const tailwindConfig: Config = {
-  content: ['./components/**/*.{js,ts,jsx,tsx,mdx}', './app/**/*.{js,ts,jsx,tsx,mdx}'],
+  content: [
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    '!./node_modules', // 👈
+  ],
   // TODO: do the sizes
   theme: { colors: tailwindColors },
   plugins: [],
-  // important: true,
+  important: true,
   mode: 'jit',
   module: {
     rules: [
@@ -31,6 +35,10 @@ export const tailwindConfig: Config = {
       },
     ],
   },
+  // important: true,
+  // corePlugins: {
+  //   preflight: false,
+  // },
 };
 
 export default tailwindConfig;
