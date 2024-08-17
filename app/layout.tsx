@@ -11,7 +11,7 @@ export default ({
     <html>
       <body>
         <StoreProvider>
-          <div className="bg-red">{children}</div>
+          <div className="flex justify-center">{children}</div>
           <CustomSnackbar />
         </StoreProvider>
       </body>

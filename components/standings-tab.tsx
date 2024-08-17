@@ -54,12 +54,14 @@ export const StandingsTab = () => {
   ];
 
   return (
-    <CustomTable<ColumnKeysProps>
-      rows={rows}
-      columns={columns}
-      className="bg-lightGray"
-      customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
-      customizeColumns={{ className: 'border-b-gray' }}
-    />
+    <div className="h-[400px]">
+      <CustomTable<ColumnKeysProps>
+        rows={rows}
+        columns={columns}
+        className="bg-lightGray"
+        customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
+        customizeColumns={{ className: 'border-b-gray' }}
+      />
+    </div>
   );
 };

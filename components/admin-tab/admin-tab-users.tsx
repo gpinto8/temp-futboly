@@ -19,7 +19,7 @@ export const AdminTabUsers = () => {
   ];
 
   return (
-    <div>
+    <div className="h-[400px]">
       <CustomTable<AdminColumnKeysProps> rows={rows} columns={columns} />
     </div>
   );

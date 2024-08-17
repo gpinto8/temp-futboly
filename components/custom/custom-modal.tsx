@@ -6,17 +6,17 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import { useState } from 'react';
 import { CustomButton, CustomButtonProps } from './custom-button';
+import Image from 'next/image';
+import { IMG_URLS } from '@/utils/img-urls';
 
 const cssStyles = {
   position: 'absolute' as 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
 };
 
 type CustomModalProps = {
@@ -82,13 +82,28 @@ export const CustomModal = ({
         slotProps={{ backdrop: { timeout: 500 } }}
       >
         <Fade in={open}>
-          <Box sx={cssStyles} className={`w-[50vw] h-[60vh] ${className}`}>
-            <div className="flex flex-col gap-6">
-              <div className="flex justify-center text-3xl">
-                <div className="font-bold">{title}</div>
-                {unboldedTitle}
+          <Box
+            sx={cssStyles}
+            className={`p-4 md:p-8 w-screen h-screen md:w-[80vw] lg:w-[50vw] md:h-[80vh] ${className}`}
+          >
+            <div className="flex flex-col gap-6 h-full">
+              <div className="flex justify-end">
+                <Image
+                  src={IMG_URLS.CLOSE_ICON.src}
+                  alt={IMG_URLS.CLOSE_ICON.alt}
+                  width={20}
+                  height={20}
+                  onClick={closeModal}
+                  className="cursor-pointer"
+                />
               </div>
-              {children}
+              <div className="flex flex-col gap-6 h-[-webkit-fill-available]">
+                <div className="flex justify-center text-3xl">
+                  <div className="font-bold">{title}</div>
+                  {unboldedTitle}
+                </div>
+                <div className="h-full">{children}</div>
+              </div>
               <CustomButton label={closeButton?.label || ''} handleClick={handleButtonClose} />
             </div>
           </Box>

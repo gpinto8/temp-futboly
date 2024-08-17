@@ -6,5 +6,6 @@ export const getPlayerRating = (playerStatistics: any) => {
     ?.map((stat: any) => stat.value.average && stat.value.average)
     ?.at(-1); // Get the latest one
 
-  return rating;
+  const displayedRating = rating && rating !== '0.00' && rating.toFixed(2);
+  return displayedRating;
 };

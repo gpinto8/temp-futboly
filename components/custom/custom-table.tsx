@@ -11,6 +11,7 @@ export type ColumnsProps<T> = {
   centered?: boolean;
   className?: string;
   width?: number;
+  minWidth?: number;
 }[];
 
 type CustomTableProps<ColumnsKeys> = {
@@ -41,9 +42,10 @@ export function CustomTable<ColumnKeysProps>({
   elevation,
 }: CustomTableProps<ColumnKeysProps>) {
   const TableRow = ({ row, className }: { row?: any; className?: string }) => {
+    const toPixel = (value?: number) => value && `${value}px`;
     return (
-      <div className="flex w-full gap-2 pb-2 items-center justify-center">
-        {columns.map(({ id, label, centered, width }, index) => {
+      <div className="flex w-fit md:w-full gap-2 pb-2 items-center justify-center">
+        {columns.map(({ id, label, centered, width, minWidth }, index) => {
           let classes = 'w-full text-black line-clamp-1 ';
           if (className) classes += className;
           if (centered) classes += ' flex justify-center items-center';
@@ -52,9 +54,9 @@ export function CustomTable<ColumnKeysProps>({
             <div
               key={index + Math.random()}
               className={classes}
-              style={{ ...(width ? { minWidth: width + 'px', width: 'fit-content' } : {}) }}
+              style={{ ...(width ? { minWidth: toPixel(width), width: 'fit-content' } : {}) }}
             >
-              {row ? row[id] : label}
+              {(row ? row[id] : label) || '-'}
             </div>
           );
         })}
@@ -88,11 +90,11 @@ export function CustomTable<ColumnKeysProps>({
     onEndReached?.();
   };
 
-  const newHeight = `${height || 400}px`;
+  const newHeight = height ? `${height}px` : '100%';
   const newElevation = elevation ?? 1;
 
   return (
-    <Paper style={{ height: newHeight, width: '100%' }} elevation={newElevation}>
+    <Paper className="w-full h-full" elevation={newElevation}>
       <Virtuoso
         data={rows}
         className={`w-full h-full ${className}`}

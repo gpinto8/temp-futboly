@@ -5,7 +5,7 @@ import { Header } from '@/components/header';
 
 export default () => {
   return (
-    <div className="mx-10">
+    <div className="px-4 md:px-10 max-w-[1500px] w-full">
       <HomePageLayout>
         <Header />
         ASDFASDF

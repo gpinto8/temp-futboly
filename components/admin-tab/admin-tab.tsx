@@ -50,7 +50,7 @@ export const AdminTab = () => {
         {currentComponentId === 'COMPETITIONS' && (
           <CustomModal openButton={{ label: 'Add competition' }} title="Create a new competition">
             <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 h-[400px]">
                 <CustomInput label="Name" />
                 <CustomInput label="Type" />
                 <CustomTable<ColumnKeysProps> rows={rows} columns={columns} />

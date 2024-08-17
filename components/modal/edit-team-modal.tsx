@@ -49,16 +49,17 @@ export const EditTeamModal = (row: any) => {
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
     { label: '#', id: 'ID', width: 30 },
-    { label: 'Player', id: 'PLAYER' },
-    { label: 'Position', id: 'POSITION', centered: true },
+    { label: 'Player', id: 'PLAYER', width: 200 },
+    { label: 'Position', id: 'POSITION', centered: true, width: 100 },
     { label: 'Rating', id: 'RATING', centered: true, width: 50 },
     { label: 'Club', id: 'CLUB', centered: true, width: 50 },
     { label: '', id: 'ACTIONS', centered: true, width: 30 },
   ];
 
   const mapPlayerRow = (player: any) => {
-    const { id, image_path, display_name, detailedPosition, position, teams, statisitcs } = player;
-    const rating = getPlayerRating(statisitcs);
+    const { id, image_path, display_name, detailedPosition, position, teams, statistics } = player;
+    const rating = getPlayerRating(statistics);
+    const club = teams?.[0]?.team.short_code;
 
     return {
       ID: id,
@@ -68,9 +69,9 @@ export const EditTeamModal = (row: any) => {
           <span className="line-clamp-1">{display_name}</span>
         </div>
       ),
-      POSITION: detailedPosition?.name || position?.name || '-',
-      RATING: rating || '-',
-      CLUB: teams?.[0]?.team.short_code || '-',
+      POSITION: detailedPosition?.name || position?.name,
+      RATING: rating,
+      CLUB: club,
       ACTIONS: (
         <SelectIcon
           playerId={id}
@@ -140,7 +141,6 @@ export const EditTeamModal = (row: any) => {
     <CustomModal
       title={`${row?.row?.TEAM}`}
       unboldedTitle="'s team"
-      className="h-[80vh]"
       openButton={{
         label: 'Edit',
         className: '!w-1/4 !h-3/4',
@@ -149,16 +149,16 @@ export const EditTeamModal = (row: any) => {
       closeButton={{ label: 'Edit team', handleClick: handleEdit }}
       handleClose={handleClose}
     >
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6 h-full">
+        <div className="flex flex-col gap-8 h-full">
           <div className="flex flex-col gap-2">
             <div className="font-bold">Choose information:</div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 md:flex-row">
               <CustomInput label="Name" handleChange={setName} />
               <CustomInput label="Owner" handleChange={setOwner} />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 h-full">
             <div className="font-bold">Choose players:</div>
             <CustomTable<PlayersColumnKeysProps>
               rows={[...selectedRows, ...rows]}

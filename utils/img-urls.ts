@@ -43,4 +43,8 @@ export const IMG_URLS = {
     src: 'assets/check.svg',
     alt: 'Check Icon',
   },
+  CLOSE_ICON: {
+    src: 'assets/close.svg',
+    alt: 'Close Icon',
+  },
 };
