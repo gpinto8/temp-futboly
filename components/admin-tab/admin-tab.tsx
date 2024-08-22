@@ -37,7 +37,7 @@ export const AdminTab = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between">
-        <div className="flex gap-4">
+        <div className="flex gap-2 md:gap-4">
           {components.map(({ id, label }) => (
             <Chip
               className={`${isCurrentId(id) ? 'text-white bg-main' : 'text-gray'}`}

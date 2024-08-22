@@ -84,9 +84,9 @@ export const CustomModal = ({
         <Fade in={open}>
           <Box
             sx={cssStyles}
-            className={`p-4 md:p-8 w-screen h-screen md:w-[80vw] lg:w-[50vw] md:h-[80vh] ${className}`}
+            className={`p-4 md:p-8 w-screen h-screen md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] ${className}`}
           >
-            <div className="flex flex-col gap-6 h-full">
+            <div className="flex flex-col gap-4 h-full">
               <div className="flex justify-end">
                 <Image
                   src={IMG_URLS.CLOSE_ICON.src}

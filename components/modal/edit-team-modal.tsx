@@ -48,12 +48,12 @@ export const EditTeamModal = (row: any) => {
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
-    { label: '#', id: 'ID', width: 30 },
-    { label: 'Player', id: 'PLAYER', width: 200 },
-    { label: 'Position', id: 'POSITION', centered: true, width: 100 },
-    { label: 'Rating', id: 'RATING', centered: true, width: 50 },
-    { label: 'Club', id: 'CLUB', centered: true, width: 50 },
-    { label: '', id: 'ACTIONS', centered: true, width: 30 },
+    { label: '#', id: 'ID', minWidth: 30 },
+    { label: 'Player', id: 'PLAYER', minWidth: 200 },
+    { label: 'Position', id: 'POSITION', centered: true, minWidth: 100 },
+    { label: 'Rating', id: 'RATING', centered: true, minWidth: 50 },
+    { label: 'Club', id: 'CLUB', centered: true, minWidth: 50 },
+    { label: '', id: 'ACTIONS', centered: true, minWidth: 30 },
   ];
 
   const mapPlayerRow = (player: any) => {

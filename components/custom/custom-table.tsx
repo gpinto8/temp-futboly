@@ -10,7 +10,6 @@ export type ColumnsProps<T> = {
   label: string;
   centered?: boolean;
   className?: string;
-  width?: number;
   minWidth?: number;
 }[];
 
@@ -44,9 +43,9 @@ export function CustomTable<ColumnKeysProps>({
   const TableRow = ({ row, className }: { row?: any; className?: string }) => {
     const toPixel = (value?: number) => value && `${value}px`;
     return (
-      <div className="flex w-fit md:w-full gap-2 pb-2 items-center justify-center">
-        {columns.map(({ id, label, centered, width, minWidth }, index) => {
-          let classes = 'w-full text-black line-clamp-1 ';
+      <div className="flex w-full gap-2 pb-2 items-center justify-between">
+        {columns.map(({ id, label, centered, minWidth }, index) => {
+          let classes = `${!minWidth ? 'w-full' : ''} text-black line-clamp-1`;
           if (className) classes += className;
           if (centered) classes += ' flex justify-center items-center';
 
@@ -54,7 +53,9 @@ export function CustomTable<ColumnKeysProps>({
             <div
               key={index + Math.random()}
               className={classes}
-              style={{ ...(width ? { minWidth: toPixel(width), width: 'fit-content' } : {}) }}
+              style={{
+                ...(minWidth ? { minWidth: toPixel(minWidth), width: 'fit-content' } : {}),
+              }}
             >
               {(row ? row[id] : label) || '-'}
             </div>
@@ -69,11 +70,12 @@ export function CustomTable<ColumnKeysProps>({
     return <TableRow className={className} />;
   };
 
-  const Footer = () => (
-    <div className="mt-5 flex justify-center items-center">
-      <Loader color="main" />
-    </div>
-  );
+  const Footer = () =>
+    typeof onEndReached === 'function' && (
+      <div className="mt-5 flex justify-center items-center">
+        <Loader color="main" />
+      </div>
+    );
 
   const getRows = (_: number, row: any) => {
     let className = customizeRows?.hideHorizontalLine ? 'border-none ' : '';

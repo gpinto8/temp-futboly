@@ -33,11 +33,11 @@ export const AppTabs = () => {
     <ThemeProvider theme={theme}>
       <div className="flex flex-col gap-8">
         <Tabs
-          classes={{ scrollableX: 'flex justify-center' }}
+          classes={{ scrollableX: 'md:flex md:justify-center' }}
           value={currentComponentId}
           textColor="primary"
           indicatorColor="primary"
-          scrollButtons={true}
+          scrollButtons
           allowScrollButtonsMobile
           variant="scrollable"
         >

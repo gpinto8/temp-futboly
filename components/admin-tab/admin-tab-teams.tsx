@@ -18,10 +18,10 @@ export const AdminTabTeams = () => {
   }));
 
   const columns: ColumnsProps<AdminColumnKeysProps> = [
-    { label: '#', id: 'INDEX' },
-    { label: 'Team', id: 'TEAM' },
-    { label: 'Owner', id: 'OWNER' },
-    { label: 'Players', id: 'PLAYERS', centered: true },
+    { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: 'Team', id: 'TEAM', minWidth: 100 },
+    { label: 'Owner', id: 'OWNER', minWidth: 100 },
+    { label: 'Players', id: 'PLAYERS', centered: true, minWidth: 30 },
     { label: 'Actions', id: 'ACTIONS', centered: true },
   ];
 
