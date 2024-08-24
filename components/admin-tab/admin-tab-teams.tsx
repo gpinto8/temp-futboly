@@ -11,8 +11,8 @@ export const AdminTabTeams = () => {
     ...row,
     ACTIONS: (
       <div className="flex gap-1">
+        <CustomButton label="Delete" style="error" className="!w-1/4 !h-1/4" />
         <EditTeamModal row={row} />
-        <CustomButton label="Delete" style="error" className="!w-1/4 !h-1/4" />,
       </div>
     ),
   }));
@@ -21,13 +21,18 @@ export const AdminTabTeams = () => {
     { label: '#', id: 'INDEX', minWidth: 30 },
     { label: 'Team', id: 'TEAM', minWidth: 100 },
     { label: 'Owner', id: 'OWNER', minWidth: 100 },
-    { label: 'Players', id: 'PLAYERS', centered: true, minWidth: 30 },
-    { label: 'Actions', id: 'ACTIONS', centered: true },
+    { label: 'Players', id: 'PLAYERS', align: 'center', minWidth: 50 },
+    { label: 'Actions', id: 'ACTIONS', align: 'center', minWidth: 200 },
   ];
 
   return (
-    <div className="h-[400px]">
-      <CustomTable<AdminColumnKeysProps> rows={rows} columns={columns} />
+    <div className="h-[400px] ">
+      <CustomTable<AdminColumnKeysProps>
+        rows={rows}
+        columns={columns}
+        maxWidth={1000}
+        elevation={0}
+      />
     </div>
   );
 };

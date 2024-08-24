@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ColumnsProps, CustomTable, RowsProps } from './custom/custom-table';
 import { IMG_URLS } from '@/utils/img-urls';
 import Image from 'next/image';
+import { useBreakpoint } from '@/utils/use-breakpoint';
 
 type ColumnKeysProps = 'INDEX' | 'TEAM' | 'WINS' | 'DRAWS' | 'LOSES' | 'POINTS' | 'LAST_MATCHES';
 
@@ -27,6 +28,7 @@ const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
 
 export const StandingsTab = () => {
   useState();
+  const breakpoint = useBreakpoint();
 
   const rows: RowsProps<ColumnKeysProps> = [
     {
@@ -44,23 +46,27 @@ export const StandingsTab = () => {
   ];
 
   const columns: ColumnsProps<ColumnKeysProps> = [
-    { label: '#', id: 'INDEX' },
-    { label: 'Team', id: 'TEAM' },
-    { label: 'W', id: 'WINS', centered: true },
-    { label: 'D', id: 'DRAWS', centered: true },
-    { label: 'L', id: 'LOSES', centered: true },
-    { label: 'Points', id: 'POINTS', centered: true },
-    { label: 'Last Matches', id: 'LAST_MATCHES', centered: true },
+    { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: 'Team', id: 'TEAM', minWidth: 100 },
+    { label: breakpoint === 'sm' ? 'W' : 'Wins', id: 'WINS', align: 'center', minWidth: 50 },
+    { label: breakpoint === 'sm' ? 'D' : 'Draws', id: 'DRAWS', align: 'center', minWidth: 50 },
+    { label: breakpoint === 'sm' ? 'L' : 'Loses', id: 'LOSES', align: 'center', minWidth: 50 },
+    { label: breakpoint === 'sm' ? 'Pts' : 'Points', id: 'POINTS', align: 'center', minWidth: 50 },
+    { label: 'Last Matches', id: 'LAST_MATCHES', align: 'center', minWidth: 150 },
   ];
+
+  console.log({ breakpoint });
 
   return (
     <div className="h-[400px]">
       <CustomTable<ColumnKeysProps>
         rows={rows}
         columns={columns}
-        className="bg-lightGray"
+        className="bg-lightGray pt-2 p-2 md:overflow-x-hidden"
         customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
         customizeColumns={{ className: 'border-b-gray' }}
+        elevation={5}
+        // maxWidth={1000}
       />
     </div>
   );

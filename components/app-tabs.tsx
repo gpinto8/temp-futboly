@@ -18,7 +18,7 @@ export const AppTabs = () => {
         { label: 'Live Match', Component: LiveMatchTab },
         { label: 'Admin', Component: AdminTab },
       ],
-      -1
+      1
     );
 
   const theme = createTheme({

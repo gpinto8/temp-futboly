@@ -8,9 +8,9 @@ export type RowsProps<T> = { [key in T]: any }[];
 export type ColumnsProps<T> = {
   id: T;
   label: string;
-  centered?: boolean;
+  minWidth: number;
+  align?: 'center' | 'left' | 'right';
   className?: string;
-  minWidth?: number;
 }[];
 
 type CustomTableProps<ColumnsKeys> = {
@@ -18,6 +18,9 @@ type CustomTableProps<ColumnsKeys> = {
   columns: ColumnsProps<ColumnsKeys>;
   className?: string;
   height?: number;
+  width?: number;
+  maxHeight?: number;
+  maxWidth?: number;
   customizeRows?: {
     className?: string;
     hideHorizontalLine?: boolean;
@@ -26,7 +29,6 @@ type CustomTableProps<ColumnsKeys> = {
     className?: string;
   };
   onEndReached?: () => void;
-  showLastChild?: boolean;
   elevation?: number;
 };
 
@@ -35,19 +37,33 @@ export function CustomTable<ColumnKeysProps>({
   columns,
   className = '',
   height,
+  width,
+  maxHeight,
+  maxWidth,
   customizeRows = {},
   customizeColumns = {},
   onEndReached,
   elevation,
 }: CustomTableProps<ColumnKeysProps>) {
-  const TableRow = ({ row, className }: { row?: any; className?: string }) => {
+  const TableRow = ({
+    row,
+    className,
+    isHeader,
+  }: {
+    row?: any;
+    className?: string;
+    isHeader?: boolean;
+  }) => {
     const toPixel = (value?: number) => value && `${value}px`;
+    const containerClassName = isHeader ? ' font-bold pt-2' : '';
     return (
-      <div className="flex w-full gap-2 pb-2 items-center justify-between">
-        {columns.map(({ id, label, centered, minWidth }, index) => {
-          let classes = `${!minWidth ? 'w-full' : ''} text-black line-clamp-1`;
-          if (className) classes += className;
-          if (centered) classes += ' flex justify-center items-center';
+      <div className={`flex w-full gap-2 pb-2 items-center justify-between ${containerClassName} `}>
+        {columns.map(({ id, label, align = 'left', minWidth }, index) => {
+          let classes = `text-black line-clamp-1`;
+          if (className) classes += ' ' + className;
+          if (align === 'center') classes += ' flex justify-center items-center';
+          if (align === 'left') classes += ' flex items-start justify-start';
+          if (align === 'right') classes += ' flex items-end justify-end';
 
           return (
             <div
@@ -67,7 +83,7 @@ export function CustomTable<ColumnKeysProps>({
 
   const Header = () => {
     const className = 'font-bold ' + customizeColumns?.className || '';
-    return <TableRow className={className} />;
+    return <TableRow className={className} isHeader />;
   };
 
   const Footer = () =>
@@ -93,14 +109,31 @@ export function CustomTable<ColumnKeysProps>({
   };
 
   const newHeight = height ? `${height}px` : '100%';
+  const newMaxHeight = maxHeight ? `${maxHeight}px` : '100%';
+  const newMaxWidth = maxWidth ? `${maxWidth}px` : '100%';
+  const newWidth = width ? `${width}px` : '100%';
   const newElevation = elevation ?? 1;
 
   return (
-    <Paper className="w-full h-full" elevation={newElevation}>
+    <Paper
+      className="w-full h-full"
+      style={{
+        height: newHeight,
+        width: newWidth,
+        maxHeight: newMaxHeight,
+        maxWidth: newMaxWidth,
+      }}
+      elevation={newElevation}
+    >
       <Virtuoso
         data={rows}
         className={`w-full h-full ${className}`}
-        style={{ height: newHeight }}
+        style={{
+          height: newHeight,
+          width: newWidth,
+          maxHeight: newMaxHeight,
+          maxWidth: newMaxWidth,
+        }}
         itemContent={getRows}
         endReached={endReached}
         components={{ Footer, Header }}

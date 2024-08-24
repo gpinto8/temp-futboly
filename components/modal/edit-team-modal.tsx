@@ -50,10 +50,10 @@ export const EditTeamModal = (row: any) => {
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
     { label: '#', id: 'ID', minWidth: 30 },
     { label: 'Player', id: 'PLAYER', minWidth: 200 },
-    { label: 'Position', id: 'POSITION', centered: true, minWidth: 100 },
-    { label: 'Rating', id: 'RATING', centered: true, minWidth: 50 },
-    { label: 'Club', id: 'CLUB', centered: true, minWidth: 50 },
-    { label: '', id: 'ACTIONS', centered: true, minWidth: 30 },
+    { label: 'Position', id: 'POSITION', align: 'center', minWidth: 100 },
+    { label: 'Rating', id: 'RATING', align: 'center', minWidth: 50 },
+    { label: 'Club', id: 'CLUB', align: 'center', minWidth: 50 },
+    { label: '', id: 'ACTIONS', align: 'center', minWidth: 30 },
   ];
 
   const mapPlayerRow = (player: any) => {

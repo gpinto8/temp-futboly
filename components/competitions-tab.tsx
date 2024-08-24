@@ -1,10 +1,32 @@
-import { useState } from 'react';
+// 'use client';
+
+import { useEffect, useState } from 'react';
 import { IMG_URLS } from '@/utils/img-urls';
 import { Card, CardActions, CardContent, CardMedia } from '@mui/material';
 import { CustomButton } from './custom/custom-button';
+import React from 'react';
 
 export const CompetitionsTab = () => {
-  useState();
+  // await
+  // sleep
+  // const [asdf, se] = useState();
+
+  useEffect(function () {
+    console.log('first render');
+    console.log('first render');
+  }, []);
+
+  // await new Promise(resolve => {
+  //   return setTimeout(resolve, 2000);
+  // });
+
+  // useEffect(() => {
+  // if (resetValue) {
+  //   setValue('');
+  //   setError(false);
+  // }
+  console.log('use effect');
+  // }, [false]);
 
   const competitions = [
     {
@@ -44,6 +66,11 @@ export const CompetitionsTab = () => {
       totalPlayers: '45 players',
     },
   ];
+
+  // React.useEffect(() => {
+  //   console.log('first render');
+  //   console.log('first render');
+  // }, []);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -12,15 +12,20 @@ export const AdminTabUsers = () => {
   );
 
   const columns: ColumnsProps<AdminColumnKeysProps> = [
-    { label: '#', id: 'INDEX' },
-    { label: 'User', id: 'USER' },
-    { label: 'Team', id: 'TEAM' },
-    { label: 'Actions', id: 'ACTIONS', centered: true },
+    { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: 'User', id: 'USER', minWidth: 100 },
+    { label: 'Team', id: 'TEAM', minWidth: 100 },
+    { label: 'Actions', id: 'ACTIONS', align: 'center', minWidth: 100 },
   ];
 
   return (
     <div className="h-[400px]">
-      <CustomTable<AdminColumnKeysProps> rows={rows} columns={columns} />
+      <CustomTable<AdminColumnKeysProps>
+        rows={rows}
+        columns={columns}
+        maxWidth={1000}
+        elevation={0}
+      />
     </div>
   );
 };

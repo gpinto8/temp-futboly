@@ -31,12 +31,16 @@ export const AdminTab = () => {
     { label: '#', id: 'INDEX' },
     { label: 'Team', id: 'TEAM' },
     { label: 'Owner', id: 'OWNER' },
-    { label: 'Actions', id: 'ACTIONS', centered: true },
+    { label: 'Actions', id: 'ACTIONS', align: 'center' },
   ];
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between">
+    <div
+      className={`flex flex-col gap-8 ${
+        currentComponentId === 'COMPETITIONS' ? 'max-w-[1000px]' : '' // Limiting the width so the "Add competition" button takes exactly the below table width and not the viewport one
+      }`}
+    >
+      <div className="flex flex-col gap-6 justify-between md:flex-row">
         <div className="flex gap-2 md:gap-4">
           {components.map(({ id, label }) => (
             <Chip
@@ -48,7 +52,10 @@ export const AdminTab = () => {
           ))}
         </div>
         {currentComponentId === 'COMPETITIONS' && (
-          <CustomModal openButton={{ label: 'Add competition' }} title="Create a new competition">
+          <CustomModal
+            openButton={{ label: 'Add competition', className: '!w-[180px]' }}
+            title="Create a new competition"
+          >
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4 h-[400px]">
                 <CustomInput label="Name" />

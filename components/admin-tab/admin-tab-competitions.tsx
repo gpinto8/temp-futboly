@@ -12,17 +12,22 @@ export const AdminTabCompetitions = () => {
   }));
 
   const columns: ColumnsProps<AdminColumnKeysProps> = [
-    { label: '#', id: 'INDEX' },
-    { label: 'Competition', id: 'COMPETITION' },
-    { label: 'Type', id: 'TYPE' },
-    { label: 'No. Teams', id: 'TEAMS', centered: true },
-    { label: 'Status', id: 'STATUS' },
-    { label: 'Actions', id: 'ACTIONS', centered: true },
+    { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: 'Competition', id: 'COMPETITION', minWidth: 100 },
+    { label: 'Type', id: 'TYPE', align: 'center', minWidth: 100 },
+    { label: 'Teams', id: 'TEAMS', align: 'center', minWidth: 50 },
+    { label: 'Status', id: 'STATUS', align: 'center', minWidth: 100 },
+    { label: 'Actions', id: 'ACTIONS', align: 'center', minWidth: 100 },
   ];
 
   return (
     <div className="h-[400px]">
-      <CustomTable<AdminColumnKeysProps> rows={rows} columns={columns} />
+      <CustomTable<AdminColumnKeysProps>
+        rows={rows}
+        columns={columns}
+        maxWidth={1000}
+        elevation={0}
+      />
     </div>
   );
 };
