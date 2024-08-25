@@ -4,6 +4,6 @@ export const FIRESTORE_COLLECTIONS = {
 };
 
 export const FIRESTORE_DOCUMENTS = {
-  uid: "uid", // Dyanmic for "users"
-  id: "id", // Dynamic for "leagues"
+  uid: 'uid', // Dyanmic for "users"
+  id: 'id', // Dynamic for "leagues"
 };

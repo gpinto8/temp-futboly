@@ -1,34 +1,16 @@
 import { IMG_URLS } from '@/utils/img-urls';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import { CustomButton } from './custom/custom-button';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAppSelector } from '@/store/hooks';
-import { LeagueCollectionCompetitionProps } from '@/firebase/firestore/types';
-import { getFirestoreLeagues, getFirestoreUsers } from '@/firebase/firestore/get-methods';
-import { getAppData, setAppData } from '@/data/get-app-data';
+import { updateFirestoreRedux } from '@/utils/update-firestore-redux';
 
 export const CompetitionsTab = () => {
-  // const [competitions, setCompetitions] = useState<LeagueCollectionCompetitionProps[]>([]);
-  const { setLeague } = setAppData();
-  const { getLeague } = getAppData();
-
-  // const user = useAppSelector(state => state.user);
-  // useEffect(() => {
-  //   (async () => {
-  //     if (user.uid) {
-  //       const userData = await getFirestoreUsers(user.uid);
-  //       const leagues = userData?.leagues?.map((league: any) => league.id);
-  //       const activeLeagueId = leagues?.[0]; // to change once we get to the header to change league
-
-  //       const leaguesData = await getFirestoreLeagues(activeLeagueId);
-  //       const competitions = leaguesData?.competitions;
-  //       if (competitions) setCompetitions(competitions);
-  //     }
-  //   })();
-  // }, [user.uid]);
+  const { setLeague } = updateFirestoreRedux();
+  const league = useAppSelector(state => state.league);
 
   const handleCompetitionSelection = async (id: number) => {
-    const mergedCompetitions = getLeague()?.competitions.map(competition => ({
+    const mergedCompetitions = league?.competitions.map(competition => ({
       ...competition,
       active: !!(competition.id === id),
     }));
@@ -37,7 +19,7 @@ export const CompetitionsTab = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
-      {getLeague()?.competitions?.map((competition, index) => {
+      {league?.competitions?.map((competition, index) => {
         const totalPlayers = competition.players.length + 1;
         const startDate = new Date(competition.startDate.toDate()).toLocaleDateString();
         const endDate = new Date(competition.endDate.toDate()).toLocaleDateString();

@@ -1,5 +1,4 @@
-import { Dispatch } from '@reduxjs/toolkit';
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 
 type ComponentProps = {
   label: string;

@@ -1,6 +1,5 @@
 'use client';
 
-import { setAppData } from '@/data/get-app-data';
 import { app } from '@/firebase/app';
 import { getFirestoreLeagues, getFirestoreUsers } from '@/firebase/firestore/get-methods';
 import { getFirebaseAuthMethods } from '@/firebase/functions/authentication';
@@ -16,7 +15,6 @@ export default ({ children }: any) => {
   const auth = getAuth(app);
   const firebaseMethods = getFirebaseAuthMethods();
   const user = useAppSelector(state => state.user);
-  // const { setLeague } = setAppData();
 
   const handleLogout = async () => {
     await firebaseMethods.logoutUser();
@@ -25,6 +23,26 @@ export default ({ children }: any) => {
     );
   };
 
+  // TODO: To revalidate user existance on every page refresh in case we delete the user from the "users" firestore collection
+  // useEffect(() => {
+  //   (async () => {
+  //     console.log('useEffect');
+  //     if (!user.uid) await handleLogout();
+  //   })();
+  // }, []);
+
+  // FETCH USER DATA
+  onAuthStateChanged(auth, async user => {
+    const uid = user?.uid;
+    if (uid) {
+      const data = await getFirestoreUsers(uid as any);
+      if (data?.username) {
+        dispatch(userActions.setUser({ uid, username: data?.username })); // If it exists then ok
+      } else handleLogout(); // Otherwise the user doesn't exist in Firestore so we cant't proceed
+    }
+  });
+
+  // FETCH LEAGUE DATA
   useEffect(() => {
     (async () => {
       if (user.uid) {
@@ -38,24 +56,6 @@ export default ({ children }: any) => {
       }
     })();
   }, [user]);
-
-  // TODO: To revalidate user existance on every page refresh in case we delete the user from the "users" firestore collection
-  // useEffect(() => {
-  //   (async () => {
-  //     console.log('useEffect');
-  //     if (!user.uid) await handleLogout();
-  //   })();
-  // }, []);
-
-  onAuthStateChanged(auth, async user => {
-    const uid = user?.uid;
-    if (uid) {
-      const data = await getFirestoreUsers(uid as any);
-      if (data?.username) {
-        dispatch(userActions.setUser({ uid, username: data?.username })); // If it exists then ok
-      } else handleLogout(); // Otherwise the user doesn't exist in Firestore so we cant't proceed
-    }
-  });
 
   return <>{children}</>;
 };

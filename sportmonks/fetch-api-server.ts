@@ -24,7 +24,7 @@ export const fetchSportmonksApiServer = async (
   let pathUrl = SPORTMONKS_DATA.APIS[path];
   if (id) pathUrl += `/${id}`;
 
-  const apiKey = '9QudD8bREVydDeSDCCkPHerTQ3TrzmbP0YCOJqTmc0C37eLwRFVYSx7SExnA'; // TO REMOVE
+  const apiKey = '9QudD8bREVydDeSDCCkPHerTQ3TrzmbP0YCOJqTmc0C37eLwRFVYSx7SExnA'; // TODO: TO REMOVE
   const currentPage = page || 1;
   const includeQueryParams = includes?.map(include => SPORTMONKS_DATA.INCLUDES[include]).join(';');
 

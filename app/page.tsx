@@ -5,7 +5,7 @@ import { APP_ROUTES } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 
 export default async () => {
-  let tokens;
+  let tokens = null;
   try {
     tokens = await getTokens(cookies(), {
       apiKey: clientConfig.apiKey,
