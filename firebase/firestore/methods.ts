@@ -1,7 +1,6 @@
 import { collection, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCUMENTS } from './data';
 import { app } from '../app';
-import { CompetitionsCollectionProps, LeaguesCollectionProps, UsersCollectionProps } from './types';
 
 const getDocument = (
   collectionName: keyof typeof FIRESTORE_COLLECTIONS,
@@ -35,4 +34,5 @@ export const setFirestoreData = async (
 
   const firestoreDocument = getDocument(collectionName, documentName);
   await setDoc(firestoreDocument, fields, { merge: true });
+  return getFirestoreData(collectionName, documentName);
 };

@@ -6,7 +6,6 @@ import { useAppSelector } from '@/store/hooks';
 export const Header = () => {
   const firebaseMethods = getFirebaseAuthMethods();
   const handleLogout = async () => await firebaseMethods.logoutUser();
-
   const user = useAppSelector(state => state.user);
 
   return (

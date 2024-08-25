@@ -3,45 +3,46 @@ import { Card, CardContent, CardMedia } from '@mui/material';
 import { CustomButton } from './custom/custom-button';
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
-import { CompetitionsCollectionProps } from '@/firebase/firestore/types';
-import {
-  getFirestoreCompetition,
-  getFirestoreLeagues,
-  getFirestoreUsers,
-} from '@/firebase/firestore/get-methods';
+import { LeagueCollectionCompetitionProps } from '@/firebase/firestore/types';
+import { getFirestoreLeagues, getFirestoreUsers } from '@/firebase/firestore/get-methods';
+import { getAppData, setAppData } from '@/data/get-app-data';
 
 export const CompetitionsTab = () => {
-  const [competitions, setCompetitions] = useState<CompetitionsCollectionProps[]>([]);
+  // const [competitions, setCompetitions] = useState<LeagueCollectionCompetitionProps[]>([]);
+  const { setLeague } = setAppData();
+  const { getLeague } = getAppData();
 
-  const user = useAppSelector(state => state.user);
-  useEffect(() => {
-    (async () => {
-      if (user.uid) {
-        const userData = await getFirestoreUsers(user.uid);
-        const leagues = userData?.leagues?.map((league: any) => league.id);
-        const activeLeagueId = leagues?.[0]; // to change once we get to the header
+  // const user = useAppSelector(state => state.user);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (user.uid) {
+  //       const userData = await getFirestoreUsers(user.uid);
+  //       const leagues = userData?.leagues?.map((league: any) => league.id);
+  //       const activeLeagueId = leagues?.[0]; // to change once we get to the header to change league
 
-        const leaguesData = await getFirestoreLeagues(activeLeagueId);
-        const competitions = leaguesData?.competitions?.map((competition: any) => competition.id);
+  //       const leaguesData = await getFirestoreLeagues(activeLeagueId);
+  //       const competitions = leaguesData?.competitions;
+  //       if (competitions) setCompetitions(competitions);
+  //     }
+  //   })();
+  // }, [user.uid]);
 
-        let competitionsData: CompetitionsCollectionProps[] = [];
-        for await (const id of competitions!) {
-          const data = await getFirestoreCompetition(id);
-          if (data) competitionsData.push(data);
-        }
-
-        setCompetitions(competitionsData);
-      }
-    })();
-  }, [user.uid]);
+  const handleCompetitionSelection = async (id: number) => {
+    const mergedCompetitions = getLeague()?.competitions.map(competition => ({
+      ...competition,
+      active: !!(competition.id === id),
+    }));
+    setLeague({ competitions: mergedCompetitions });
+  };
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
-      {competitions.map((competition, index) => {
+      {getLeague()?.competitions?.map((competition, index) => {
         const totalPlayers = competition.players.length + 1;
         const startDate = new Date(competition.startDate.toDate()).toLocaleDateString();
         const endDate = new Date(competition.endDate.toDate()).toLocaleDateString();
         const name = competition.name;
+        const id = competition.id;
 
         return (
           <Card key={index + name} elevation={8} className="max-w-[300px] rounded-xl">
@@ -57,7 +58,11 @@ export const CompetitionsTab = () => {
                   {startDate} - {endDate}
                 </div>
                 <div>{totalPlayers} players</div>
-                <CustomButton className="mt-2" label="Select" />
+                <CustomButton
+                  className="mt-2"
+                  label="Select"
+                  handleClick={() => handleCompetitionSelection(id)}
+                />
               </div>
             </CardContent>
           </Card>
