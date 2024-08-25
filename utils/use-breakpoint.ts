@@ -8,41 +8,45 @@ const tailwindBreakpoints = {
   '2xl': 1536,
 };
 
-export const useBreakpoint = () => {
-  const [breakpoint, setBreakPoint] = useState<keyof typeof tailwindBreakpoints | ''>('');
-  const [windowSize, setWindowSize] = useState<any>({ width: undefined, height: undefined });
+type TailwindBreakpointsProps = keyof typeof tailwindBreakpoints | '';
 
-  const handleResize = () => {
-    setWindowSize({
-      width: window?.innerWidth || 0,
-      height: window?.innerHeight || 0,
-    });
-  };
+const betweenOf = (value: number, a: number, b: number) => value >= a && value <= b;
+
+const getViewportBreakpoint = (viewportWidth: number): TailwindBreakpointsProps => {
+  const { sm, md, lg, xl } = tailwindBreakpoints;
+
+  if (betweenOf(viewportWidth, 0, sm)) {
+    return 'sm';
+  } else if (betweenOf(viewportWidth, sm, md)) {
+    return 'md';
+  } else if (betweenOf(viewportWidth, md, lg)) {
+    return 'lg';
+  } else if (betweenOf(viewportWidth, lg, xl)) {
+    return 'xl';
+  } else if (betweenOf(viewportWidth, xl, tailwindBreakpoints['2xl'])) {
+    return '2xl';
+  } else return '';
+};
+
+export const useBreakpoint = () => {
+  const [breakpoint, setBreakPoint] = useState<TailwindBreakpointsProps>(
+    getViewportBreakpoint(innerWidth)
+  );
+  const [windowSize, setWindowSize] = useState<{ width?: number; height?: number }>({
+    width: 0,
+    height: 0,
+  });
+
+  const handleResize = () => setWindowSize({ width: innerWidth, height: innerHeight });
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
     handleResize();
 
-    if (0 < windowSize.width && windowSize.width < tailwindBreakpoints.sm) {
-      setBreakPoint('sm');
-    } else if (
-      tailwindBreakpoints.sm < windowSize.width &&
-      windowSize.width < tailwindBreakpoints.md
-    ) {
-      setBreakPoint('md');
-    } else if (
-      tailwindBreakpoints.md < windowSize.width &&
-      windowSize.width < tailwindBreakpoints.lg
-    ) {
-      setBreakPoint('lg');
-    } else if (
-      tailwindBreakpoints.lg < windowSize.width &&
-      windowSize.width < tailwindBreakpoints.md
-    ) {
-      setBreakPoint('xl');
-    } else if (windowSize.width >= tailwindBreakpoints.md) {
-      setBreakPoint('2xl');
-    } else setBreakPoint('');
+    if (windowSize.width) {
+      const breakpoint = getViewportBreakpoint(windowSize.width);
+      setBreakPoint(breakpoint);
+    }
 
     return () => window.removeEventListener('resize', handleResize);
   }, [windowSize.width]);

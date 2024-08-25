@@ -9,17 +9,14 @@ import { LiveMatchTab } from './tabs/live-match-tab/live-match-tab';
 
 export const AppTabs = () => {
   const { currentComponentId, components, setComponentId, SwitchedComponent, isCurrentId } =
-    useSwitchComponents(
-      [
-        { label: 'Competitions', Component: CompetitionsTab },
-        { label: 'Standings', Component: StandingsTab },
-        { label: 'Teams', Component: AdminTab },
-        { label: 'Matches', Component: AdminTab },
-        { label: 'Live Match', Component: LiveMatchTab },
-        { label: 'Admin', Component: AdminTab },
-      ],
-      1
-    );
+    useSwitchComponents([
+      { label: 'Competitions', Component: () => <CompetitionsTab /> },
+      { label: 'Standings', Component: () => <StandingsTab /> },
+      { label: 'Teams', Component: () => <AdminTab /> },
+      { label: 'Matches', Component: () => <AdminTab /> },
+      { label: 'Live Match', Component: () => <LiveMatchTab /> },
+      { label: 'Admin', Component: () => <AdminTab /> },
+    ]);
 
   const theme = createTheme({
     palette: {

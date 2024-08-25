@@ -1,6 +1,7 @@
 import { collection, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { FIRESTORE_COLLECTIONS, FIRESTORE_DOCUMENTS } from './data';
 import { app } from '../app';
+import { CompetitionsCollectionProps, LeaguesCollectionProps, UsersCollectionProps } from './types';
 
 const getDocument = (
   collectionName: keyof typeof FIRESTORE_COLLECTIONS,
@@ -12,7 +13,7 @@ const getDocument = (
   return databaseDocument;
 };
 
-export const getFirestoreData = async (
+export const getFirestoreData = async <FieldsProps>(
   collectionName: keyof typeof FIRESTORE_COLLECTIONS,
   documentName: keyof typeof FIRESTORE_DOCUMENTS
 ) => {
@@ -22,7 +23,7 @@ export const getFirestoreData = async (
   const documentSnapshot = await getDoc(document);
   const fields = documentSnapshot.data();
 
-  return fields;
+  if (fields) return fields as FieldsProps;
 };
 
 export const setFirestoreData = async (

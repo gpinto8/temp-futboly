@@ -10,12 +10,12 @@ export const Header = () => {
   const user = useAppSelector(state => state.user);
 
   return (
-    <div className="flex bg-gray">
-      <div className="bg-error">HOMEPAGE - LOGGED</div>
+    <div className="flex justify-between border border-error">
+      <div className="">HOMEPAGE</div>
+      <h1>USERNAME: {user?.username}</h1>
       <button className="bg-black text-white" onClick={handleLogout}>
         Logout
       </button>
-      <h1>USERNAME: {user?.username}</h1>
     </div>
   );
 };

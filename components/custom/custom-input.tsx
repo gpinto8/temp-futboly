@@ -31,7 +31,7 @@ export const CustomInput = ({
   const [error, setError] = useState(false);
   const { img, button } = endAdorment || {};
 
-  const id = `${label.toLowerCase()}-${Date.now()}`;
+  const id = `${label.toLowerCase()}}`;
   const imageWidth = 25;
   const imageHeight = 25;
 

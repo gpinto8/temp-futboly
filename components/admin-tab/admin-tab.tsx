@@ -28,10 +28,10 @@ export const AdminTab = () => {
   }));
 
   const columns: ColumnsProps<ColumnKeysProps> = [
-    { label: '#', id: 'INDEX' },
-    { label: 'Team', id: 'TEAM' },
-    { label: 'Owner', id: 'OWNER' },
-    { label: 'Actions', id: 'ACTIONS', align: 'center' },
+    { label: '#', id: 'INDEX', minWidth: 0 },
+    { label: 'Team', id: 'TEAM', minWidth: 0 },
+    { label: 'Owner', id: 'OWNER', minWidth: 0 },
+    { label: 'Actions', id: 'ACTIONS', align: 'center', minWidth: 0 },
   ];
 
   return (

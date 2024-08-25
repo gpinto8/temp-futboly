@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import { ColumnsProps, CustomTable, RowsProps } from './custom/custom-table';
 import { IMG_URLS } from '@/utils/img-urls';
-import Image from 'next/image';
 import { useBreakpoint } from '@/utils/use-breakpoint';
+import Image from 'next/image';
 
 type ColumnKeysProps = 'INDEX' | 'TEAM' | 'WINS' | 'DRAWS' | 'LOSES' | 'POINTS' | 'LAST_MATCHES';
 
@@ -11,7 +10,7 @@ const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
 
   return (
     <div className="flex gap-1.5 justify-center">
-      {lastMatches.map(lastMatch => {
+      {lastMatches.map((lastMatch, index) => {
         const icons = {
           W: 'WIN_CIRCLE_ICON',
           D: 'DRAW_CIRCLE_ICON',
@@ -19,7 +18,9 @@ const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
         };
         if (lastMatch) {
           const icon = IMG_URLS[icons[lastMatch] as keyof typeof IMG_URLS];
-          return <Image src={icon.src} width={15} height={15} alt={icon.alt} />;
+          return (
+            <Image key={lastMatch + index} src={icon.src} width={15} height={15} alt={icon.alt} />
+          );
         }
       })}
     </div>
@@ -27,7 +28,6 @@ const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
 };
 
 export const StandingsTab = () => {
-  useState();
   const breakpoint = useBreakpoint();
 
   const rows: RowsProps<ColumnKeysProps> = [
@@ -55,18 +55,15 @@ export const StandingsTab = () => {
     { label: 'Last Matches', id: 'LAST_MATCHES', align: 'center', minWidth: 150 },
   ];
 
-  console.log({ breakpoint });
-
   return (
     <div className="h-[400px]">
       <CustomTable<ColumnKeysProps>
         rows={rows}
         columns={columns}
-        className="bg-lightGray pt-2 p-2 md:overflow-x-hidden"
+        className="bg-lightGray"
         customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
         customizeColumns={{ className: 'border-b-gray' }}
         elevation={5}
-        // maxWidth={1000}
       />
     </div>
   );

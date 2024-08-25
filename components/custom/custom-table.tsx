@@ -57,7 +57,9 @@ export function CustomTable<ColumnKeysProps>({
     const toPixel = (value?: number) => value && `${value}px`;
     const containerClassName = isHeader ? ' font-bold pt-2' : '';
     return (
-      <div className={`flex w-full gap-2 pb-2 items-center justify-between ${containerClassName} `}>
+      <div
+        className={`flex w-full gap-2 pb-2 px-2 items-center justify-between ${containerClassName} `}
+      >
         {columns.map(({ id, label, align = 'left', minWidth }, index) => {
           let classes = `text-black line-clamp-1`;
           if (className) classes += ' ' + className;
