@@ -17,7 +17,8 @@ export const fetchSportmonksApiClient = async <QueryParameters>(
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
-  const url = `${baseUrl}/${urlPath}?${queryParameters}`;
+  const apiKey = '9QudD8bREVydDeSDCCkPHerTQ3TrzmbP0YCOJqTmc0C37eLwRFVYSx7SExnA'; // TODO: TO REMOVE
+  const url = `${baseUrl}/${urlPath}?api_token=${apiKey}&${queryParameters}`;
 
   return await fetch(url).then(response => response.json());
 };

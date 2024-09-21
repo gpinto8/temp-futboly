@@ -1,6 +1,10 @@
+'use client';
+
 import './globals.css';
 import StoreProvider from '../store/store-provider';
 import { CustomSnackbar } from '@/components/custom/custom-snackbar';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 export default ({
   children,
@@ -11,8 +15,10 @@ export default ({
     <html>
       <body>
         <StoreProvider>
-          <div className="flex justify-center">{children}</div>
-          <CustomSnackbar />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex justify-center">{children}</div>
+            <CustomSnackbar />
+          </LocalizationProvider>
         </StoreProvider>
       </body>
     </html>

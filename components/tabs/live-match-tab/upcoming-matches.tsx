@@ -1,5 +1,4 @@
-import { IMG_URLS } from '@/utils/img-urls';
-import Image from 'next/image';
+import { CustomImage } from '@/components/custom/custom-image';
 
 export const UpcomingMatches = () => {
   return (
@@ -7,7 +6,7 @@ export const UpcomingMatches = () => {
       <div className="font-bold text-2xl">Upcoming Matches</div>
       <div className="grid grid-cols-6">
         <div className="flex flex-col gap-4 bg-lightGray py-6 px-4 justify-center items-center">
-          <Image src={IMG_URLS['LOGIN_ILLUSTRATION'].src} width={60} height={60} alt={'asdf'} />
+          <CustomImage imageKey="LOGIN_ILLUSTRATION" width={60} height={60} />
           <div className="flex flex-col font-bold justify-center items-center">
             <div>Milan</div>
             <div>vs</div>

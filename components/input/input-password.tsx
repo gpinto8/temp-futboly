@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { CustomInput, InputProps } from '../custom/custom-input';
 
 type InputPasswordProps = {
+  label?: string;
   resetValue: InputProps['resetValue'];
   handleChange: InputProps['handleChange'];
 };
 
-export const InputPassword = ({ resetValue, handleChange }: InputPasswordProps) => {
+export const InputPassword = ({ resetValue, handleChange, label }: InputPasswordProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const togglePasword = () => setShowPassword(!showPassword);
 
@@ -14,7 +15,7 @@ export const InputPassword = ({ resetValue, handleChange }: InputPasswordProps) 
 
   return (
     <CustomInput
-      label="Password"
+      label={(label) ? label : "Password"}
       handleChange={handleChange}
       type={showPassword ? 'text' : 'password'}
       endAdorment={{

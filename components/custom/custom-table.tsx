@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { Virtuoso } from 'react-virtuoso';
 import { Loader } from '../loader';
+import './custom-table.scss';
 
 // @ts-ignore
 export type RowsProps<T> = { [key in T]: any }[];
@@ -13,9 +14,9 @@ export type ColumnsProps<T> = {
   className?: string;
 }[];
 
-type CustomTableProps<ColumnsKeys> = {
-  rows: RowsProps<ColumnsKeys>;
-  columns: ColumnsProps<ColumnsKeys>;
+export type CustomTableProps<ColumnsKeysProps> = {
+  rows: RowsProps<ColumnsKeysProps>;
+  columns: ColumnsProps<ColumnsKeysProps>;
   className?: string;
   height?: number;
   width?: number;
@@ -30,6 +31,11 @@ type CustomTableProps<ColumnsKeys> = {
   };
   onEndReached?: () => void;
   elevation?: number;
+  isComplete?: {
+    value: boolean;
+    text: string;
+    className?: string;
+  };
 };
 
 export function CustomTable<ColumnKeysProps>({
@@ -44,6 +50,7 @@ export function CustomTable<ColumnKeysProps>({
   customizeColumns = {},
   onEndReached,
   elevation,
+  isComplete,
 }: CustomTableProps<ColumnKeysProps>) {
   const TableRow = ({
     row,
@@ -88,12 +95,19 @@ export function CustomTable<ColumnKeysProps>({
     return <TableRow className={className} isHeader />;
   };
 
-  const Footer = () =>
-    typeof onEndReached === 'function' && (
+  const Footer = () => {
+    return typeof onEndReached === 'function' && !isComplete?.value ? (
       <div className="mt-5 flex justify-center items-center">
         <Loader color="main" />
       </div>
+    ) : (
+      <div className="flex justify-center items-center my-2">
+        <span className={isComplete?.className || 'text-gray-500'}>
+          {isComplete?.text}
+        </span>
+      </div>
     );
+  };
 
   const getRows = (_: number, row: any) => {
     let className = customizeRows?.hideHorizontalLine ? 'border-none ' : '';
@@ -129,7 +143,7 @@ export function CustomTable<ColumnKeysProps>({
     >
       <Virtuoso
         data={rows}
-        className={`w-full h-full ${className}`}
+        className={`w-full h-full inner-table ${className}`}
         style={{
           height: newHeight,
           width: newWidth,

@@ -1,46 +1,21 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomInput, InputProps } from '../custom/custom-input';
 import { CustomModal } from '../custom/custom-modal';
-import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
-import Image from 'next/image';
-import { IMG_URLS } from '@/utils/img-urls';
+import { ColumnsProps, RowsProps } from '../custom/custom-table';
 import { Avatar } from '@mui/material';
 import { fetchSportmonksApiClient } from '@/sportmonks/fetch-api-client';
-import { PlayersGetIdQueryParamProps } from '@/pages/api/sportmonks/players/get-by-id';
 import { PlayersGetAllQueryParamProps } from '@/pages/api/sportmonks/players/get-all';
-import { getPlayerRating } from '@/sportmonks/utils/get-player-rating';
-
+import { getPlayerRating } from '@/sportmonks/common-methods';
+import { SelectableTable } from '../table/selectable-table';
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
-type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB' | 'ACTIONS';
-
-const SelectIcon = ({
-  playerId,
-  selectedPlayerIds,
-  setSelectedPlayerIds,
-}: {
-  playerId: number;
-  selectedPlayerIds: number[];
-  setSelectedPlayerIds: Dispatch<SetStateAction<number[]>>;
-}) => {
-  const selected = selectedPlayerIds?.includes(playerId);
-  const icon = selected ? IMG_URLS.CHECK_ICON : IMG_URLS.PLUS_ICON;
-
-  const handleSelect = () => setSelectedPlayerIds([...selectedPlayerIds, playerId]);
-
-  return (
-    <div className="flex justify-center items-center cursor-pointer w-6 h-8">
-      <Image src={icon.src} alt={icon.alt} width={25} height={25} onClick={handleSelect} />
-    </div>
-  );
-};
+type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
 export const EditTeamModal = (row: any) => {
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [players, setPlayers] = useState<any[]>([]);
 
   const [name, setName] = useState<HandleChangeParamProps>();
@@ -48,62 +23,63 @@ export const EditTeamModal = (row: any) => {
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
-    { label: '#', id: 'ID', minWidth: 30 },
     { label: 'Player', id: 'PLAYER', minWidth: 200 },
     { label: 'Position', id: 'POSITION', align: 'center', minWidth: 100 },
     { label: 'Rating', id: 'RATING', align: 'center', minWidth: 50 },
     { label: 'Club', id: 'CLUB', align: 'center', minWidth: 50 },
-    { label: '', id: 'ACTIONS', align: 'center', minWidth: 30 },
   ];
 
-  const mapPlayerRow = (player: any) => {
-    const { id, image_path, display_name, detailedPosition, position, teams, statistics } = player;
+  const mapPlayerRow = (player: any, index: number) => {
+    const {
+      id,
+      image_path,
+      display_name,
+      detailedPosition,
+      position,
+      teams,
+      statistics,
+    } = player;
     const rating = getPlayerRating(statistics);
     const club = teams?.[0]?.team.short_code;
 
     return {
-      ID: id,
+      ID: index + 1,
       PLAYER: (
         <div className="flex gap-1">
-          <Avatar src={image_path} alt={display_name} sx={{ width: 24, height: 24 }} />
+          <Avatar
+            src={image_path}
+            alt={display_name}
+            sx={{ width: 24, height: 24 }}
+          />
           <span className="line-clamp-1">{display_name}</span>
         </div>
       ),
       POSITION: detailedPosition?.name || position?.name,
       RATING: rating,
       CLUB: club,
-      ACTIONS: (
-        <SelectIcon
-          playerId={id}
-          selectedPlayerIds={selectedPlayerIds}
-          setSelectedPlayerIds={setSelectedPlayerIds}
-        />
-      ),
     };
   };
 
-  // For every "selectedPlayerIds" (aka when you click the "+" icon) lets fetch that player by id and add it to the "selectedRows" state
+  // Whenever the players state changes we update the table rows here
   useEffect(() => {
-    (async function () {
-      if (!selectedPlayerIds.length) return;
+    (async () => {
+      const rows: RowsProps<PlayersColumnKeysProps> = (players as any)
+        ?.map(
+          (player: any, index: number) =>
+            !selectedPlayerIds.includes(player.id) &&
+            mapPlayerRow(player, index),
+        )
+        .filter(Boolean);
 
-      const players: RowsProps<PlayersColumnKeysProps> = [];
-      for await (const id of selectedPlayerIds) {
-        const player = await fetchSportmonksApiClient<PlayersGetIdQueryParamProps>(
-          'PLAYERS/GET-BY-ID',
-          { id }
-        );
-        const mappedPlayer = mapPlayerRow(player.data);
-        players.push(mappedPlayer);
-      }
-
-      setSelectedRows(players);
+      setRows(rows);
     })();
-  }, [selectedPlayerIds]);
+  }, [players, selectedPlayerIds]);
 
   // When opening the edit modal, we fetch all the first x players
   const getPlayers = async () => {
-    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>('PLAYERS/GET-ALL');
+    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
+      'PLAYERS/GET-ALL',
+    );
     setPlayers(data.data);
   };
 
@@ -112,25 +88,24 @@ export const EditTeamModal = (row: any) => {
     const newPageCounter = pageCounter + 1;
     setPageCounter(newPageCounter);
 
-    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>('PLAYERS/GET-ALL', {
-      page: newPageCounter,
-    });
+    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
+      'PLAYERS/GET-ALL',
+      {
+        page: newPageCounter,
+      },
+    );
     if (players) setPlayers([...players, ...data.data]);
   };
 
-  // Whenever the players state changes we update the table rows here
-  useEffect(() => {
-    (async () => {
-      const rows: RowsProps<PlayersColumnKeysProps> = (players as any)
-        ?.map((player: any) => !selectedPlayerIds.includes(player.id) && mapPlayerRow(player))
-        .filter(Boolean);
-
-      setRows(rows);
-    })();
-  }, [players, selectedPlayerIds]);
-
   const handleClose = () => {
     setPageCounter(1); // Resetting the count so the next time we open up the modal we start from the beginning and not from the part we left it on
+  };
+
+  const handleSelectedRows = (
+    selectedRows: RowsProps<PlayersColumnKeysProps>,
+  ) => {
+    const playerIds = selectedRows.map((row) => row.ID);
+    setSelectedPlayerIds(playerIds);
   };
 
   const handleEdit = () => {
@@ -160,12 +135,11 @@ export const EditTeamModal = (row: any) => {
           </div>
           <div className="flex flex-col gap-2 h-full">
             <div className="font-bold">Choose players:</div>
-            <CustomTable<PlayersColumnKeysProps>
-              rows={[...selectedRows, ...rows]}
+            <SelectableTable<PlayersColumnKeysProps>
               columns={columns}
+              rows={rows}
               onEndReached={handleEndReached}
-              height={310}
-              elevation={0}
+              getSelectedRows={handleSelectedRows}
             />
           </div>
         </div>

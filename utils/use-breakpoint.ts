@@ -1,18 +1,14 @@
+import { tailwindBreakpoints } from '@/tailwind.config';
 import { useEffect, useState } from 'react';
-
-const tailwindBreakpoints = {
-  sm: 640,
-  md: 768,
-  lg: 1024,
-  xl: 1280,
-  '2xl': 1536,
-};
 
 type TailwindBreakpointsProps = keyof typeof tailwindBreakpoints | '';
 
-const betweenOf = (value: number, a: number, b: number) => value >= a && value <= b;
+const betweenOf = (value: number, a: number, b: number) =>
+  value >= a && value <= b;
 
-const getViewportBreakpoint = (viewportWidth: number): TailwindBreakpointsProps => {
+const getViewportBreakpoint = (
+  viewportWidth: number,
+): TailwindBreakpointsProps => {
   const { sm, md, lg, xl } = tailwindBreakpoints;
 
   if (betweenOf(viewportWidth, 0, sm)) {
@@ -30,14 +26,18 @@ const getViewportBreakpoint = (viewportWidth: number): TailwindBreakpointsProps 
 
 export const useBreakpoint = () => {
   const [breakpoint, setBreakPoint] = useState<TailwindBreakpointsProps>(
-    getViewportBreakpoint(innerWidth)
+    'sm', //getViewportBreakpoint(window.innerWidth)
   );
-  const [windowSize, setWindowSize] = useState<{ width?: number; height?: number }>({
+  const [windowSize, setWindowSize] = useState<{
+    width?: number;
+    height?: number;
+  }>({
     width: 0,
     height: 0,
   });
 
-  const handleResize = () => setWindowSize({ width: innerWidth, height: innerHeight });
+  const handleResize = () =>
+    setWindowSize({ width: innerWidth, height: innerHeight });
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);

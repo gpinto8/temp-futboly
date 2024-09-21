@@ -10,7 +10,8 @@ export const makeStore = () => {
       user: userReducer,
       league: leagueReducer,
     }),
-    middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }),
     // @ts-ignore
     // devTools: window?.__REDUX_DEVTOOLS_EXTENSION__ && window?.__REDUX_DEVTOOLS_EXTENSION__(), // TODO: only for dev tho
   });

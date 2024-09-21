@@ -1,11 +1,14 @@
 'use client';
 
-import { SignInSignUp, type SignInSignUpProps } from '../../components/signin-signup';
+import {
+  SignInSignUp,
+  type SignInSignUpProps,
+} from '../../components/signin-signup';
 import { APP_ROUTES } from '@/utils/routes';
-import { getFirebaseAuthMethods } from '@/firebase/functions/authentication';
+import { useSetUsers } from '@/data/users/use-set-users';
 
 export default () => {
-  const firebaseAuth = getFirebaseAuthMethods();
+  const { signInUser } = useSetUsers();
 
   const signInObject: SignInSignUpProps['mapObject'] = {
     title: 'Sign In',
@@ -16,9 +19,18 @@ export default () => {
     },
   };
 
-  const handleSubmit: SignInSignUpProps['handleSubmit'] = async ({ email, password }) => {
-    return await firebaseAuth.signInUser(email, password);
+  const handleSubmit: SignInSignUpProps['handleSubmit'] = async ({
+    email,
+    password,
+  }) => {
+    return await signInUser(email, password);
   };
 
-  return <SignInSignUp mapObject={signInObject} hideUserInput handleSubmit={handleSubmit} />;
+  return (
+    <SignInSignUp
+      mapObject={signInObject}
+      hideUserInput
+      handleSubmit={handleSubmit}
+    />
+  );
 };

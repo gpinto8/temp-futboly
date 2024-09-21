@@ -4,12 +4,11 @@ import { FutbolyLogo } from './futboly-logo';
 import { InputEmail } from './input/input-email';
 import { InputPassword } from './input/input-password';
 import { InputUsername } from './input/input-username';
-import Image from 'next/image';
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { CustomButton } from './custom/custom-button';
-import { IMG_URLS } from '../utils/img-urls';
 import { InputProps } from './custom/custom-input';
+import { CustomImage } from './custom/custom-image';
 
 export type SignInSignUpProps = {
   mapObject: {
@@ -31,7 +30,11 @@ export type SignInSignUpProps = {
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 
-export const SignInSignUp = ({ mapObject, hideUserInput, handleSubmit }: SignInSignUpProps) => {
+export const SignInSignUp = ({
+  mapObject,
+  hideUserInput,
+  handleSubmit,
+}: SignInSignUpProps) => {
   const { title, otherwiseDo } = mapObject || {};
 
   const [email, setEmail] = useState<HandleChangeParamProps>();
@@ -82,11 +85,21 @@ export const SignInSignUp = ({ mapObject, hideUserInput, handleSubmit }: SignInS
         <div className="flex flex-col justify-center items-center gap-4 w-full">
           <h1 className="font-bold text-[32px]">{title}</h1>
           <div className="flex flex-col gap-4 w-full max-w-[400px]">
-            <form onSubmit={handleFormSubmit} className="flex flex-col gap-3" action="#">
+            <form
+              onSubmit={handleFormSubmit}
+              className="flex flex-col gap-3"
+              action="#"
+            >
               <InputEmail handleChange={setEmail} resetValue={resetForm} />
-              <InputPassword handleChange={setPassword} resetValue={resetForm} />
+              <InputPassword
+                handleChange={setPassword}
+                resetValue={resetForm}
+              />
               {!hideUserInput && (
-                <InputUsername handleChange={setUsername} resetValue={resetForm} />
+                <InputUsername
+                  handleChange={setUsername}
+                  resetValue={resetForm}
+                />
               )}
               <CustomButton
                 label={title}
@@ -105,12 +118,11 @@ export const SignInSignUp = ({ mapObject, hideUserInput, handleSubmit }: SignInS
         </div>
       </div>
       <div className="md:w-1/2 h-full text-center rounded-2xl hidden md:flex justify-center items-center">
-        <Image
-          src={IMG_URLS.LOGIN_ILLUSTRATION.src}
+        <CustomImage
+          imageKey="LOGIN_ILLUSTRATION"
           className="w-full h-full max-w-[800px] max-h-[800px] md:h-[500px] lg:h-full"
           width={500}
           height={500}
-          alt={IMG_URLS.LOGIN_ILLUSTRATION.alt}
         />
       </div>
     </div>

@@ -1,3 +1,5 @@
+export type ImageUrlsProps = keyof typeof IMG_URLS;
+
 export const IMG_URLS = {
   FUTBOLY_LOGO_ICON: {
     src: 'assets/futboly-logo.svg',
@@ -6,6 +8,14 @@ export const IMG_URLS = {
   LOGIN_ILLUSTRATION: {
     src: 'assets/login-illustration.svg',
     alt: 'Login Illustration',
+  },
+  LEAGUE_ILLUSTRATION: {
+    src: 'assets/league-illustration.svg',
+    alt: 'League Illustration',
+  },
+  RULES_ICON: {
+    src: 'assets/rules-icon.svg',
+    alt: 'Rules Icon',
   },
   AT_ICON: {
     src: 'assets/at.svg',
@@ -46,5 +56,21 @@ export const IMG_URLS = {
   CLOSE_ICON: {
     src: 'assets/close.svg',
     alt: 'Close Icon',
+  },
+  LOGOUT: {
+    src: 'assets/logout.svg',
+    alt: 'Logout Icon',
+  },
+  PRIVATE: {
+    src: 'assets/private.svg',
+    alt: 'Private Icon',
+  },
+  PUBLIC: {
+    src: 'assets/public.svg',
+    alt: 'Public Icon',
+  },
+  LEAGUE_TROPHY: {
+    src: 'assets/league-trophy.svg',
+    alt: 'League Trophy Icon',
   },
 };

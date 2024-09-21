@@ -7,12 +7,12 @@ type AdminColumnKeysProps = 'INDEX' | 'TEAM' | 'OWNER' | 'PLAYERS' | 'ACTIONS';
 export const AdminTabTeams = () => {
   const rows: RowsProps<AdminColumnKeysProps> = [
     { INDEX: 1, TEAM: 'Team1', OWNER: 'gpinto8', PLAYERS: 49 },
-  ].map(row => ({
+  ].map((row) => ({
     ...row,
     ACTIONS: (
       <div className="flex gap-1">
-        <CustomButton label="Delete" style="error" className="!w-1/4 !h-1/4" />
         <EditTeamModal row={row} />
+        <CustomButton label="Delete" style="error" className="!w-1/4 !h-1/4" />
       </div>
     ),
   }));
@@ -27,6 +27,7 @@ export const AdminTabTeams = () => {
 
   return (
     <div className="h-[400px] ">
+      TODO
       <CustomTable<AdminColumnKeysProps>
         rows={rows}
         columns={columns}

@@ -3,13 +3,14 @@ import { CircularProgress } from '@mui/material';
 
 type LoaderProps = {
   color?: keyof typeof tailwindColors;
+  size?: number;
 };
 
-export const Loader = ({ color = 'lightGray' }: LoaderProps) => {
+export const Loader = ({ color = 'lightGray', size = 30 }: LoaderProps) => {
   return (
     <CircularProgress
       variant="indeterminate"
-      size={30}
+      size={size}
       thickness={4}
       value={100}
       className={`text-${color}`}

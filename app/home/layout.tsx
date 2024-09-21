@@ -1,61 +1,38 @@
 'use client';
 
 import { app } from '@/firebase/app';
-import { getFirestoreLeagues, getFirestoreUsers } from '@/firebase/firestore/get-methods';
-import { getFirebaseAuthMethods } from '@/firebase/functions/authentication';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { errorActions } from '@/store/slices/error';
-import { leagueActions } from '@/store/slices/league';
-import { userActions } from '@/store/slices/user';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
+import { useSetUsers } from '@/data/users/use-set-users';
+import { useSetLeague } from '@/data/leagues/use-set-league';
+import { useGetUsers } from '@/data/users/use-get-users';
+import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 
 export default ({ children }: any) => {
-  const dispatch = useAppDispatch();
   const auth = getAuth(app);
-  const firebaseMethods = getFirebaseAuthMethods();
-  const user = useAppSelector(state => state.user);
-
-  const handleLogout = async () => {
-    await firebaseMethods.logoutUser();
-    dispatch(
-      errorActions.setError({ message: 'User exists but is not registered on the database.' })
-    );
-  };
-
-  // TODO: To revalidate user existance on every page refresh in case we delete the user from the "users" firestore collection
-  // useEffect(() => {
-  //   (async () => {
-  //     console.log('useEffect');
-  //     if (!user.uid) await handleLogout();
-  //   })();
-  // }, []);
+  const { setUser } = useSetUsers();
+  const { getUser } = useGetUsers();
+  const { setLeague } = useSetLeague();
+  const { hasLeagues } = useGetLeagues();
 
   // FETCH USER DATA
-  onAuthStateChanged(auth, async user => {
+  onAuthStateChanged(auth, async (user) => {
     const uid = user?.uid;
-    if (uid) {
-      const data = await getFirestoreUsers(uid as any);
-      if (data?.username) {
-        dispatch(userActions.setUser({ uid, username: data?.username })); // If it exists then ok
-      } else handleLogout(); // Otherwise the user doesn't exist in Firestore so we cant't proceed
-    }
+    if (uid) await setUser(uid);
   });
 
   // FETCH LEAGUE DATA
+  const uid = getUser()?.id;
   useEffect(() => {
     (async () => {
-      if (user.uid) {
-        const userData = await getFirestoreUsers(user?.uid);
-        const leagues = userData?.leagues?.map((league: any) => league.id);
-        const activeLeagueId = leagues?.[0]; // to change once we get to the header to change league
-
-        const league = await getFirestoreLeagues(activeLeagueId);
-        // console.log({ league });
-        dispatch(leagueActions.setLeague(league));
+      const uid = getUser()?.id;
+      if (uid) {
+        const hasLeagueInside = await hasLeagues(uid);
+        console.log({hasLeagueInside, uid})
+        if (hasLeagueInside) await setLeague(uid);
       }
     })();
-  }, [user]);
+  }, [uid]);
 
   return <>{children}</>;
 };

@@ -36,7 +36,9 @@ export const getFirebaseErrors = () => {
   const dispatch = useAppDispatch();
 
   return (firebaseCode: string) => {
-    const firebaseError = Object.values(FIREBASE_ERRORS).find(error => error.code === firebaseCode);
+    const firebaseError = Object.values(FIREBASE_ERRORS).find(
+      (error) => error.code === firebaseCode,
+    );
     if (firebaseError) {
       dispatch(errorActions.setError({ message: firebaseError.message }));
     } else {

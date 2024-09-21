@@ -6,10 +6,9 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import { useState } from 'react';
 import { CustomButton, CustomButtonProps } from './custom-button';
-import Image from 'next/image';
-import { IMG_URLS } from '@/utils/img-urls';
+import { CustomImage } from './custom-image';
 
-const cssStyles = {
+const cssStylesFullPage = {
   position: 'absolute' as 'absolute',
   top: '50%',
   left: '50%',
@@ -19,14 +18,28 @@ const cssStyles = {
   boxShadow: 24,
 };
 
+const cssStylesDialog = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  bgcolor: 'background.paper',
+  borderRadius: 2,
+  boxShadow: 24,
+};
+
 type CustomModalProps = {
-  title: string;
+  title: string | React.ReactNode; // Title is not necessary when hasOpenButton is false
   children: React.ReactNode;
+  hasOpenButton?: boolean;
+  externalStatus?: boolean;
   unboldedTitle?: string;
   className?: string;
+  isDialog?: boolean;
   handleClose?: () => void;
   openButton?: {
     label: string;
+    isText?: boolean;
     className?: string;
     handleClick?: () => void;
     style?: CustomButtonProps['style'];
@@ -34,17 +47,24 @@ type CustomModalProps = {
   closeButton?: {
     label: string;
     handleClick?: () => void;
+    className?: string;
+    disabled?: boolean;
+    hide?: boolean;
+    style?: CustomButtonProps['style'];
   };
 };
 
 export const CustomModal = ({
   title,
   children,
+  hasOpenButton = true,
+  externalStatus = false,
   unboldedTitle,
   className = '',
   handleClose,
   openButton,
   closeButton,
+  isDialog = false
 }: CustomModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -64,47 +84,78 @@ export const CustomModal = ({
     closeModal();
   };
 
+  const modalStatus = Boolean(hasOpenButton ? open : externalStatus);
+
+  const fullPageClasses = "p-4 md:p-8 w-screen h-screen md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] " + className;
+  const dialogPageClasses = "p-4 md:p-8 " + className;
+
   return (
     <>
-      <CustomButton
-        label={openButton?.label || ''}
-        className={`w-fit h-10 ${openButton?.className || ''}`}
-        style={openButton?.style || 'black'}
-        handleClick={handleModalClick}
-      />
+      {hasOpenButton && !(openButton?.isText) && (
+        <CustomButton
+          label={openButton?.label || ''}
+          className={`w-fit h-10 ${openButton?.className || ''}`}
+          style={openButton?.style || 'black'}
+          handleClick={handleModalClick}
+        />
+      )}
+      {hasOpenButton && openButton?.isText && (
+        <span
+          className={openButton?.className || ''}
+          onClick={handleModalClick}
+        >
+          {openButton?.label}
+        </span>
+      )}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={open}
+        open={modalStatus}
         onClose={closeModal}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{ backdrop: { timeout: 500 } }}
       >
-        <Fade in={open}>
+        <Fade in={modalStatus}>
           <Box
-            sx={cssStyles}
-            className={`p-4 md:p-8 w-screen h-screen md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] ${className}`}
+            sx={!isDialog ? cssStylesFullPage : cssStylesDialog}
+            className={!isDialog ? fullPageClasses : dialogPageClasses}
           >
             <div className="flex flex-col gap-4 h-full">
-              <div className="flex justify-end">
-                <Image
-                  src={IMG_URLS.CLOSE_ICON.src}
-                  alt={IMG_URLS.CLOSE_ICON.alt}
+              <div
+                className={
+                  'mx-2 flex align-center ' +
+                  (typeof title !== 'string'
+                    ? 'justify-between'
+                    : 'justify-end')
+                }
+              >
+                {typeof title !== 'string' && title}
+                <CustomImage
+                  imageKey="CLOSE_ICON"
                   width={20}
                   height={20}
-                  onClick={closeModal}
+                  onClick={hasOpenButton ? closeModal : handleClose}
                   className="cursor-pointer"
                 />
               </div>
               <div className="flex flex-col gap-6 h-[-webkit-fill-available]">
-                <div className="flex justify-center text-3xl">
-                  <div className="font-bold">{title}</div>
-                  {unboldedTitle}
-                </div>
+                {typeof title === 'string' && (
+                  <div className="flex justify-center text-3xl">
+                    <div className="font-bold">{title}</div>
+                    {unboldedTitle}
+                  </div>
+                )}
                 <div className="h-full">{children}</div>
               </div>
-              <CustomButton label={closeButton?.label || ''} handleClick={handleButtonClose} />
+              {closeButton?.hide !== true && (
+                <CustomButton
+                  label={closeButton?.label || ''}
+                  handleClick={handleButtonClose}
+                  disabled={closeButton?.disabled}
+                  style={closeButton?.style || 'main'}
+                />
+              )}
             </div>
           </Box>
         </Fade>
