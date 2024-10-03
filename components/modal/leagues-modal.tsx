@@ -2,12 +2,9 @@
 
 import { useState } from 'react';
 import { CustomModal } from "@/components/custom/custom-modal";
-import { CustomButton } from "@/components/custom/custom-button";
 import { CustomInput, InputProps } from "@/components/custom/custom-input";
 import { InputPassword } from '@/components/input/input-password';
 import { useSetLeague } from "@/data/leagues/use-set-league";
-import { useGetLeagues } from "@/data/leagues/use-get-leagues";
-import { DocumentData } from 'firebase/firestore';
 import { useAppSelector } from '@/store/hooks';
 import { LeaguesCollectionProps } from '@/firebase/db-types';
 import { LeagueList } from '@/components/league-list';
@@ -44,7 +41,11 @@ export const CreateLeagueModal = ({ buttonFull }) => {
     }
 
     return (
-        <CustomModal title={<p className="text-3xl font-bold">Create Your League</p>} closeButton={{ label: "Create" }} openButton={{ label: "Create", style: "main", className: openButtonStyle}} handleClose={handleSubmit} isDialog={true}>
+        <CustomModal title={<p className="text-3xl font-bold">Create Your League</p>} 
+        closeButton={{ label: "Create" }} 
+        openButton={{ label: "Create", style: "main", className: openButtonStyle}} 
+        handleClose={handleSubmit} 
+        isDialog={{value: true, style: "large"}}>
             <div className="flex flex-col gap-4 mt-2">
                 <div className="flex flex-col items-center justify-center gap-4">
                     <CustomInput label="League Name" handleChange={setLeagueName} endAdorment={{ img: "LEAGUE_TROPHY" }} />
@@ -106,7 +107,7 @@ export const JoinPublicLeagueModal = ({league}: {league: LeaguesCollectionProps}
         closeButton={{label: "Join", style: "main", className: "mt-4 rounded-full", handleClick: handleClick}} 
         openButton={{label: "Join", isText: false, className: "rounded-full text-xs py-1 my-1 px-4 h-full", style: "main"}}
         handleClose={handleClose}
-        isDialog={true}>
+        isDialog={{value: true, style: "slim"}}>
             <div className="flex flex-col gap-4 my-2 min-w-[60vw] md:min-w-[30vw] xl:min-w-[25vw]">
                 <CustomInput label="League ID" initialValue={league.name} disabled/>
             </div>
@@ -122,7 +123,7 @@ export const LeaguesModal = () => {
         <CustomModal title={<p className="text-2xl sm:text-3xl font-bold sm:text-nowrap">Leagues</p>} 
         openButton={{label: "Browse Leagues", isText: false, className: "rounded-full text-xs py-1 my-1 px-4", style: "black"}}
         closeButton={{label: "Close", style: "main"}}
-        isDialog={true}
+        isDialog={{value: true, style: "large"}}
         className='min-w-[95%]'>
             <LeagueList />
         </CustomModal>

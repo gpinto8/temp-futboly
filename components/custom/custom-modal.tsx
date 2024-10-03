@@ -35,7 +35,10 @@ type CustomModalProps = {
   externalStatus?: boolean;
   unboldedTitle?: string;
   className?: string;
-  isDialog?: boolean;
+  isDialog?: {
+    value: boolean;
+    style: 'slim' | 'large';
+  };
   handleClose?: () => void;
   openButton?: {
     label: string;
@@ -64,7 +67,10 @@ export const CustomModal = ({
   handleClose,
   openButton,
   closeButton,
-  isDialog = false
+  isDialog = {
+    value: false,
+    style: 'large',
+  },
 }: CustomModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -86,12 +92,21 @@ export const CustomModal = ({
 
   const modalStatus = Boolean(hasOpenButton ? open : externalStatus);
 
-  const fullPageClasses = "p-4 md:p-8 w-screen h-screen md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] " + className;
-  const dialogPageClasses = "p-4 md:p-8 " + className;
+  const fullPageClasses =
+    'p-4 md:p-8 w-screen h-screen md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] ' +
+    className;
+  const dialogPageClasses = {
+    slim:
+      'p-4 md:p-10 min-w-[90vw] sm:min-w-[80vw] md:min-w-fit' + ' ' + className,
+    large:
+      'p-4 md:p-10 w-[90vw] sm:w-[85vw] md:w-[70dvw] xl:w-[60dvw]' +
+      ' ' +
+      className,
+  };
 
   return (
     <>
-      {hasOpenButton && !(openButton?.isText) && (
+      {hasOpenButton && !openButton?.isText && (
         <CustomButton
           label={openButton?.label || ''}
           className={`w-fit h-10 ${openButton?.className || ''}`}
@@ -118,8 +133,12 @@ export const CustomModal = ({
       >
         <Fade in={modalStatus}>
           <Box
-            sx={!isDialog ? cssStylesFullPage : cssStylesDialog}
-            className={!isDialog ? fullPageClasses : dialogPageClasses}
+            sx={!isDialog.value ? cssStylesFullPage : cssStylesDialog}
+            className={
+              !isDialog.value
+                ? fullPageClasses
+                : dialogPageClasses[isDialog.style]
+            }
           >
             <div className="flex flex-col gap-4 h-full">
               <div
@@ -139,7 +158,7 @@ export const CustomModal = ({
                   className="cursor-pointer"
                 />
               </div>
-              <div className="flex flex-col gap-6 h-[-webkit-fill-available]">
+              <div className="flex flex-col gap-6">
                 {typeof title === 'string' && (
                   <div className="flex justify-center text-3xl">
                     <div className="font-bold">{title}</div>

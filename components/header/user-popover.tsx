@@ -8,7 +8,10 @@ import { CustomTable } from '@/components/custom/custom-table';
 import { ColumnsProps, RowsProps } from '../custom/custom-table';
 import { CustomButton } from '@/components/custom/custom-button';
 import { CustomImage } from '../custom/custom-image';
-import { CreateLeagueModal } from '@/components/modal/leagues-modal';
+import {
+  CreateLeagueModal,
+  JoinPublicLeagueModal,
+} from '@/components/modal/leagues-modal';
 import { LeaguesModal } from '@/components/modal/leagues-modal';
 import { LeaguesCollectionProps } from '@/firebase/db-types';
 import { leagueActions } from '@/store/slices/league';
@@ -167,7 +170,7 @@ const UserSection = ({ handleClose, isModal }) => {
   }, [check]);
 
   return (
-    <div className="px-4 mt-2 rounded-2xl min-w-[500px]">
+    <div className="px-0 sm:mx-2 md:px-4 mt-2 rounded-2xl md:min-w-[500px]">
       {!isModal && (
         <div
           id="rulesTitle"
@@ -214,11 +217,11 @@ const UserSection = ({ handleClose, isModal }) => {
           </div>
         </div>
         <CustomCard style="gray" className="lg:px-6 w-full">
-          <div className="flex flex-row items-center justify-between gap-16">
-            <div className="flex flex-col items-center justify-center mx-4 min-w-[150px]">
+          <div className="flex flex-row items-center justify-between gap-16 mx-4">
+            <div className="flex flex-col items-center justify-center mx-4">
               <CustomImage
                 forceSrc="https://cdn.sportmonks.com/images/soccer/leagues/271.png"
-                className="mx-2 h-12 w-12"
+                className="h-12 w-12"
                 width={48}
                 height={48}
               />
