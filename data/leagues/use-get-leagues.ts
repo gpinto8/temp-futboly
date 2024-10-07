@@ -2,6 +2,7 @@ import { useAppSelector } from '@/store/hooks';
 import { useGetUsers } from '../users/use-get-users';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { LeaguesCollectionProps, UsersCollectionProps } from '@/firebase/db-types';
 
 export const useGetLeagues = () => {
   const league = useAppSelector((state) => state.league);
@@ -22,19 +23,14 @@ export const useGetLeagues = () => {
   // GET CURRENT LEAGUE DATA FROM REDUX
   const getLeague = () => mapLeague(league);
 
-  // GET A LEAGUE FROM USER ID ----> FEELS KINDA SUS TO ME BECAUSE THE USER ATM DO NOT HAVE THE LEAGUE DETAIL IN THE USER COLLECTION
-  const getLeagueByUid = async (uid: string) => {
-    const userData: any = await getUserFromUui?.(uid); // get user data
-    // console.log({ userData });
-    const leagues = userData?.leagues?.map((league: any) => league.id); // get league from user
-    // console.log({ leagues });
-    if (leagues) {
-      const activeLeagueId = leagues?.[0]; // to change once we get to the header to change league // get current league
-      // console.log({ activeLeagueId });
-      const data = await getLeagueById(activeLeagueId);
-      // console.log({ data });
-      return { data, documentId: activeLeagueId };
-    } else return {};
+  const getLeaguesByUid = async (uid: string) => {
+    try {
+      const leagues = await firestoreMethods("leagues", "id").getDocsByQuery(`players[${uid}]`, ">", "");
+      console.log({ leagues });
+      return leagues ? leagues : [];
+    } catch (error) {
+      console.error('Error getting leagues: ', error);
+    }
   };
 
   const getLeagueByShortId = async (shortId: string) => {
@@ -45,29 +41,6 @@ export const useGetLeagues = () => {
       shortId,
     );
     return league;
-  };
-
-  // GET ALL LEAGUE IDS FROM CURRENT USER ID
-  const getLeagueIds = async (uid: string): Promise<string[]> => {
-    const userData: any = await getUserFromUui?.(uid); // get user data
-    const leagueIds = userData?.leagues?.map((league: any) => league?.id); // get league from user
-    return leagueIds;
-  };
-
-  // GET ALL LEAGUES FROM CURRENT USER ID
-  const getLeagues = async (uid: string) => {
-    const leagueIds = await getLeagueIds(uid);
-    if (leagueIds) {
-      const leagueData: any = [];
-      for await (const leagueId of leagueIds) {
-        const league = await getLeagueById(leagueId);
-        leagueData.push({
-          leagueId,
-          league,
-        });
-      }
-      return leagueData;
-    } else return {};
   };
 
   const getAllLeaguesByChunks = async (
@@ -85,19 +58,10 @@ export const useGetLeagues = () => {
     return { leagues: [], lastVisible: null, hasMore: false };
   };
 
-  const getLeaguesByPlayer = async (uid: string) => {
-    const leagues = await firestoreMethods('leagues', 'id').getDocsByQuery(
-      'players',
-      'array-contains',
-      uid,
-    );
-    return leagues;
-  };
-
   // CHECK IF CURRENT USER HAS ANY LEAGUES
   const hasLeagues = async (uid: string) => {
-    const leagueIds = await getLeagueIds(uid);
-    const hasUserLeagues = !!(leagueIds?.length > 0);
+    const leagueIds = await getLeaguesByUid(uid);
+    const hasUserLeagues = !leagueIds || !!(leagueIds?.length > 0);
     return hasUserLeagues;
   };
 
@@ -111,30 +75,25 @@ export const useGetLeagues = () => {
   };
 
   // GET LEAGUE'S OWNER DATA (SINCE OWNER !== CURRENT USER (OR MAYBE IT IS BUT JUST ONCE OFC))
-  const getLeagueOwner = async (uid: string) => {
-    const { data }: any = await getLeagueByUid(uid);
-    // console.log({ data });
-    if (data) {
-      const ownerId = data.owner;
-      // console.log({ ownerId });
-      const owner: any = await getUserFromUui(ownerId);
+  const getLeagueOwner = async (leagueId: string) => {
+    const data = await getLeagueById(leagueId) as LeaguesCollectionProps | null; //Mi dice che restituisce un Unknown
+    //const data = await getLeagueById(leagueId);
+    if (data?.players) {
+      const ownerEntry = Object.entries(data.players).find(([key, value]) => value === "owner");
+      const ownerId = ownerEntry ? ownerEntry[0] : undefined;
+      if (!ownerId) return {};
+      const owner: UsersCollectionProps = await getUserFromUui(ownerId);
       // console.log({ owner });
-      return {
-        id: ownerId,
-        username: owner.username,
-      };
+      return {owner};
     } else return {};
   };
 
   return {
     getLeague,
-    getLeagueIds,
     getAllLeaguesByChunks,
-    getLeaguesByPlayer,
     getLeagueByShortId,
-    getLeagues,
     hasLeagues,
-    getLeagueByUid,
+    getLeaguesByUid,
     getLeagueById,
     getLeagueOwner,
   };

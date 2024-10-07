@@ -6,7 +6,7 @@ import { getShortBase64Id } from '@/utils/id';
 import { LeaguesCollectionProps } from '@/firebase/db-types';
 
 export const useSetLeague = () => {
-  const { getLeagueByUid, getLeagueOwner, getLeagueIds } = useGetLeagues();
+  const { getLeagueById, getLeagueOwner } = useGetLeagues();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user); // Can't use the "useGetUsers" hook because it creates an infinite loop since it uses the this hook
 
@@ -19,7 +19,7 @@ export const useSetLeague = () => {
       owner: user.uid,
       ownerUsername: user.username,
       competitions: [],
-      players: [user.uid],
+      players: { [user.uid]: "owner" },
     });
     const leagueShortID = getShortBase64Id();
     if (leagueShortID === 'Error') return; //Handle better the error re trying or using another ID
@@ -51,7 +51,7 @@ export const useSetLeague = () => {
     playerId: string, // TODO: name better the user playerId -> userId
   ) => {
     if (!leagueId || !playerId || !league) return;
-    const newPlayers = league.players.filter((player) => player !== playerId);
+    const newPlayers = Object.entries(league.players).filter(([player, role]) => player !== playerId);
     if (newPlayers.length === 0) {
       const updateResult = await firestoreMethods(
         'leagues',
@@ -63,26 +63,8 @@ export const useSetLeague = () => {
         'leagues',
         leagueId as any,
       ).replaceField('players', newPlayers);
-      // console.log(updateResult);
+      console.log(updateResult);
     }
-
-    // Also delete the league reference from the "users" collection
-    const leagueIds = await getLeagueIds(playerId);
-    // console.log({ leagueIds });
-    const filteredLeagues = leagueIds.filter(
-      (leagueId) => leagueId !== leagueId,
-    );
-    // console.log({ filteredLeagues });
-    const leagueRefsMap = filteredLeagues.map((leagueId) =>
-      firestoreMethods('leagues', leagueId as any).getDocRef(),
-    );
-    // console.log({ leagueRefsMap });
-    const updateResult = await firestoreMethods(
-      'users',
-      playerId as any,
-    ).replaceField('leagues', leagueRefsMap);
-    // console.log({ updateResult });
-
     location.reload(); // TODO: set to redux the updated league data
   };
 
@@ -91,35 +73,20 @@ export const useSetLeague = () => {
     const updateLeague = await firestoreMethods(
       'leagues',
       leagueId as any,
-    ).addDataToField('players', playerId, 'array');
+    ).createField(playerId, "guest");
     const leagueRef = firestoreMethods('leagues', leagueId as any).getDocRef();
-    // console.log({ leagueRef });
-    const updateUser = await firestoreMethods(
-      'users',
-      playerId as any,
-    ).addDataToField('leagues', leagueRef, 'array');
-
-    // console.log({ playerId });
-    // await setLeague(playerId);
     location.reload(); // TODO: set to redux the updated league data
-
-    // console.log({ updateLeague, updateUser });
   };
 
   // SET LEAGUE TO REDUX FROM THE USER ID
   const setLeague = async (uid: string) => {
     // console.log({ uid });
-    const { data, documentId }: any = await getLeagueByUid(uid);
-    // console.log({ data, documentId });
-    const ownerLeague: any = await getLeagueOwner(uid);
-    // console.log({ ownerLeague });
+    const data = await getLeagueById(uid);
 
-    if (data && documentId && ownerLeague) {
+    if (data) {
       dispatch(
         leagueActions.setLeague({
-          ...data,
-          ownerUsername: ownerLeague.username,
-          documentId,
+          ...data as any,
         }),
       );
     }
