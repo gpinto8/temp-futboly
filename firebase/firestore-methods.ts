@@ -62,7 +62,7 @@ export const firestoreMethods = (
       const q = query(databaseCollection, where(field, operator, value));
       const querySnapshot = await getDocs(q);
       const docs = querySnapshot.docs.map(doc => {return {id: doc.id, ...doc.data()}});
-      return docs;
+      return docs ? docs : [];
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
@@ -92,10 +92,17 @@ export const firestoreMethods = (
   };
 
   // GET DATA FROM A DOCUMENT
-  const getDocumentData = async <FieldsProps>() => {
+  // const getDocumentData = async <FieldsProps>() => {
+  //   const documentSnapshot = await getDocSnapshot();
+  //   const fields = documentSnapshot.data();
+  //   if (fields) return fields as FieldsProps;
+  // };
+
+  // GET DATA FROM A DOCUMENT
+  const getDocumentData = async () => {
     const documentSnapshot = await getDocSnapshot();
-    const fields = documentSnapshot.data();
-    if (fields) return fields as FieldsProps;
+    const data = documentSnapshot.data();
+    return data ? { id: documentSnapshot.id, ...data } : null;
   };
 
   const createField = async (field: string, value: any) => {
