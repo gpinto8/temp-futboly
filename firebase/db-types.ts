@@ -3,43 +3,61 @@ import { DocumentReference } from 'firebase/firestore';
 
 // USERS
 export type UsersCollectionProps = {
-  username: string;
-  leagues: DocumentReference<LeaguesCollectionProps>[];
+    id: string;
+    username: string;
+    activeLeague: DocumentReference<LeaguesCollectionProps>;
 };
 
 // LEAGUES
 export type LeaguesCollectionProps = {
-  id: string;
-  name: string;
-  leaguePassword?: string;
-  owner: string;
-  // owner: DocumentReference<UsersCollectionProps>; // "users" refs
-  ownerUsername: string;
-  competitions: LeagueCollectionCompetitionProps[];
-  teams: LeagueCollectionTeamProps[]; //Still empty
-  shortId: string;
-  isPrivate: boolean;
-  players: string[]; // The actual "Sportmonks" players id
-  specificPosition: boolean;
+    id: string;
+    name: string;
+    leaguePassword?: string;
+    shortId: string;
+    isPrivate: boolean;
+    players: any;
 };
 
 // COMPETITIONS
-export type LeagueCollectionCompetitionProps = {
-  id: string; // self.crypto.randomUUID()
-  name: string;
-  players: number[]; // The actual "Sportmonks" players id
-  startDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
-  endDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
-  active: boolean;
-  type: 'Classic';
+export type CompetitionsCollectionProps = {
+    id: string;
+    name: string;
+    startDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
+    endDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
+    specificPosition: boolean;
+    league: DocumentReference<LeaguesCollectionProps>;
+    currentWeek: Number;
+    maxWeek: Number;
+    teams: DocumentReference<TeamsCollectionProps>[];
+    standings: {
+        teamId: DocumentReference<TeamsCollectionProps>,
+        points: Number
+    }[];
+    matchSchedule: {
+        week: Number,
+        home: DocumentReference<TeamsCollectionProps>,
+        away: DocumentReference<TeamsCollectionProps>
+        result: {
+            home: Number,
+            away: Number
+        }
+    }[];
 };
 
 // TEAMS
-type LeagueCollectionTeamProps = {
-  id: string; // self.crypto.randomUUID()
-  owner: string;
-  // owner: DocumentReference<UsersCollectionProps>; // "users" refs
-  name: string;
-  coach: string;
-  players: number[]; // The actual "Sportmonks" players id
+export type TeamsCollectionProps = {
+    id: string;
+    uid: DocumentReference<UsersCollectionProps>;
+    league: DocumentReference<LeaguesCollectionProps>;
+    competition: DocumentReference<CompetitionsCollectionProps>;
+    name: string;
+    logo: string; // Actual Sportmonks ID
+    formation: string; // String with module
+    players: {
+        sportmonksID: string,
+        actualPosition: {
+            isBenched: Boolean,
+            slot: Number
+        }
+    }[];
 };
