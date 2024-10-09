@@ -14,13 +14,16 @@ import {
   limit,
   QueryDocumentSnapshot,
   WhereFilterOp,
-  deleteDoc
+  deleteDoc,
+  writeBatch
 } from 'firebase/firestore';
 import { app } from './app';
 
 export const FIRESTORE_COLLECTIONS = {
   users: 'users',
   leagues: 'leagues',
+  competitions: 'competitions',
+  teams: 'teams',
 };
 
 export const FIRESTORE_DOCUMENTS = {
@@ -141,6 +144,25 @@ export const firestoreMethods = (
     }
   };
 
+  const deleteDocumentsByQuery = async (field: string, operator: WhereFilterOp, value: any) => {
+    const database = getFirestore(app);
+    const databaseCollection = collection(database, collectionName);
+    try {
+      const q = query(databaseCollection, where(field, operator, value));
+      const querySnapshot = await getDocs(q);
+      const batch = writeBatch(database);
+
+      querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+    
+      await batch.commit();
+      console.log("Documenti cancellati con successo.");
+    } catch (error) {
+      console.error('Error getting documents: ', error);
+    }
+  }
+
   const deleteDocument = async () => {
     const docRef = getDocRef();
     await deleteDoc(docRef);
@@ -156,6 +178,7 @@ export const firestoreMethods = (
     createField,
     addDataToField,
     replaceField,
-    deleteDocument
+    deleteDocument,
+    deleteDocumentsByQuery
   };
 };
