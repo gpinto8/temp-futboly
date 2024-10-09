@@ -6,6 +6,7 @@ export type UsersCollectionProps = {
   id: string;
   username: string;
   activeLeague: DocumentReference<LeaguesCollectionProps>;
+  // activeCompetition: DocumentReference<CompetitionsCollectionProps>; I keep it commented for the moment because it is tricky to handle when you swap between leagues
 };
 
 // LEAGUES
