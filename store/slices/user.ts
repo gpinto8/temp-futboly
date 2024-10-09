@@ -5,12 +5,14 @@ const userSlice = createSlice({
   initialState: {
     uid: '',
     username: '',
+    activeLeague: '',
   },
   reducers: {
     setUser: (state, action) => {
-      const { uid, username } = action.payload;
+      const { uid, username, activeLeague } = action.payload;
       state.uid = uid;
       state.username = username;
+      state.activeLeague = activeLeague;
     },
   },
 });

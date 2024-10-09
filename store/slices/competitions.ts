@@ -1,28 +1,42 @@
 import { CompetitionsCollectionProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type InitialStateProps = CompetitionsCollectionProps & {
-    documentId?: '';
-    ownerUsername?: '';
-};
+// type InitialStateProps = CompetitionsCollectionProps & {
+//     documentId?: '';
+//     ownerUsername?: '';
+// };
 
-const initialState: InitialStateProps = {
-    documentId: '',
-    name: '',
-    ownerUsername: '',
+const initialState: Partial<CompetitionsCollectionProps> = {
     id: '',
-
+    name: '',
+    //startDate: '',
+    //endDate: '',
+    specificPosition: false,
+    //league: '',
+    currentWeek: 0,
+    maxWeek: 0,
+    teams: [],
+    standings: [],
+    matchSchedule: [],
 };
 
 const competitionSlice = createSlice({
     name: 'competition',
     initialState,
     reducers: {
-        setLeague(state, action: PayloadAction<InitialStateProps>) {
+        setCompetition(state, action: PayloadAction<CompetitionsCollectionProps>) {
             const competition = action.payload;
+            state.id = competition.id;
             state.name = competition.name;
-            state.ownerUsername = competition.ownerUsername;
-            state.documentId = competition.documentId;
+            state.startDate = competition.startDate;
+            state.endDate = competition.endDate;
+            state.specificPosition = competition.specificPosition;
+            state.league = competition.league;
+            state.currentWeek = competition.currentWeek;
+            state.maxWeek = competition.maxWeek;
+            state.teams = competition.teams;
+            state.standings = competition.standings;
+            state.matchSchedule = competition.matchSchedule;
         },
     },
 });
