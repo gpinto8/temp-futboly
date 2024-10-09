@@ -78,17 +78,18 @@ export const useSetLeague = () => {
     location.reload(); // TODO: set to redux the updated league data
   };
 
-  // SET LEAGUE TO REDUX FROM THE USER ID
-  const setLeague = async (uid: string) => {
+  // SET LEAGUE TO REDUX FROM THE USER ID --> Here I can pass directly the League object, avoid the fetch and dispatch directly the league with a "random" competition
+  const setLeague = async (id: string, uid: string) => {
     // console.log({ uid });
-    const data = await getLeagueById(uid);
+    const data = await getLeagueById(id);
 
     if (data) {
-      dispatch(
-        leagueActions.setLeague({
-          ...data as any,
-        }),
-      );
+      // Update the user active league
+      const userUpdate = await firestoreMethods('users', uid as any).replaceField("activeLeague", data.id); // Using data.id and not just id for "safety"
+
+      if (userUpdate) {
+        dispatch(leagueActions.setLeague({...data as any}));
+      }
     }
   };
 
