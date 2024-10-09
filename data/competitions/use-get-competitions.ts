@@ -1,41 +1,42 @@
-import { LeagueCollectionCompetitionProps } from '@/firebase/db-types';
-import { useAppSelector } from '@/store/hooks';
-import { Timestamp } from 'firebase/firestore';
+import { firestoreMethods } from '@/firebase/firestore-methods';
 
 export const useGetCompetitions = () => {
-  const league = useAppSelector((state) => state.league);
 
-  const mapCompetition = (
-    competition: LeagueCollectionCompetitionProps,
-    index: number,
-  ) => {
-    const toDate = (date: Timestamp) =>
-      date && new Date(date.toDate()).toLocaleDateString();
+  // const mapCompetition = (
+  //   competition: CompetitionsCollectionProps,
+  //   index: number,
+  // ) => {
+  //   const toDate = (date: Timestamp) =>
+  //     date && new Date(date.toDate()).toLocaleDateString();
 
-    return {
-      indexNo: ++index,
-      startDateText: toDate(competition?.startDate),
-      endDateText: toDate(competition?.endDate),
-      active: competition?.active,
-      id: competition?.id,
-      name: competition?.name,
-      players: competition?.players,
-      usersTotal: 'TODO',
-      teamsTotal: 'TODO',
-      type: 'TODO' as any,
-      activeText: competition?.active ? 'Active' : 'Non-Active',
-      status: '',
-      currentWeek: 'TODO',
-    };
-  };
+  //   return {
+  //     indexNo: ++index,
+  //     startDateText: toDate(competition?.startDate),
+  //     endDateText: toDate(competition?.endDate),
+  //     active: competition?.active,
+  //     id: competition?.id,
+  //     name: competition?.name,
+  //     players: competition?.players,
+  //     usersTotal: 'TODO',
+  //     teamsTotal: 'TODO',
+  //     type: 'TODO' as any,
+  //     activeText: competition?.active ? 'Active' : 'Non-Active',
+  //     status: '',
+  //     currentWeek: 'TODO',
+  //   };
+  // };
 
-  // GET CURRENT COMPETITION FROM CURRENT LEAGUE
-  const getCompetition = () => league?.competitions?.map(mapCompetition);
+  // GET COMPETITION BY ID --> TO GET THE ACTIVE WE JUST NEED TO PASS THE ID FORM THE USER FIELD
+  const getCompetitionById = async (id: string) => {
+    const competition = await firestoreMethods("competitions", id as any).getDocumentData();
+    return competition ? competition : null;
+  }
 
   // GET CURRENT ACTIVE COMPETITION FROM CURRENT LEAGUE
-  const getActiveCompetition = () => {
-    return getCompetition()?.find(({ active }) => active);
+  const getCompetitionsByUid = async (uid: string) => {
+    const competitions = await firestoreMethods("competitions", uid as any).getDocsByQuery("league", "==", uid);
+    return competitions ? competitions : [];
   };
 
-  return { getCompetition, getActiveCompetition };
+  return { getCompetitionById, getCompetitionsByUid };
 };
