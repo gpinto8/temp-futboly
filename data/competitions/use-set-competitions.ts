@@ -18,7 +18,7 @@ export const useSetCompetitions = () => {
       ).createDocument(competition);
       if (objCreated) {
         dispatch(competitionActions.setCompetition(objCreated));
-        return objCreated;
+        return objCreated as CompetitionsCollectionProps;
       }
     } else {
       console.error('No competition data provided');

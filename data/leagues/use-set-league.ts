@@ -6,7 +6,7 @@ import { getShortBase64Id } from '@/utils/id';
 import { LeaguesCollectionProps } from '@/firebase/db-types';
 
 export const useSetLeague = () => {
-  const { getLeagueById, getLeagueOwner } = useGetLeagues();
+  const { getLeagueById } = useGetLeagues();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user); // Can't use the "useGetUsers" hook because it creates an infinite loop since it uses the this hook
 

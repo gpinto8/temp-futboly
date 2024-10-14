@@ -18,6 +18,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { app } from './app';
+import { CompetitionsCollectionProps, LeaguesCollectionProps, TeamsCollectionProps, UsersCollectionProps } from './db-types';
 
 export const FIRESTORE_COLLECTIONS = {
   users: 'users',
@@ -65,7 +66,16 @@ export const firestoreMethods = (
       const q = query(databaseCollection, where(field, operator, value));
       const querySnapshot = await getDocs(q);
       const docs = querySnapshot.docs.map(doc => {return {id: doc.id, ...doc.data()}});
-      return docs ? docs : [];
+      if (collectionName === "competitions") {
+        return docs ? docs as CompetitionsCollectionProps[] : [];
+      } else if (collectionName === "leagues") {
+        return docs ? docs as LeaguesCollectionProps[] : [];
+      } else if (collectionName === "teams") {
+        return docs ? docs as TeamsCollectionProps[] : [];
+      } else if (collectionName === "users") {
+        return docs ? docs as UsersCollectionProps[] : [];
+      }
+      return docs ? docs as any : [];
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
