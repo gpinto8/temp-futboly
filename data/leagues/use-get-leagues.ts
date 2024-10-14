@@ -62,7 +62,7 @@ export const useGetLeagues = () => {
   const hasLeagues = async (uid: string) => {
     const leagueIds = await getLeaguesByUid(uid);
     const hasUserLeagues = !leagueIds || !!(leagueIds?.length > 0);
-    return hasUserLeagues as Boolean;
+    return hasUserLeagues as boolean;
   };
 
   // GET LEAGUE DATA BY ITS ID
