@@ -47,7 +47,7 @@ export const Header = ({
   const openUser = Boolean(anchorElUser);
   const idRules = openRules ? 'rules-popover' : undefined;
   const idUser = openUser ? 'user-popover' : undefined;
-  const logoWidth = 160;
+  // const logoWidth = 160;
 
   return (
     <nav>
