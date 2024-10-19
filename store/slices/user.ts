@@ -1,18 +1,24 @@
+import { LeaguesCollectionProps } from '@/firebase/db-types';
 import { createSlice } from '@reduxjs/toolkit';
+import { DocumentReference } from 'firebase/firestore';
+import { act } from 'react';
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    uid: '',
+    id: '',
     username: '',
-    activeLeague: '',
+    activeLeague: null as DocumentReference<LeaguesCollectionProps> | null,
+    activeCompetitions: null as any, //TODO: Think of a better type handling solution
   },
   reducers: {
     setUser: (state, action) => {
-      const { uid, username, activeLeague } = action.payload;
-      state.uid = uid;
+      console.log('Setting user: ', action.payload);
+      const { uid, username, activeLeague, activeCompetitions } = action.payload;
+      state.id = uid;
       state.username = username;
-      state.activeLeague = activeLeague;
+      state.activeLeague = activeLeague as DocumentReference<LeaguesCollectionProps> | null;
+      state.activeCompetitions = activeCompetitions;
     },
   },
 });
