@@ -5,8 +5,10 @@ import { DocumentReference } from 'firebase/firestore';
 export type UsersCollectionProps = {
   id: string;
   username: string;
-  activeLeague: DocumentReference<LeaguesCollectionProps>;
-  // activeCompetition: DocumentReference<CompetitionsCollectionProps>; I keep it commented for the moment because it is tricky to handle when you swap between leagues
+  activeLeague: DocumentReference<LeaguesCollectionProps> | null;
+  activeCompetitions: {
+    [key: string]: DocumentReference<CompetitionsCollectionProps>;
+  };
 };
 
 // LEAGUES
@@ -31,6 +33,7 @@ export type CompetitionsCollectionProps = {
   league: DocumentReference<LeaguesCollectionProps>;
   currentWeek: Number;
   maxWeek: Number;
+  players: DocumentReference<UsersCollectionProps>[];
   teams: DocumentReference<TeamsCollectionProps>[];
   standings: {
     teamId: DocumentReference<TeamsCollectionProps>;
@@ -63,4 +66,22 @@ export type TeamsCollectionProps = {
       slot: Number;
     };
   }[];
+};
+
+export type MappedPlayerProps = {
+  uid: string;
+  role: string;
+  username: string;
+};
+
+export type MappedLeaguesProps = Omit<LeaguesCollectionProps, 'players'> & {
+  players: MappedPlayerProps[],
+  ownerUsername: string | "",
+  competitionsNo?: number | undefined
+};
+
+export type MappedCompetitionsProps = CompetitionsCollectionProps & {
+  startDateText: string;
+  endDateText: string;
+  active: boolean;
 };
