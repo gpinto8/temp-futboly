@@ -3,21 +3,22 @@ import { CustomButton } from '../custom/custom-button';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
+import { MappedLeaguesProps } from '@/firebase/db-types';
 
 type AdminColumnKeysProps = 'INDEX' | 'USER' | 'TEAM' | 'ACTIONS';
 
 export const AdminTabUsers = () => {
-  const league = useAppSelector((state) => state.league);
-  const { removeUserFromLeague, getLeagueUsers } = useGetUsers();
+  const league: MappedLeaguesProps = useAppSelector((state) => state.league);
+  const { removeUserFromLeague } = useGetUsers();
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
 
   useEffect(() => {
     (async () => {
-      const users = await getLeagueUsers();
-      const userRows = users.map((user) => ({
-        INDEX: user?.indexNo,
-        USER: user?.ownerUsername,
-        TEAM: user?.team,
+      const users = league.players
+      const userRows = users.map((user, index) => ({
+        INDEX: index,
+        USER: user?.ownerUsername, // Why owner?
+        TEAM: user?.team, // Also league doesn not have teams, just competitions do
         ACTIONS: (
           <CustomButton
             label="Kick"

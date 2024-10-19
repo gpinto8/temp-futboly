@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import { CustomButton } from '../custom/custom-button';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import { useAppSelector } from '@/store/hooks';
+import { MappedCompetitionsProps } from '@/firebase/db-types';
 
 type AdminColumnKeysProps =
   | 'INDEX'
@@ -12,16 +15,26 @@ type AdminColumnKeysProps =
   | 'ACTIONS';
 
 export const AdminTabCompetitions = () => {
-  const { getCompetition } = useGetCompetitions();
+  const { getCompetitionsByLeagueId } = useGetCompetitions();
   const { deleteCompetition } = useSetCompetitions();
+  const [competitions, setCompetitions] = useState<MappedCompetitionsProps[]>([]);
+  const league = useAppSelector((state) => state.league);
 
-  const rows: RowsProps<AdminColumnKeysProps> = getCompetition().map(
-    ({ indexNo, name, type, teamsTotal, status, id }) => ({
-      INDEX: indexNo,
+  useEffect(() => {
+    const fetchCompetitions = async (leagueId: string) => {
+      const competitions = await getCompetitionsByLeagueId(leagueId);
+      setCompetitions(competitions);
+    };
+    fetchCompetitions(league.id);
+  }, [league]);
+
+  const rows: RowsProps<AdminColumnKeysProps> = competitions.map(
+    ({ name, specificPosition, teams, active, id }, index) => ({
+      INDEX: index,
       COMPETITION: name,
-      TYPE: type,
-      TEAMS: teamsTotal,
-      STATUS: status,
+      TYPE: specificPosition ? "Specific Position" : "General Position",
+      TEAMS: teams.length,
+      STATUS: active,
       ACTIONS: (
         <CustomButton
           label="Delete"

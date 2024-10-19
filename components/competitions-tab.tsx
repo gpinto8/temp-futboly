@@ -1,20 +1,37 @@
+import { useEffect, useState } from 'react';
 import { IMG_URLS } from '@/utils/img-urls';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import { CustomButton } from './custom/custom-button';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
+import { useAppSelector } from '@/store/hooks';
+import { UsersCollectionProps, MappedCompetitionsProps } from '@/firebase/db-types';
 
 export const CompetitionsTab = () => {
-  const { getCompetition } = useGetCompetitions();
+  const user: UsersCollectionProps = useAppSelector((state) => state.user);
+  const league = useAppSelector((state) => state.league);
+  const { getCompetitionsByUid } = useGetCompetitions();
   const { setActiveCompetition } = useSetCompetitions();
+  const [competitions, setCompetitions] = useState<MappedCompetitionsProps[] | null>(null);
+
+  const getCompetitions = async () => {
+    const competitions = await getCompetitionsByUid(user.id);
+    return competitions ? competitions as MappedCompetitionsProps[] : null;
+  };
+
+  useEffect(() => {
+    const fetchCompetitions = async () => {
+      const competitions = await getCompetitions();
+      setCompetitions(competitions);
+    };
+
+    fetchCompetitions();
+  }, [user.id]);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
-      {getCompetition()?.map(
-        (
-          { startDateText, endDateText, usersTotal, name, id, active },
-          index,
-        ) => {
+      { competitions?.map((competition: MappedCompetitionsProps, index: number) => {
+          const { startDateText, endDateText, players, name, id, active } = competition;
           return (
             <Card
               key={index + name}
@@ -32,12 +49,12 @@ export const CompetitionsTab = () => {
                   <div>
                     {startDateText} - {endDateText}
                   </div>
-                  <div>{usersTotal} users</div>
+                  <div>{players.length} users</div>
                   <CustomButton
                     className="mt-2"
-                    label={active ? 'Selected' : 'Select'}
+                    label={active ? 'Active' : 'Select'}
                     disabled={active}
-                    handleClick={() => setActiveCompetition(id)}
+                    handleClick={() => setActiveCompetition(id, user, league.id, competition)}
                   />
                 </div>
               </CardContent>

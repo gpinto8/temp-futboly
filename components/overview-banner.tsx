@@ -4,11 +4,12 @@ import { useAppSelector } from '@/store/hooks';
 import Chip from '@mui/material/Chip';
 import { CustomButton } from '@/components/custom/custom-button';
 import { CustomCard } from '@/components/custom/custom-card';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
 import { ImageUrlsProps } from '@/utils/img-urls';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
+import { LeaguesCollectionProps, MappedLeaguesProps, UsersCollectionProps } from '@/firebase/db-types';
 
 type BannerCardProps = {
   title: string;
@@ -98,46 +99,50 @@ const GameSection = () => {
 };
 
 export const OverviewBanner = () => {
-  const league = useAppSelector((state) => state.league);
+  const { user, league }: {user: UsersCollectionProps | undefined, league: LeaguesCollectionProps | MappedLeaguesProps | undefined} = useAppSelector((state) => {return { "user": state.user, "league": state.league }});
   const [overviewData, setOverviewData] = useState<BannerCardProps[]>([]);
   const { getLeague } = useGetLeagues();
-  const { getActiveCompetition } = useGetCompetitions();
+  const { getActiveCompetitionByUid } = useGetCompetitions(); //TODO: substitute with hook that takes it from redux
 
   useEffect(() => {
-    const activeCompetition = getActiveCompetition();
-    const currentLeague = getLeague();
+    const updateBanners = async () => {
+      if (!user || !league) return;
+      const activeCompetition = await getActiveCompetitionByUid(user.id, league.id, user); //getActiveCompetition();
+      const currentLeague = await getLeague();
 
-    const leagueData: BannerCardProps = {
-      title: 'League',
-      imageKey: 'AT_ICON',
-      entries: [
-        { key: 'Name', value: currentLeague?.name },
-        { key: 'Owner', value: currentLeague?.ownerUsername },
-        { key: 'Competition', value: currentLeague?.competitionsNo },
-      ],
+      const leagueData: BannerCardProps = {
+        title: 'League',
+        imageKey: 'AT_ICON',
+        entries: [
+          { key: 'Name', value: currentLeague?.name },
+          { key: 'Owner', value: currentLeague?.ownerUsername },
+          { key: 'Competition', value: currentLeague?.competitionsNo },
+        ],
+      };
+
+      const competitionData: BannerCardProps = {
+        title: 'Competition',
+        imageKey: 'AT_ICON',
+        entries: [
+          { key: 'Name', value: activeCompetition?.name },
+          { key: 'Week', value: activeCompetition?.currentWeek ? Number(activeCompetition.currentWeek) : undefined },
+          { key: 'Teams', value: activeCompetition?.players.length },
+        ],
+      };
+
+      const teamData: BannerCardProps = {
+        title: 'Team',
+        imageKey: 'AT_ICON',
+        entries: [
+          { key: 'Name', value: 'TODO' },
+          { key: 'Coach', value: 'TODO' },
+          { key: 'Position', value: 'TODO' },
+        ],
+      };
+
+      setOverviewData([leagueData, competitionData, teamData]);
     };
-
-    const competitionData: BannerCardProps = {
-      title: 'Competition',
-      imageKey: 'AT_ICON',
-      entries: [
-        { key: 'Name', value: activeCompetition?.name },
-        { key: 'Week', value: activeCompetition?.currentWeek },
-        { key: 'Teams', value: activeCompetition?.usersTotal },
-      ],
-    };
-
-    const teamData: BannerCardProps = {
-      title: 'Team',
-      imageKey: 'AT_ICON',
-      entries: [
-        { key: 'Name', value: 'TODO' },
-        { key: 'Coach', value: 'TODO' },
-        { key: 'Position', value: 'TODO' },
-      ],
-    };
-
-    setOverviewData([leagueData, competitionData, teamData]);
+    updateBanners();
   }, [league]);
 
   return (

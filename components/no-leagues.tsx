@@ -1,17 +1,18 @@
 'use client';
 
 // import { useGetLeagues } from '@/data/leagues/use-get-leagues';
-import { useGetUsers } from '@/data/users/use-get-users';
+// import { useGetUsers } from '@/data/users/use-get-users';
 import { useEffect } from 'react';
 import { Header } from './header';
 import FirstTime from './first-time';
-// import { useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 
 export const NoLeagues = () => {
-  const { getUser } = useGetUsers();
-  const uid = getUser()?.id;
+  // const { getUser } = useGetUsers();
+  // const uid = getUser()?.id;
   // const { getLeagues } = useGetLeagues();
-  // const user = useAppSelector((state) => state.user);
+  const user = useAppSelector((state) => state.user);
+  const uid = user.id;
   // console.log({ user });
 
   useEffect(() => {

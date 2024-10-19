@@ -5,19 +5,22 @@ import HomePageLayout from './layout';
 import { AppTabs } from '@/components/app-tabs';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { useGetUsers } from '@/data/users/use-get-users';
+// import { useGetUsers } from '@/data/users/use-get-users';
 import { useEffect, useState } from 'react';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { PageLoader } from '@/components/page-loader';
 import { NoLeagues } from '@/components/no-leagues';
+import { UsersCollectionProps } from '@/firebase/db-types';
+import { useAppSelector } from '@/store/hooks';
 
 export default () => {
-  const { getUser } = useGetUsers();
+  // const { getUser } = useGetUsers();
+  const user: UsersCollectionProps = useAppSelector((state) => state.user);
   const { hasLeagues } = useGetLeagues();
   const [loading, setLoading] = useState(true);
   const [hasUserLeagues, setHasUserLeagues] = useState(false);
 
-  const uid = getUser().id;
+  const uid = user?.id;
   useEffect(() => {
     (async () => {
       if (uid) {
