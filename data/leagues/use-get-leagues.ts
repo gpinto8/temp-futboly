@@ -1,27 +1,54 @@
-// import { useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { useGetUsers } from '../users/use-get-users';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
-import { LeaguesCollectionProps, UsersCollectionProps } from '@/firebase/db-types';
+import { LeaguesCollectionProps, UsersCollectionProps, MappedPlayerProps, MappedLeaguesProps } from '@/firebase/db-types';
+import { DocumentReference } from 'firebase/firestore';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 
 export const useGetLeagues = () => {
-  // const league = useAppSelector((state) => state.league);
+  const league = useAppSelector((state) => state.league);
   const { getUserFromUui } = useGetUsers();
+  const { getCompetitionsByLeagueId } = useGetCompetitions();
 
-  // const mapLeague = (league) => {
-  //   return {
-  //     ...league,
-  //     id: league?.id,
-  //     name: league?.name,
-  //     ownerId: league?.owner,
-  //     ownerUsername: league?.ownerUsername,
-  //     competitionsNo: league.competitions.length,
-  //     documentId: league.documentId,
-  //   };
-  // };
+  const mapLeague = async (league: LeaguesCollectionProps) => {
+    const mappedPlayers = await Promise.all(Object.entries(league.players).map(async ([uid, role]) => {
+      const player = await getUserFromUui(uid);
+      return {
+        uid,
+        role,
+        username: player?.username,
+      } as MappedPlayerProps;
+    }));
+    const returnLeague: MappedLeaguesProps = {
+      ...league,
+      players: mappedPlayers,
+      ownerUsername: ""
+    };
+    const ownerUsername = returnLeague?.players.find(player => player.role === 'owner');
+    const leaguesCompetitions = await getCompetitionsByLeagueId(league.id);
+    
+    return {
+      ...returnLeague,
+      ownerUsername: ownerUsername?.username,
+      competitionsNo: leaguesCompetitions.length,
+    } as MappedLeaguesProps;
+  };
 
   // // GET CURRENT LEAGUE DATA FROM REDUX
-  // const getLeague = () => mapLeague(league);
+  const getLeague = async () => await mapLeague(league);
+
+  const getActiveLeagueByUid = async (uid: string, user?: UsersCollectionProps) => {
+    if (user) {
+      const leagueRef = user.activeLeague;
+      if (leagueRef) {
+        const league = await getLeagueById(leagueRef);  //If league doesn't exist has to be handled
+        if (league) return league as LeaguesCollectionProps;
+      }
+    }
+    const leagues = await firestoreMethods("leagues", "id").getDocsByQuery(`players.${uid}`, ">", "");
+    return leagues ? leagues[0] as LeaguesCollectionProps : null as null; //Return the first one it finds --> TODO put limit 1
+  };
 
   const getLeaguesByUid = async (uid: string) => {
     try {
@@ -66,7 +93,7 @@ export const useGetLeagues = () => {
   };
 
   // GET LEAGUE DATA BY ITS ID
-  const getLeagueById = async (leagueId: string) => {
+  const getLeagueById = async (leagueId: DocumentReference<LeaguesCollectionProps>) => {
     const league = await firestoreMethods(
       'leagues',
       leagueId as any,
@@ -89,7 +116,8 @@ export const useGetLeagues = () => {
   // };
 
   return {
-    // getLeague,
+    getLeague,
+    getActiveLeagueByUid,
     getAllLeaguesByChunks,
     getLeagueByShortId,
     hasLeagues,

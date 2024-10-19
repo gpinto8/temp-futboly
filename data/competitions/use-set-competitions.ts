@@ -1,17 +1,23 @@
 import { firestoreMethods } from '@/firebase/firestore-methods';
-import { CompetitionsCollectionProps } from '@/firebase/db-types';
+import { CompetitionsCollectionProps, UsersCollectionProps, MappedCompetitionsProps } from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { competitionActions } from '@/store/slices/competitions';
+import { DocumentReference } from 'firebase/firestore';
+import { useGetCompetitions } from './use-get-competitions';
 
 export const useSetCompetitions = () => {
   const competitionState = useAppSelector((state) => state.league);
+  const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  const { getCompetitionById } = useGetCompetitions();
 
   // ADD A COMPETITION TO CURRENT LEAGUE
   const addCompetition = async (
     competition?: Omit<CompetitionsCollectionProps, 'id'>,
   ) => {
     if (competition) {
+      const userRef = firestoreMethods('users', user.id as any).getDocRef();
+      competition.players = [userRef as DocumentReference<UsersCollectionProps>];
       const objCreated = await firestoreMethods(
         'competitions',
         'id',
@@ -22,6 +28,31 @@ export const useSetCompetitions = () => {
       }
     } else {
       console.error('No competition data provided');
+    }
+  };
+
+  const setActiveCompetition = async (competitionId: CompetitionsCollectionProps['id'] | undefined, user: UsersCollectionProps, leagueId: string, competition?: CompetitionsCollectionProps | MappedCompetitionsProps ) => {
+    const setActiveCompetitionToUser = async (competitionId: string) => {
+      const competitionRef = firestoreMethods('competitions', competitionId as any).getDocRef();
+      const uid = user.id;
+      let replaceObject = user.activeCompetitions;
+      replaceObject[leagueId] = competitionRef as DocumentReference<CompetitionsCollectionProps>;
+      const userUpdate = await firestoreMethods('users', user.id as any).replaceField('activeCompetitions', replaceObject);
+      // if (userUpdate) {
+      //   dispatch(competitionActions.setCompetition(competition));  //TODO: Dispatch also the updated user info
+      // }
+    };
+
+    if (competition) {
+      await setActiveCompetitionToUser(competition.id as string);
+      dispatch(competitionActions.setCompetition(competition));
+    } else {
+      const competition = await getCompetitionById(competitionId as any);
+      if (competition) {
+        dispatch(competitionActions.setCompetition(competition));
+      } else {
+        console.error('No competition found');
+      }
     }
   };
 
@@ -56,5 +87,5 @@ export const useSetCompetitions = () => {
       location.reload();
   };
 
-  return { addCompetition, deleteCompetition };
+  return { setActiveCompetition, addCompetition, deleteCompetition };
 };

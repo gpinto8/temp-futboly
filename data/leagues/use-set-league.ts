@@ -4,6 +4,7 @@ import { leagueActions } from '@/store/slices/league';
 import { useGetLeagues } from './use-get-leagues';
 import { getShortBase64Id } from '@/utils/id';
 import { LeaguesCollectionProps } from '@/firebase/db-types';
+import { DocumentReference } from 'firebase/firestore';
 
 export const useSetLeague = () => {
   const { getLeagueById } = useGetLeagues();
@@ -13,13 +14,13 @@ export const useSetLeague = () => {
   const addLeague = async (leagueProps: LeagueFormDetailsProps) => {
     if (!leagueProps.name || !leagueProps.leaguePassword) return;
     //TODO Verify if the league name is unique
-    if (!user.uid || !user.username) return;
+    if (!user.id || !user.username) return;
     const leagueData = await firestoreMethods('leagues', 'id').createDocument({
       ...leagueProps,
-      owner: user.uid,
+      owner: user.id,
       ownerUsername: user.username,
       competitions: [],
-      players: { [user.uid]: "owner" },
+      players: { [user.id]: "owner" },
     });
     const leagueShortID = getShortBase64Id();
     if (leagueShortID === 'Error') return; //Handle better the error re trying or using another ID
@@ -34,7 +35,7 @@ export const useSetLeague = () => {
     // console.log({ leagueRef });
     const updateUser = await firestoreMethods(
       'users',
-      user.uid as any,
+      user.id as any,
     ).addDataToField('leagues', leagueRef, 'array');
 
     // console.log({ updateUser });
@@ -79,18 +80,19 @@ export const useSetLeague = () => {
   };
 
   // SET LEAGUE TO REDUX FROM THE USER ID --> Here I can pass directly the League object, avoid the fetch and dispatch directly the league with a "random" competition
-  const setLeague = async (id: string, uid: string) => {
+  const setLeague = async (league: LeaguesCollectionProps /*| DocumentReference<LeaguesCollectionProps>*/, uid: string) => {
     // console.log({ uid });
-    const data = await getLeagueById(id);
+    
+    // const data = await getLeagueById(id);
 
-    if (data) {
+    // if (data) {
       // Update the user active league
-      const userUpdate = await firestoreMethods('users', uid as any).replaceField("activeLeague", data.id); // Using data.id and not just id for "safety"
+      const userUpdate = await firestoreMethods('users', uid as any).replaceRefField("activeLeague", league.id); // Using data.id and not just id for "safety"
 
       if (userUpdate) {
-        dispatch(leagueActions.setLeague({...data as any}));
+        dispatch(leagueActions.setLeague(league));  //TODO: Dispatch also the updated user info
       }
-    }
+    // }
   };
 
   return { addLeague, exitLeague, setLeague, addPlayerToLeague };

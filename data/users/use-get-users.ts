@@ -4,14 +4,12 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { leagueActions } from '@/store/slices/league';
 
 export const useGetUsers = () => {
-  // const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
   const dispatch = useAppDispatch();
 
-//  const getUser = () => ({
-//     id: user.uid,
-//     username: user.username,
-//   }); 
+  const getUser = () => {
+    return useAppSelector((state) => state.user) as UsersCollectionProps;
+  };
 
   const getUserFromUui = async (uid: string) => {
     if (uid) {
@@ -64,7 +62,7 @@ export const useGetUsers = () => {
   };
 
   return {
-    // getUser,
+    getUser,
     // getUserLeagues,
     // getLeagueUsers,
     removeUserFromLeague,
