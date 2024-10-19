@@ -37,10 +37,11 @@ export const firestoreMethods = (
   documentName: keyof typeof FIRESTORE_DOCUMENTS,
 ) => {
   // GET THE DOCUMENT REFERENCE
-  const getDocRef = () => {
+  const getDocRef = (documentId?: string) => {
     const database = getFirestore(app);
     const databaseCollection = collection(database, collectionName);
-    const databaseDocument = doc(databaseCollection, documentName);
+    const documentToGet = documentId ? documentId : documentName;
+    const databaseDocument = doc(databaseCollection, documentToGet);
     return databaseDocument;
   };
 
@@ -137,6 +138,16 @@ export const firestoreMethods = (
     }
   };
 
+  const replaceRefField = async (field: string, value: any) => {
+    if (field && value) {
+      const docRef = getDocRef();
+      const getUpdateDocRef = getDocRef(value);
+      const updatingFields = { [field]: getUpdateDocRef };
+      await updateDoc(docRef, updatingFields);
+      return true;
+    }
+  };
+
   // ADD DATA TO AN ALREADY EXSTING FIELD WITHOUT REMOVING THE EXISTING DATA
   const addDataToField = async (
     field: string,
@@ -188,6 +199,7 @@ export const firestoreMethods = (
     createField,
     addDataToField,
     replaceField,
+    replaceRefField,
     deleteDocument,
     deleteDocumentsByQuery
   };
