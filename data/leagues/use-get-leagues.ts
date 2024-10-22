@@ -101,6 +101,11 @@ export const useGetLeagues = () => {
     return league ? league as LeaguesCollectionProps : null as null;
   };
 
+  const getLeagueRefById = (leagueId: string) => {
+    const league = firestoreMethods('leagues', leagueId as any).getDocRef();
+    return league ? league as DocumentReference<LeaguesCollectionProps> : null as null;
+  };
+
   // GET LEAGUE'S OWNER DATA (SINCE OWNER !== CURRENT USER (OR MAYBE IT IS BUT JUST ONCE OFC))
   // const getLeagueOwner = async (leagueId: string) => {
   //   const data = await getLeagueById(leagueId) as LeaguesCollectionProps | null; //Mi dice che restituisce un Unknown
@@ -123,6 +128,7 @@ export const useGetLeagues = () => {
     hasLeagues,
     getLeaguesByUid,
     getLeagueById,
+    getLeagueRefById,
     // getLeagueOwner,
   };
 };

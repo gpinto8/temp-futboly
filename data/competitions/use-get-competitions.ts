@@ -66,5 +66,10 @@ export const useGetCompetitions = () => {
     return competitions ? competitions[0] as CompetitionsCollectionProps : null as null; //Return the first one it finds --> TODO put limit 1
   };
 
-  return { getCompetitionById, getCompetitionsByUid, getCompetitionsByLeagueId, getActiveCompetitionByUid };
+  const getCompetitionRefById = (id: string) => {
+    const competition = firestoreMethods("competitions", id as any).getDocRef();
+    return competition ? competition as DocumentReference<CompetitionsCollectionProps> : null as null;
+  };
+
+  return { getCompetitionById, getCompetitionsByUid, getCompetitionsByLeagueId, getActiveCompetitionByUid, getCompetitionRefById };
 };

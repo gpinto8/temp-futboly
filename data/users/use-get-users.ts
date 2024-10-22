@@ -2,6 +2,7 @@ import { UsersCollectionProps } from '@/firebase/db-types';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { leagueActions } from '@/store/slices/league';
+import { DocumentReference } from 'firebase/firestore';
 
 export const useGetUsers = () => {
   const league = useAppSelector((state) => state.league);
@@ -61,11 +62,17 @@ export const useGetUsers = () => {
     // dispatch(leagueActions.setAllTeams(filteredTeams));
   };
 
+  const getUserRefById = (userId: string) => {
+    const userRef = firestoreMethods('users', userId as any).getDocRef();
+    return userRef ? userRef as DocumentReference<UsersCollectionProps> : null as null;
+  };
+
   return {
     getUser,
     // getUserLeagues,
     // getLeagueUsers,
     removeUserFromLeague,
     getUserFromUui,
+    getUserRefById,
   };
 };
