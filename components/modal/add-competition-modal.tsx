@@ -8,11 +8,14 @@ import { SelectableTable } from '../table/selectable-table';
 import { CustomInputDateTime } from '../input/input-date-time';
 import { Timestamp } from 'firebase/firestore';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
+import { useGetLeagues } from '@/data/leagues/use-get-leagues';
+import { useAppSelector } from '@/store/hooks';
 
 type TeamsColumnsKeysProps = 'ID' | 'TEAM' | 'OWNER';
 
 export const AddCompetitionModal = () => {
   const { addCompetition } = useSetCompetitions();
+  const { getLeagueRefById } = useGetLeagues();
 
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [closeButtonDisabled, setCloseButtonDisabled] = useState(true);
@@ -41,15 +44,23 @@ export const AddCompetitionModal = () => {
 
   const handleCreate = async () => {
     const teams = selectedRows.map((row) => row.ID);
+    const league = useAppSelector((state) => state.league);
+    const leagueRef = getLeagueRefById(league.id);
 
-    if (endDate && startDate && name && teams.length) {
+    if (endDate && startDate && name && teams.length && leagueRef) {
       const newCompetition = await addCompetition({
-        active: false,
-        endDate,
         name,
-        players: teams,
         startDate,
-        type: 'Classic',
+        endDate,
+        specificPosition: false,
+        league: leagueRef,
+        currentWeek: 0,
+        //maxWeek: maxWeek ?? 0,
+        maxWeek: 10,
+        players: teams ?? [],
+        teams: [],
+        standings: null,
+        matchSchedule: null
       });
     }
   };
