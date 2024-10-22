@@ -127,7 +127,7 @@ export function SelectableTable<ColumnKeysProps>({
       onEndReached={onEndReached}
       height={310}
       elevation={0}
-      className="flex flex-col"
+      className="flex flex-col min-h-[50vh] sm:min-h-[35vh]"
     />
   );
 }
