@@ -16,12 +16,11 @@ export const useSetCompetitions = () => {
     competition?: Omit<CompetitionsCollectionProps, 'id'>,
   ) => {
     if (competition) {
-      const userRef = firestoreMethods('users', user.id as any).getDocRef();
-      competition.players = [userRef as DocumentReference<UsersCollectionProps>];
-      const objCreated = await firestoreMethods(
-        'competitions',
-        'id',
-      ).createDocument(competition);
+      if (!(competition.players.length > 0)) {
+        const userRef: DocumentReference<UsersCollectionProps>= firestoreMethods('users', user.id as any).getDocRef() as DocumentReference<UsersCollectionProps>;
+        competition.players = [userRef];
+      }
+      const objCreated = await firestoreMethods('competitions', 'id').createDocument(competition);
       if (objCreated) {
         dispatch(competitionActions.setCompetition(objCreated));
         return objCreated as CompetitionsCollectionProps;
@@ -34,10 +33,7 @@ export const useSetCompetitions = () => {
   const setActiveCompetition = async (competitionId: CompetitionsCollectionProps['id'] | undefined, user: UsersCollectionProps, leagueId: string, competition?: CompetitionsCollectionProps | MappedCompetitionsProps ) => {
     const setActiveCompetitionToUser = async (competitionId: string) => {
       const competitionRef = firestoreMethods('competitions', competitionId as any).getDocRef();
-      const uid = user.id;
-      let replaceObject = user.activeCompetitions;
-      replaceObject[leagueId] = competitionRef as DocumentReference<CompetitionsCollectionProps>;
-      const userUpdate = await firestoreMethods('users', user.id as any).replaceField('activeCompetitions', replaceObject);
+      const userUpdate = await firestoreMethods('users', user.id as any).replaceRefField(`activeCompetitions.${leagueId}`, competitionRef);
       // if (userUpdate) {
       //   dispatch(competitionActions.setCompetition(competition));  //TODO: Dispatch also the updated user info
       // }
