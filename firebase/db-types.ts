@@ -38,7 +38,7 @@ export type CompetitionsCollectionProps = {
   standings: {
     teamId: DocumentReference<TeamsCollectionProps>;
     points: Number;
-  }[];
+  }[] | null;
   matchSchedule: {
     week: Number;
     home: DocumentReference<TeamsCollectionProps>;
@@ -47,7 +47,7 @@ export type CompetitionsCollectionProps = {
       home: Number;
       away: Number;
     };
-  }[];
+  }[] | null;
 };
 
 // TEAMS
