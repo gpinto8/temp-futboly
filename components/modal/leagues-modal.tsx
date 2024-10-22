@@ -88,10 +88,10 @@ export const JoinPublicLeagueModal = ({league}: {league: LeaguesCollectionProps}
         if (league?.isPrivate) {
             //Verificare che la pw sia corretta
             if (leaguePasswordInput?.value === league?.leaguePassword) {
-                await addPlayerToLeague(league.id, user.uid);
+                await addPlayerToLeague(league.id, user.id);
             }
         } else {
-            await addPlayerToLeague(league.id, user.uid);
+            await addPlayerToLeague(league.id, user.id);
         }
         setResetForm(true);
     }
