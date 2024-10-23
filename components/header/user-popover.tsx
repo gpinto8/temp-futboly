@@ -13,8 +13,8 @@ import {
   JoinPublicLeagueModal,
 } from '@/components/modal/leagues-modal';
 import { LeaguesModal } from '@/components/modal/leagues-modal';
-import { LeaguesCollectionProps } from '@/firebase/db-types';
-import { leagueActions } from '@/store/slices/league';
+import { LeaguesCollectionProps, UsersCollectionProps } from '@/firebase/db-types';
+// import { leagueActions } from '@/store/slices/league';
 import { Loader } from '@/components/loader';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useSetLeague } from '@/data/leagues/use-set-league';
@@ -49,8 +49,8 @@ const columns: ColumnsProps<LeaguesColumnKeysProps> = [
 
 const getRows = (
   leagues: Array<LeaguesCollectionProps>,
-  dispatch: any,
-  user: { uid: string; username: string },
+  setLeagues: any,
+  user: UsersCollectionProps,
   exitLeague: any,
 ) => {
   return leagues.map((league: LeaguesCollectionProps) => {
@@ -64,23 +64,16 @@ const getRows = (
       ),
       LEAGUE: league.name,
       TEAM: 'Team',
-      PLAYERS: league.players.length.toString() + ' / 10',
-      COMPETITIONS: league.competitions.length,
+      PLAYERS: Object.keys(league.players).length.toString() + ' / 10',
+      // COMPETITIONS: league.competitions.length,
+      COMPETITIONS: 10,
       SELECT: (
         <CustomButton
           style="outlineMain"
           label="Select"
           disableElevation
           className="rounded-full text-xs py-1 my-1 px-4 h-full"
-          handleClick={() =>
-            dispatch(
-              leagueActions.setLeague({
-                ...league,
-                ownerUsername: league.ownerUsername as '',
-                documentId: '' as '' | undefined,
-              }),
-            )
-          }
+          handleClick={() => setLeagues(league, user.id)}
         />
       ),
       EXIT: (
@@ -136,8 +129,9 @@ const UserSection = ({ handleClose, isModal }) => {
   const [check, setCheck] = useState(true);
   const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
-  const { getLeaguesByPlayer } = useGetLeagues();
-  const dispatch = useAppDispatch();
+  const { getLeaguesByUid } = useGetLeagues();
+  //const dispatch = useAppDispatch();
+  const { setLeague } = useSetLeague();
   const { exitLeague } = useSetLeague();
   const [rows, setRows] = useState<RowsProps<LeaguesColumnKeysProps>>();
 
@@ -149,12 +143,12 @@ const UserSection = ({ handleClose, isModal }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (!check) return;
-      const data = await getLeaguesByPlayer(user.uid);
+      const data = await getLeaguesByUid(user.id);
       if (!data) return;
       setRows(
         getRows(
           data as LeaguesCollectionProps[],
-          dispatch,
+          setLeague,
           user,
           deleteElement,
         ),
@@ -226,11 +220,11 @@ const UserSection = ({ handleClose, isModal }) => {
                 height={48}
               />
               <p className="text-nowrap font-medium text-gray-500 text-sm">
-                {
+                {/*
                   league?.competitions?.find(
                     (competition) => competition.active,
                   )?.name
-                }
+                */}
               </p>
             </div>
             <div className="flex flex-col items-center justify-center mx-4">
