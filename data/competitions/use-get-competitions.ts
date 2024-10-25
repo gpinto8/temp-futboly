@@ -32,8 +32,14 @@ export const useGetCompetitions = () => {
   }
 
   // GET CURRENT ACTIVE COMPETITION FROM CURRENT LEAGUE
-  const getCompetitionsByUid = async (uid: string) => {
-    const competitions = await firestoreMethods("competitions", uid as any).getDocsByQuery("league", "==", uid);
+  const getCompetitionsByUid = async (leagueId: string, userId: string) => {
+    const leagueRef = firestoreMethods("leagues", leagueId as any).getDocRef();
+    const userRef = firestoreMethods("users", userId as any).getDocRef();
+    const competitionsFirestoreObj = firestoreMethods("competitions", "id" as any);
+    competitionsFirestoreObj.setWhereFilter("league", "==", leagueRef);
+    competitionsFirestoreObj.setWhereFilter("players", "array-contains", userRef);
+    const competitions = await competitionsFirestoreObj.executeQuery() as CompetitionsCollectionProps[];
+      
     if (competitions) {
       const mappedCompetitions = await Promise.all(competitions.map(async (competition: CompetitionsCollectionProps) => await mapCompetition(competition as CompetitionsCollectionProps)));
       return mappedCompetitions as MappedCompetitionsProps[];
@@ -52,18 +58,23 @@ export const useGetCompetitions = () => {
     }
   };
 
-  const getActiveCompetitionByUid = async (uid: string, leagueId: string, user?: UsersCollectionProps | undefined) => {
-    if (user) {
-      console.log(user);
-      console.log(user.activeCompetitions);
+  const getActiveCompetitionByUid = async (leagueId: string, user: UsersCollectionProps) => {
+    if (user.activeCompetitions) {
       const competitionRef = user.activeCompetitions[leagueId];
       if (competitionRef) {
-        const competition = await getCompetitionById(competitionRef);  //If league doesn't exist has to be handled
+        const competition = await getCompetitionById(competitionRef); //If league doesn't exist returns the first one it finds
         if (competition) return competition as CompetitionsCollectionProps;
       }
     }
-    const competitions = await firestoreMethods("leagues", "id").getDocsByQuery(`players.${uid}`, ">", "");
-    return competitions ? competitions[0] as CompetitionsCollectionProps : null as null; //Return the first one it finds --> TODO put limit 1
+    const userRef = firestoreMethods("users", user.id as any).getDocRef();
+    const leagueRef = firestoreMethods("leagues", leagueId as any).getDocRef();
+    const competitionsQueryBuilder = firestoreMethods("competitions", "id");
+    competitionsQueryBuilder.setWhereFilter("league", "==", leagueRef);
+    competitionsQueryBuilder.setWhereFilter("players", "array-contains", userRef);
+    const competitions = await competitionsQueryBuilder.executeQuery() as CompetitionsCollectionProps[];
+    if (!competitions) return null as null;
+    const competition = competitions[0];  // Return the first one it finds --> TODO put limit 1
+    return competition as CompetitionsCollectionProps;
   };
 
   const getCompetitionRefById = (id: string) => {
