@@ -33,7 +33,12 @@ export const useSetCompetitions = () => {
   const setActiveCompetition = async (competitionId: CompetitionsCollectionProps['id'] | undefined, user: UsersCollectionProps, leagueId: string, competition?: CompetitionsCollectionProps | MappedCompetitionsProps ) => {
     const setActiveCompetitionToUser = async (competitionId: string) => {
       const competitionRef = firestoreMethods('competitions', competitionId as any).getDocRef();
-      const userUpdate = await firestoreMethods('users', user.id as any).replaceRefField(`activeCompetitions.${leagueId}`, competitionRef);
+      const createField = user.activeCompetitions ? false : true;
+      if (createField) {
+        const userUpdate = await firestoreMethods('users', user.id as any).createField(`activeCompetitions`, { [leagueId]: competitionRef });
+      } else {
+        const userUpdate = await firestoreMethods('users', user.id as any).replaceRefField(`activeCompetitions.${leagueId}`, competitionRef);
+      }  
       // if (userUpdate) {
       //   dispatch(competitionActions.setCompetition(competition));  //TODO: Dispatch also the updated user info
       // }
