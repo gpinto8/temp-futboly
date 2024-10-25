@@ -10,12 +10,13 @@ import { UsersCollectionProps, MappedCompetitionsProps } from '@/firebase/db-typ
 export const CompetitionsTab = () => {
   const user: UsersCollectionProps = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
-  const { getCompetitionsByUid } = useGetCompetitions();
+  const { getCompetitionsByUid, getActiveCompetitionByUid } = useGetCompetitions();
   const { setActiveCompetition } = useSetCompetitions();
   const [competitions, setCompetitions] = useState<MappedCompetitionsProps[] | null>(null);
+  const [activeElement, setActiveElement] = useState<string | null>(null);
 
   const getCompetitions = async () => {
-    const competitions = await getCompetitionsByUid(user.id);
+    const competitions = await getCompetitionsByUid(league.id, user.id);
     return competitions ? competitions as MappedCompetitionsProps[] : null;
   };
 
@@ -25,18 +26,30 @@ export const CompetitionsTab = () => {
       setCompetitions(competitions);
     };
 
-    fetchCompetitions();
-  }, [user.id]);
+    const fetchActiveElement = async () => {
+      const activeCompetition = await getActiveCompetitionByUid(league.id, user);
+      if (activeCompetition) {  // If null it means the user is not in any competition
+        if (!user.activeCompetitions || !user.activeCompetitions[league.id]) setActiveCompetition(activeCompetition.id, user, league.id, activeCompetition);  // It means that the user didn't have an active one for this league so I am setting the first one it found
+        setActiveElement(activeCompetition.id);
+      }
+    };
+
+    if (user && league) {
+      fetchCompetitions();
+      fetchActiveElement();
+    }
+  }, [league]);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
       { competitions?.map((competition: MappedCompetitionsProps, index: number) => {
-          const { startDateText, endDateText, players, name, id, active } = competition;
+          const { startDateText, endDateText, players, name, id } = competition;
+          const activeNode = activeElement === id;
           return (
             <Card
               key={index + name}
               elevation={8}
-              className={`max-w-[300px] rounded-xl ${active ? '-order-1' : ''}`}
+              className={`max-w-[300px] rounded-xl ${activeNode ? '-order-1' : ''}`}
             >
               <CardMedia
                 className="h-40"
@@ -52,9 +65,12 @@ export const CompetitionsTab = () => {
                   <div>{players.length} users</div>
                   <CustomButton
                     className="mt-2"
-                    label={active ? 'Active' : 'Select'}
-                    disabled={active}
-                    handleClick={() => setActiveCompetition(id, user, league.id, competition)}
+                    label={activeNode ? 'Active' : 'Select'}
+                    disabled={activeNode}
+                    handleClick={() => {
+                      setActiveCompetition(id, user, league.id, competition);
+                      setActiveElement(id);
+                    }}
                   />
                 </div>
               </CardContent>
