@@ -13,7 +13,7 @@ const userSlice = createSlice({
   },
   reducers: {
     setUser: (state, action) => {
-      console.log('Setting user: ', action.payload);
+      // console.log('Setting user: ', action.payload);
       const { uid, username, activeLeague, activeCompetitions } = action.payload;
       state.id = uid;
       state.username = username;

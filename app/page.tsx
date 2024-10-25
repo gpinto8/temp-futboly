@@ -13,7 +13,9 @@ export default async () => {
       cookieSignatureKeys: serverConfig.cookieSignatureKeys,
       serviceAccount: serverConfig.serviceAccount,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 
   if (tokens) {
     redirect(APP_ROUTES.HOME);
