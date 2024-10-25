@@ -36,6 +36,7 @@ export const firestoreMethods = (
   collectionName: keyof typeof FIRESTORE_COLLECTIONS,
   documentName: keyof typeof FIRESTORE_DOCUMENTS,
 ) => {
+  let queryFilters: any;
   // GET THE DOCUMENT REFERENCE
   const getDocRef = (documentId?: string) => {
     const database = getFirestore(app);
@@ -57,6 +58,40 @@ export const firestoreMethods = (
       };
     } catch (error) {
       console.error('Error adding document: ', error);
+    }
+  };
+
+  const setWhereFilter = (field: string, operator: WhereFilterOp, value: any) => {
+    const database = getFirestore(app);
+    const databaseCollection = collection(database, collectionName);
+    if (queryFilters) {
+      queryFilters = query(queryFilters, where(field, operator, value));
+    } else {
+      queryFilters = query(databaseCollection, where(field, operator, value));
+    }
+  };
+
+  const executeQuery = async () => {
+    if (!queryFilters) return;
+    try {
+      const querySnapshot = await getDocs(queryFilters);
+      const docs = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return data ? { id: doc.id, ...data } : { id: doc.id };
+      });
+
+      if (collectionName === "competitions") {
+        return docs ? docs as CompetitionsCollectionProps[] : [];
+      } else if (collectionName === "leagues") {
+        return docs ? docs as LeaguesCollectionProps[] : [];
+      } else if (collectionName === "teams") {
+        return docs ? docs as TeamsCollectionProps[] : [];
+      } else if (collectionName === "users") {
+        return docs ? docs as UsersCollectionProps[] : [];
+      }
+      return docs ? docs as any : [];
+    } catch (error) {
+      console.error('Error getting documents: ', error);
     }
   };
 
@@ -178,7 +213,7 @@ export const firestoreMethods = (
       });
     
       await batch.commit();
-      console.log("Documenti cancellati con successo.");
+      // console.log("Documenti cancellati con successo.");
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
@@ -201,6 +236,8 @@ export const firestoreMethods = (
     replaceField,
     replaceRefField,
     deleteDocument,
-    deleteDocumentsByQuery
+    deleteDocumentsByQuery,
+    setWhereFilter,
+    executeQuery
   };
 };
