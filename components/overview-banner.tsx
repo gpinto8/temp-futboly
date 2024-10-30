@@ -107,7 +107,7 @@ export const OverviewBanner = () => {
   useEffect(() => {
     const updateBanners = async () => {
       if (!user || !league) return;
-      const activeCompetition = await getActiveCompetitionByUid(user.id, league.id, user); //getActiveCompetition();
+      const activeCompetition = await getActiveCompetitionByUid(league.id, user); //getActiveCompetition();
       const currentLeague = await getLeague();
 
       const leagueData: BannerCardProps = {
@@ -142,7 +142,9 @@ export const OverviewBanner = () => {
 
       setOverviewData([leagueData, competitionData, teamData]);
     };
-    updateBanners();
+    if (user && user.id && String(user.id).trim() !== "" && league && league.id && String(league.id).trim() !== "") {
+      updateBanners();
+    }
   }, [league]);
 
   return (

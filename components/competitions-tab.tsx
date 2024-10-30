@@ -34,7 +34,7 @@ export const CompetitionsTab = () => {
       }
     };
 
-    if (user && league) {
+    if (user && league && league.id !== null && league.id !== undefined && String(league.id).trim() !== '') {
       fetchCompetitions();
       fetchActiveElement();
     }
