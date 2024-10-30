@@ -49,7 +49,8 @@ export const useGetCompetitions = () => {
   };
 
   const getCompetitionsByLeagueId = async (leagueId: string) => {
-    const competitions = await firestoreMethods("competitions", "id").getDocsByQuery("league", "==", leagueId);
+    const leagueRef = firestoreMethods("leagues", leagueId as any).getDocRef();
+    const competitions = await firestoreMethods("competitions", "id").getDocsByQuery("league", "==", leagueRef);
     if (competitions) {
       const mappedCompetitions = await Promise.all(competitions.map(async (competition: CompetitionsCollectionProps) => await mapCompetition(competition as CompetitionsCollectionProps)));
       return mappedCompetitions as MappedCompetitionsProps[];
