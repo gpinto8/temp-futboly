@@ -70,7 +70,7 @@ export type TeamsCollectionProps = {
 
 export type MappedPlayerProps = {
   uid: string;
-  role: string;
+  role: "owner" | "guest";
   username: string;
 };
 
