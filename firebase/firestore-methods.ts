@@ -42,6 +42,10 @@ export const firestoreMethods = (
     const database = getFirestore(app);
     const databaseCollection = collection(database, collectionName);
     const documentToGet = documentId ? documentId : documentName;
+    if (!documentToGet) {
+      console.error('No document ID specified for collection: ', collectionName);
+      return null;
+    }
     const databaseDocument = doc(databaseCollection, documentToGet);
     return databaseDocument;
   };
@@ -137,6 +141,7 @@ export const firestoreMethods = (
   // GET THE DOCUMENT SNAPSHOT
   const getDocSnapshot = async () => {
     const document = getDocRef();
+    if (!document) return null;
     return await getDoc(document);
   };
 
@@ -150,6 +155,7 @@ export const firestoreMethods = (
   // GET DATA FROM A DOCUMENT
   const getDocumentData = async () => {
     const documentSnapshot = await getDocSnapshot();
+    if (!documentSnapshot || !documentSnapshot.exists()) return null;
     const data = documentSnapshot.data();
     return data ? { id: documentSnapshot.id, ...data } : null;
   };
@@ -157,6 +163,7 @@ export const firestoreMethods = (
   const createField = async (field: string, value: any) => {
     if (field && value) {
       const docRef = getDocRef();
+      if (!docRef) return false;
       const updatingFields = { [field]: value };
       await setDoc(docRef, updatingFields, { merge: true });
       return true;
@@ -167,6 +174,7 @@ export const firestoreMethods = (
   const replaceField = async (field: string, value: any) => {
     if (field && value) {
       const docRef = getDocRef();
+      if (!docRef) return false;
       const updatingFields = { [field]: value };
       await updateDoc(docRef, updatingFields);
       return true;
@@ -176,6 +184,7 @@ export const firestoreMethods = (
   const replaceRefField = async (field: string, value: any) => {
     if (field && value) {
       const docRef = getDocRef();
+      if (!docRef) return false;
       const getUpdateDocRef = getDocRef(value);
       const updatingFields = { [field]: getUpdateDocRef };
       await updateDoc(docRef, updatingFields);
@@ -191,6 +200,7 @@ export const firestoreMethods = (
   ) => {
     if (field && value) {
       const docRef = getDocRef();
+      if (!docRef) return false;
 
       const fieldValue = fieldType === 'array' ? arrayUnion(value) : value;
       const updatingFields = { [field]: fieldValue };
@@ -221,6 +231,7 @@ export const firestoreMethods = (
 
   const deleteDocument = async () => {
     const docRef = getDocRef();
+    if (!docRef) return false;
     await deleteDoc(docRef);
     return true;
   }
