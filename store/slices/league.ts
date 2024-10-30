@@ -1,4 +1,4 @@
-import { LeaguesCollectionProps } from '@/firebase/db-types';
+import { MappedLeaguesProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // type InitialStateProps = LeaguesCollectionProps & {
@@ -6,27 +6,29 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 //     ownerUsername?: '';
 // };
 
-const initialState: LeaguesCollectionProps = {
+const initialState: MappedLeaguesProps = {
     id: '',
     name: '',
     leaguePassword: '',
     shortId: '',
     isPrivate: false,
-    players: {},
+    players: [],
+    ownerUsername: '',
 };
 
 const leagueSlice = createSlice({
     name: 'league',
     initialState,
     reducers: {
-        setLeague(state, action: PayloadAction<LeaguesCollectionProps>) {
-            const { id, name, leaguePassword, shortId, isPrivate, players } = action.payload;
+        setLeague(state, action: PayloadAction<MappedLeaguesProps>) {
+            const { id, name, leaguePassword, shortId, isPrivate, players, ownerUsername } = action.payload;
             state.id = id;
             state.name = name;
             state.leaguePassword = leaguePassword;
             state.shortId = shortId;
             state.isPrivate = isPrivate;
             state.players = players;
+            state.ownerUsername = ownerUsername;
         },
     },
 });

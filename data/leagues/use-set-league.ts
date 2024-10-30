@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { leagueActions } from '@/store/slices/league';
 import { useGetLeagues } from './use-get-leagues';
 import { getShortBase64Id } from '@/utils/id';
-import { LeaguesCollectionProps } from '@/firebase/db-types';
+import { LeaguesCollectionProps, MappedLeaguesProps } from '@/firebase/db-types';
 import { DocumentReference } from 'firebase/firestore';
 
 export const useSetLeague = () => {
@@ -80,7 +80,7 @@ export const useSetLeague = () => {
   };
 
   // SET LEAGUE TO REDUX FROM THE USER ID --> Here I can pass directly the League object, avoid the fetch and dispatch directly the league with a "random" competition
-  const setLeague = async (league: LeaguesCollectionProps /*| DocumentReference<LeaguesCollectionProps>*/, uid: string) => {
+  const setLeague = async (league: MappedLeaguesProps /*| DocumentReference<LeaguesCollectionProps>*/, uid: string) => {
     // console.log({ uid });
     
     // const data = await getLeagueById(id);

@@ -36,18 +36,19 @@ export const useGetLeagues = () => {
   };
 
   // // GET CURRENT LEAGUE DATA FROM REDUX
-  const getLeague = async () => await mapLeague(league);
+  // const getLeague = async () => await mapLeague(league);
+  const getLeague = () => league;
 
   const getActiveLeagueByUid = async (uid: string, user?: UsersCollectionProps) => {
     if (user) {
       const leagueRef = user.activeLeague;
       if (leagueRef) {
         const league = await getLeagueById(leagueRef);  //If league doesn't exist has to be handled
-        if (league) return league as LeaguesCollectionProps;
+        if (league) return league as MappedLeaguesProps;
       }
     }
     const leagues = await firestoreMethods("leagues", "id").getDocsByQuery(`players.${uid}`, ">", "");
-    return leagues ? leagues[0] as LeaguesCollectionProps : null as null; //Return the first one it finds --> TODO put limit 1
+    return leagues ? await mapLeague(leagues[0]) as MappedLeaguesProps : null as null; //Return the first one it finds --> TODO put limit 1
   };
 
   const getLeaguesByUid = async (uid: string) => {
@@ -67,7 +68,7 @@ export const useGetLeagues = () => {
       '==',
       shortId,
     );
-    return league ? league as LeaguesCollectionProps : null as null;
+    return league ? await mapLeague(league) as MappedLeaguesProps : null as null;
   };
 
   const getAllLeaguesByChunks = async (
@@ -97,8 +98,8 @@ export const useGetLeagues = () => {
     const league = await firestoreMethods(
       'leagues',
       leagueId as any,
-    ).getDocumentData();
-    return league ? league as LeaguesCollectionProps : null as null;
+    ).getDocumentData() as LeaguesCollectionProps;
+    return league ? await mapLeague(league) as MappedLeaguesProps : null as null;
   };
 
   const getLeagueRefById = (leagueId: string) => {
