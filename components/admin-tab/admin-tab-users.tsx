@@ -13,23 +13,29 @@ export const AdminTabUsers = () => {
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
 
   useEffect(() => {
-    (async () => {
-      const users = league.players
+    const setUsersRows = async () => {
+      const users = league.players;
       const userRows = users.map((user, index) => ({
         INDEX: index,
-        USER: user?.ownerUsername, // Why owner?
-        TEAM: user?.team, // Also league doesn not have teams, just competitions do
-        ACTIONS: (
+        // USER: user?.ownerUsername, // Why owner?
+        USER: user.username,
+        // TEAM: user?.team, // Also league doesn not have teams, just competitions do
+        TEAM: "TODO",
+        ACTIONS: user.role !== "owner" && (
           <CustomButton
             label="Kick"
             style="error"
             className="!w-1/4 !h-1/4"
-            handleClick={() => removeUserFromLeague(user?.ownerId)}
+            handleClick={() => removeUserFromLeague(user?.uid)}
           />
         ),
       }));
       setRows(userRows);
-    })();
+    };
+
+    if (league && league.id && String(league.id).trim() !== '' && league.players) {
+      setUsersRows();
+    }
   }, [league]);
 
   const columns: ColumnsProps<AdminColumnKeysProps> = [
