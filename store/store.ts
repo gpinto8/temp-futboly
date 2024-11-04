@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { errorReducer } from './slices/error';
 import { userReducer } from './slices/user';
 import { leagueReducer } from './slices/league';
+import { competitionReducer } from './slices/competitions';
 
 export const makeStore = () => {
   return configureStore({
@@ -9,6 +10,7 @@ export const makeStore = () => {
       error: errorReducer,
       user: userReducer,
       league: leagueReducer,
+      competition: competitionReducer
     }),
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false }),
