@@ -40,7 +40,7 @@ export const useGetCompetitions = () => {
     competitionsFirestoreObj.setWhereFilter("players", "array-contains", userRef);
     const competitions = await competitionsFirestoreObj.executeQuery() as CompetitionsCollectionProps[];
       
-    if (competitions) {
+    if (competitions && competitions.length > 0) {
       const mappedCompetitions = await Promise.all(competitions.map(async (competition: CompetitionsCollectionProps) => await mapCompetition(competition as CompetitionsCollectionProps)));
       return mappedCompetitions as MappedCompetitionsProps[];
     } else {
@@ -51,7 +51,7 @@ export const useGetCompetitions = () => {
   const getCompetitionsByLeagueId = async (leagueId: string) => {
     const leagueRef = firestoreMethods("leagues", leagueId as any).getDocRef();
     const competitions = await firestoreMethods("competitions", "id").getDocsByQuery("league", "==", leagueRef);
-    if (competitions) {
+    if (competitions && competitions.length > 0) {
       const mappedCompetitions = await Promise.all(competitions.map(async (competition: CompetitionsCollectionProps) => await mapCompetition(competition as CompetitionsCollectionProps)));
       return mappedCompetitions as MappedCompetitionsProps[];
     } else {
@@ -73,7 +73,7 @@ export const useGetCompetitions = () => {
     competitionsQueryBuilder.setWhereFilter("league", "==", leagueRef);
     competitionsQueryBuilder.setWhereFilter("players", "array-contains", userRef);
     const competitions = await competitionsQueryBuilder.executeQuery() as CompetitionsCollectionProps[];
-    if (!competitions) return null as null;
+    if (!competitions || !(competitions.length > 0)) return null as null;
     const competition = competitions[0];  // Return the first one it finds --> TODO put limit 1
     return competition as CompetitionsCollectionProps;
   };

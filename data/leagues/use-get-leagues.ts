@@ -48,14 +48,13 @@ export const useGetLeagues = () => {
       }
     }
     const leagues = await firestoreMethods("leagues", "id").getDocsByQuery(`players.${uid}`, ">", "");
-    return leagues ? await mapLeague(leagues[0]) as MappedLeaguesProps : null as null; //Return the first one it finds --> TODO put limit 1
+    return leagues && leagues.length > 0 ? await mapLeague(leagues[0]) as MappedLeaguesProps : null as null; //Return the first one it finds --> TODO put limit 1
   };
 
   const getLeaguesByUid = async (uid: string) => {
     try {
       const leagues = await firestoreMethods("leagues", "id").getDocsByQuery(`players.${uid}`, ">", "");
-      // console.log({ leagues }); Commented because seems to be working
-      return leagues ? leagues as LeaguesCollectionProps[] : [];  //I assure that an array is returned
+      return leagues && leagues.length > 0 ? leagues as LeaguesCollectionProps[] : [];  //I assure that an array is returned
     } catch (error) {
       console.error('Error getting leagues: ', error);
     }
