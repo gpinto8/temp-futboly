@@ -17,6 +17,7 @@ export const CreateLeagueModal = ({ buttonFull }) => {
     const [leaguePassword, setLeaguePassword] = useState<HandleChangeParamProps>();
     const [repeatPassword, setRepeatPassword] = useState<HandleChangeParamProps>();
     const [resetForm, setResetForm] = useState(false);
+    const [isPrivate, setIsPrivate] = useState(false);
     const { addLeague } = useSetLeague();
 
     const openButtonStyle = (!buttonFull ? "max-w-20"  : "") + " rounded-full mb-2";
@@ -25,55 +26,64 @@ export const CreateLeagueModal = ({ buttonFull }) => {
         if (!leagueName || !leaguePassword || !repeatPassword) return;  //Se uno dei valori è vuoto
         if (!(leagueName.isValid && leaguePassword.isValid && repeatPassword.isValid)) return; //Uno dei valore non è valido
         if (leaguePassword.value !== repeatPassword.value) return; //Le password non corrispondono
-        const specificPosition = (document.getElementById("specificPosition") as HTMLInputElement).checked;
-        const isPrivate = (document.getElementById("isPrivate") as HTMLInputElement).checked;
+        // const isPrivate = (document.getElementById("isPrivate") as HTMLInputElement).checked;
         const response = await addLeague({
             name: leagueName.value,
             leaguePassword: leaguePassword.value,
-            specificPosition,
             isPrivate
         });
-        // console.log({response})
         if (response) {
             setResetForm(true);
             setResetForm(false);
         }
     }
 
+    const toggleIsPrivate = (event: any) => {
+        setIsPrivate(event.target.checked);
+    }
+
     return (
-        <CustomModal title={<p className="text-3xl font-bold">Create Your League</p>} 
-        closeButton={{ label: "Create" }} 
-        openButton={{ label: "Create", style: "main", className: openButtonStyle}} 
-        handleClose={handleSubmit} 
-        isDialog={{value: true, style: "large"}}>
-            <div className="flex flex-col gap-4 mt-2">
-                <div className="flex flex-col items-center justify-center gap-4">
-                    <CustomInput label="League Name" handleChange={setLeagueName} endAdorment={{ img: "LEAGUE_TROPHY" }} />
-                </div>
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4 ">
-                    <InputPassword label="League Password" handleChange={setLeaguePassword} resetValue={resetForm} />
-                    <InputPassword label="Repeat Password" handleChange={setRepeatPassword} resetValue={resetForm}/>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <div className="w-full">
-                        <label htmlFor="specificPosition" className="flex gap-4">
-                            <input type="checkbox" id="specificPosition" name="specificPosition" className="size-5 rounded-md border-gray-200 bg-white shadow-sm" />
-                            <span className="text-sm text-gray-700 text-nowrap">
-                                Specific Positions
-                            </span>
-                        </label>
-                    </div>
-                    <div className="w-full">
-                        <label htmlFor="isPrivate" className="flex gap-4">
-                            <input type="checkbox" id="isPrivate" name="isPrivate" className="size-5 rounded-md border-gray-200 bg-white shadow-sm" />
-                            <span className="text-sm text-gray-700 text-nowrap">
-                                Private
-                            </span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </CustomModal>
+      <CustomModal
+        title={<p className="text-3xl font-bold">Create Your League</p>}
+        closeButton={{ label: 'Create' }}
+        openButton={{
+          label: 'Create',
+          style: 'main',
+          className: openButtonStyle,
+        }}
+        handleClose={handleSubmit}
+        isDialog={{ value: true, style: 'large' }}
+      >
+        <div className="flex flex-col gap-4 mt-2">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <CustomInput
+              label="League Name"
+              handleChange={setLeagueName}
+              endAdorment={{ img: 'LEAGUE_TROPHY' }}
+            />
+          </div>
+          { isPrivate && (
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 ">
+            <InputPassword
+              label="League Password"
+              handleChange={setLeaguePassword}
+              resetValue={resetForm}
+            />
+            <InputPassword
+              label="Repeat Password"
+              handleChange={setRepeatPassword}
+              resetValue={resetForm}
+            />
+          </div>
+          )}
+          <div className="w-full">
+            <label htmlFor="isPrivate" className="flex gap-4" onChange={toggleIsPrivate}>
+              <input type="checkbox" id="isPrivate" name="isPrivate" className="size-5 rounded-md border-gray-200 bg-white shadow-sm" />
+              <span className="text-sm text-gray-700 text-nowrap">Private</span>
+            </label>
+          </div>
+        </div>
+      </CustomModal>
     );
 };
 

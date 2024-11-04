@@ -101,6 +101,6 @@ export const useSetLeague = () => {
 type LeagueFormDetailsProps = {
   name: string;
   leaguePassword: string;
-  specificPosition: boolean;
+  // specificPosition: boolean; Now this prop is defined in the Competition
   isPrivate: boolean;
 };
