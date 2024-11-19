@@ -75,9 +75,10 @@ export type MappedPlayerProps = {
 };
 
 export type MappedLeaguesProps = Omit<LeaguesCollectionProps, 'players'> & {
-  players: MappedPlayerProps[],
-  ownerUsername: string | "",
-  competitionsNo?: number | undefined
+  players: MappedPlayerProps[];
+  ownerUsername: string | "";
+  competitionsNo?: number | undefined;
+  leagueCompetitions?: MappedCompetitionsProps[] | undefined;
 };
 
 export type MappedCompetitionsProps = CompetitionsCollectionProps & {
