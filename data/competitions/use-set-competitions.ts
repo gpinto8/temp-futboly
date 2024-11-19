@@ -4,10 +4,12 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { competitionActions } from '@/store/slices/competitions';
 import { DocumentReference } from 'firebase/firestore';
 import { useGetCompetitions } from './use-get-competitions';
+import { leagueActions } from '@/store/slices/league';
 
 export const useSetCompetitions = () => {
-  const competitionState = useAppSelector((state) => state.league);
+  const competitionState = useAppSelector((state) => state.competition);
   const user = useAppSelector((state) => state.user);
+  const leagueState = useAppSelector((state) => state.league);
   const dispatch = useAppDispatch();
   const { getCompetitionById } = useGetCompetitions();
 
@@ -84,8 +86,10 @@ export const useSetCompetitions = () => {
     await firestoreMethods('teams', "id").deleteDocumentsByQuery('competition', '==', competitionId);
     await firestoreMethods('competitions', competitionState.id as any).deleteDocument(); //Deletes the object
     
-      //dispatch(leagueActions.setAllCompetitions(filteredCompetitions)); We need to get the competitions and once we have then then we filter the deleted one and update the state
-      location.reload();
+      // dispatch(leagueActions.setAllCompetitions(filteredCompetitions)); We need to get the competitions and once we have then then we filter the deleted one and update the state
+      // location.reload();
+      const filteredCompetitions = leagueState.leagueCompetitions?.filter(competition => competition.id !== competitionId);
+      dispatch(leagueActions.setLeagueCompetitions(filteredCompetitions ? filteredCompetitions : []));
   };
 
   return { setActiveCompetition, addCompetition, deleteCompetition };

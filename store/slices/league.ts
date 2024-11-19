@@ -1,4 +1,4 @@
-import { MappedLeaguesProps } from '@/firebase/db-types';
+import { MappedCompetitionsProps, MappedLeaguesProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // type InitialStateProps = LeaguesCollectionProps & {
@@ -29,6 +29,9 @@ const leagueSlice = createSlice({
             state.isPrivate = isPrivate;
             state.players = players;
             state.ownerUsername = ownerUsername;
+        },
+        setLeagueCompetitions(state, action: PayloadAction<MappedCompetitionsProps[]>) {
+            state.leagueCompetitions = action.payload;
         },
     },
 });
