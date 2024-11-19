@@ -5,6 +5,7 @@ import { AdminTab } from './admin-tab/admin-tab';
 import { useSwitchComponents } from '@/utils/switch-components';
 import { StandingsTab } from './standings-tab';
 import { CompetitionsTab } from './competitions-tab';
+import { LiveMatch } from './live-match';
 
 export const AppTabs = () => {
   const {
@@ -18,7 +19,7 @@ export const AppTabs = () => {
     { label: 'Standings', Component: () => <StandingsTab /> },
     { label: 'Teams', Component: () => <div>TODO</div> },
     { label: 'Matches', Component: () => <div>TODO</div> },
-    { label: 'Live Match', Component: () => <div>TODO</div> },
+    { label: 'Live Match', Component: () => <LiveMatch/> },
     { label: 'Admin', Component: () => <AdminTab /> },
   ]);
 
