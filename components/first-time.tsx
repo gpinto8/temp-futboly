@@ -4,6 +4,7 @@ import { CustomImage } from "@/components/custom/custom-image";
 import { CreateLeagueModal } from "@/components/modal/leagues-modal";
 import { useBreakpoint } from "@/utils/use-breakpoint";
 import { LeagueList } from "@/components/league-list";
+import { CustomSeparator } from "@/components/custom/custom-separator";
 
 const FirstTime = () => {
     return (
@@ -15,11 +16,7 @@ const FirstTime = () => {
                         <p className="text-sm">Play with your friends with a <strong>private league</strong> or make new ones with a <strong>public league!</strong></p>
                         <CreateLeagueModal buttonFull={false} />
                     </div>
-                    <div className="flex items-center justify-center w-full my-4">
-                        <div className="border-t border-gray-300 flex-grow"></div>
-                        <span className="px-2 text-gray-500">OR</span>
-                        <div className="border-t border-gray-300 flex-grow"></div>
-                        </div>
+                    <CustomSeparator withText={true} text="OR" />
                     <h1 className="text-3xl font-bold">Join a League</h1>
                     <p>Choose one from the list below or join a league</p>
                 </div>
