@@ -16,7 +16,7 @@ export const LiveMatch = () => {
             </div>
             <CustomSeparator withText={false} />
             <div id="upcomingMatches">
-                <h1 className="font-bold text-4xl text-main">Upcoming Matches</h1>
+                <h1 className="font-bold text-4xl text-main mb-4">Upcoming Matches</h1>
                 <div className="flex flex-row justify-center items-center gap-4">
                     <UpcomingMatch />
                     <UpcomingMatch />
