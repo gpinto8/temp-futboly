@@ -1,7 +1,6 @@
 import { LeaguesCollectionProps } from '@/firebase/db-types';
 import { createSlice } from '@reduxjs/toolkit';
 import { DocumentReference } from 'firebase/firestore';
-import { act } from 'react';
 
 const userSlice = createSlice({
   name: 'user',
