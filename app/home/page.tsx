@@ -21,7 +21,6 @@ export default () => {
   const [hasUserLeagues, setHasUserLeagues] = useState(false);
 
   const uid = user?.id;
-  console.log(user);
   useEffect(() => {
     (async () => {
       if (uid) {

@@ -19,35 +19,29 @@ export default ({ children }: any) => {
   const { getActiveLeagueByUid } = useGetLeagues();
 
   // FETCH USER DATA
-  // onAuthStateChanged(auth, async (user) => {
-  //   console.log("Auth Changed");
-  //   const uid = user?.uid;
-  //   if (uid) await setUser(uid);  //When it changes it will update the user so the useEffect will run
-  // });
+  onAuthStateChanged(auth, async (userPar) => {
+    const uid = userPar?.uid;
+    if (uid && uid !== user.id) await setUser(uid);  //When it changes it will update the user so the useEffect will run
+  });
 
   // FETCH LEAGUE DATA
   //const uid = getUser()?.id;
   useEffect(() => {
-    console.log(auth);
-    console.log(auth.currentUser);
     const setUserData = async () => {
-      const uid = auth?.currentUser?.uid;
+      const uid = user?.id;
       console.log('UID presente: ' + uid);
       if (uid) {
-        if (uid) await setUser(uid); //When it changes it will update the user so the useEffect will run
         const league = await getActiveLeagueByUid(uid, user);
         if (league) await setLeague(league, uid);
         // console.log({hasLeagueInside, uid}); //If the user has an active league I have to make sure that it exists
         // If he doesn't have a recent league, then I need to check if he is a partecipant in one
         // if (hasLeagueInside) await setLeague(activeLeague, uid);
       } else {
-        logoutUser();
+        // logoutUser();
       }
     };
-    if (auth && auth.currentUser) {
-      setUserData();
-    }
-  }, []);
+    setUserData();
+  }, [user]);
 
   return <>{children}</>;
 };
