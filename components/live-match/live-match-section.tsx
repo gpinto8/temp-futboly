@@ -8,8 +8,8 @@ export const LiveMatchSection = ({ home, away, score } : CurrentLiveMatchType) =
             <h2 className="text-l font-medium my-2">Home Team LineUp</h2>
             <CustomSeparator withText={false} />
             <div id="homeTeamLineUp">
-                {home.players.map((player) => (
-                    <div className="flex flex-row items-center gap-2">
+                {home.players.map((player, index) => (
+                    <div key={index} className="flex flex-row items-center gap-2">
                         <p className="font-bold text-error">{player.position}</p>
                         <p className="font-semibold">{player.name}</p>
                         {/* <CustomImage forceSrc={player.image} className="h-12 w-12" /> */}
@@ -54,8 +54,8 @@ export const LiveMatchSection = ({ home, away, score } : CurrentLiveMatchType) =
             <h2 className="text-l font-medium my-2">Away Team LineUp</h2>
             <CustomSeparator withText={false} />
             <div id="awayTeamLineUp">
-                {away.players.map((player) => (
-                    <div className="flex flex-row items-center gap-2">
+                {away.players.map((player, index) => (
+                    <div key={index} className="flex flex-row items-center gap-2">
                         <p className="font-bold text-error">{player.position}</p>
                         <p className="font-semibold">{player.name}</p>
                         {/* <CustomImage forceSrc={player.image} className="h-12 w-12" /> */}
