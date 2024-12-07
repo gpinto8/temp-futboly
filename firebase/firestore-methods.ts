@@ -15,7 +15,8 @@ import {
   QueryDocumentSnapshot,
   WhereFilterOp,
   deleteDoc,
-  writeBatch
+  writeBatch,
+  DocumentReference,
 } from 'firebase/firestore';
 import { app } from './app';
 import { CompetitionsCollectionProps, LeaguesCollectionProps, TeamsCollectionProps, UsersCollectionProps } from './db-types';
@@ -160,6 +161,14 @@ export const firestoreMethods = (
     return data ? { id: documentSnapshot.id, ...data } : null;
   };
 
+  const getDocumentDataByRef = async (documentRef: DocumentReference) => {
+    const documentSnapshot = await getDoc(documentRef);
+    if (!documentSnapshot || !documentSnapshot.exists()) return null;
+    const data = documentSnapshot.data();
+    return data ? { id: documentSnapshot.id, ...data } : null;
+  }
+
+
   const createField = async (field: string, value: any) => {
     if (field && value) {
       const docRef = getDocRef();
@@ -181,12 +190,12 @@ export const firestoreMethods = (
     }
   };
 
-  const replaceRefField = async (field: string, value: any) => {
+  const replaceRefField = async (field: string, value: DocumentReference) => {
     if (field && value) {
       const docRef = getDocRef();
       if (!docRef) return false;
-      const getUpdateDocRef = getDocRef(value);
-      const updatingFields = { [field]: getUpdateDocRef };
+      // const getUpdateDocRef = getDocRef(value);
+      const updatingFields = { [field]: value };
       await updateDoc(docRef, updatingFields);
       return true;
     }
@@ -241,6 +250,7 @@ export const firestoreMethods = (
     getDocumentData,
     getDocsByQuery,
     getDocsByChunk,
+    getDocumentDataByRef,
     createDocument,
     createField,
     addDataToField,
