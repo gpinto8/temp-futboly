@@ -87,7 +87,13 @@ export const useSetUsers = () => {
 
     // If it exists then ok
     if (data?.username) {
-      dispatch(userActions.setUser({ uid, username: data?.username }));
+
+      dispatch(userActions.setUser({ 
+        uid, 
+        username: data?.username,
+        activeLeague: data?.activeLeague,
+        activeCompetitions: data?.activeCompetitions,
+      }));
     }
     // Otherwise the user doesn't exist in Firestore so we cant't proceed
     else {
