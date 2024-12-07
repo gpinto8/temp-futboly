@@ -31,6 +31,11 @@ export const useGetCompetitions = () => {
     }
   }
 
+  const getCompetitionByRef = async (competitionRef: DocumentReference<CompetitionsCollectionProps>) => {
+    const competition = await firestoreMethods("competitions", "competitionRef" as any).getDocumentDataByRef(competitionRef);
+    return competition ? await mapCompetition(competition as CompetitionsCollectionProps) as MappedCompetitionsProps : null as null;
+  }
+
   // GET CURRENT ACTIVE COMPETITION FROM CURRENT LEAGUE
   const getCompetitionsByUid = async (leagueId: string, userId: string) => {
     const leagueRef = firestoreMethods("leagues", leagueId as any).getDocRef();
@@ -63,7 +68,7 @@ export const useGetCompetitions = () => {
     if (user.activeCompetitions) {
       const competitionRef = user.activeCompetitions[leagueId];
       if (competitionRef) {
-        const competition = await getCompetitionById(competitionRef); //If league doesn't exist returns the first one it finds
+        const competition = await getCompetitionByRef(competitionRef); //If league doesn't exist returns the first one it finds
         if (competition) return competition as CompetitionsCollectionProps;
       }
     }
@@ -83,5 +88,5 @@ export const useGetCompetitions = () => {
     return competition ? competition as DocumentReference<CompetitionsCollectionProps> : null as null;
   };
 
-  return { getCompetitionById, getCompetitionsByUid, getCompetitionsByLeagueId, getActiveCompetitionByUid, getCompetitionRefById };
+  return { getCompetitionById, getCompetitionByRef, getCompetitionsByUid, getCompetitionsByLeagueId, getActiveCompetitionByUid, getCompetitionRefById };
 };

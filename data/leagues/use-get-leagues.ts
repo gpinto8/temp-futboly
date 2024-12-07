@@ -43,7 +43,8 @@ export const useGetLeagues = () => {
     if (user) {
       const leagueRef = user.activeLeague;
       if (leagueRef) {
-        const league = await getLeagueById(leagueRef);  //If league doesn't exist has to be handled
+
+        const league = await getLeagueByRef(leagueRef);  //If league doesn't exist has to be handled
         if (league) return league as MappedLeaguesProps;
       }
     }
@@ -93,11 +94,16 @@ export const useGetLeagues = () => {
   };
 
   // GET LEAGUE DATA BY ITS ID
-  const getLeagueById = async (leagueId: DocumentReference<LeaguesCollectionProps>) => {
+  const getLeagueById = async (leagueRef: DocumentReference<LeaguesCollectionProps>) => {
     const league = await firestoreMethods(
       'leagues',
-      leagueId as any,
+      leagueRef as any,
     ).getDocumentData() as LeaguesCollectionProps;
+    return league ? await mapLeague(league) as MappedLeaguesProps : null as null;
+  };
+
+  const getLeagueByRef = async (leagueRef: DocumentReference<LeaguesCollectionProps>) => {
+    const league = await firestoreMethods('leagues', "id" as any).getDocumentDataByRef(leagueRef) as LeaguesCollectionProps;
     return league ? await mapLeague(league) as MappedLeaguesProps : null as null;
   };
 

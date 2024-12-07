@@ -87,7 +87,9 @@ export const useSetLeague = () => {
 
     // if (data) {
       // Update the user active league
-      const userUpdate = await firestoreMethods('users', uid as any).replaceRefField("activeLeague", league.id); // Using data.id and not just id for "safety"
+      const leagueRef = firestoreMethods('leagues', league.id as any).getDocRef();
+      if (!leagueRef) return;
+      const userUpdate = await firestoreMethods('users', uid as any).replaceRefField("activeLeague", leagueRef); // Using data.id and not just id for "safety"
 
       if (userUpdate) {
         dispatch(leagueActions.setLeague(league));  //TODO: Dispatch also the updated user info
