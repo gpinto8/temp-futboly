@@ -198,11 +198,7 @@ export const getMockupMatchesHistory = () => {
                 teamName: "France",
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
-            date: new Date(Date.parse("2024-09-05")),
-            score: {
-                home: 2,
-                away: 1
-            }
+            date: new Date(Date.parse("2024-09-05"))
         },{
             home: {
                 teamName: "Portugal",
@@ -254,11 +250,7 @@ export const getMockupMatchesHistory = () => {
                 teamName: "France",
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
-            date: new Date(Date.now()),
-            score: {
-                home: 2,
-                away: 1
-            }
+            date: new Date(Date.now())
         }
     ]) as MatchInfoType[];
 }
@@ -273,4 +265,30 @@ type MatchInfoType = {
         home: number;
         away: number;
     };
+};
+
+export const getMockupAllMatchesHistory = () => {
+    return ([
+        {
+            week: 1,
+            matches: getMockupMatchesHistory().slice(0, 5)
+        },
+        {
+            week: 2,
+            matches: getMockupMatchesHistory().slice(0, 5)
+        },
+        {
+            week: 3,
+            matches: getMockupMatchesHistory().slice(0, 5)
+        },
+        {
+            week: 4,
+            matches: getMockupMatchesHistory().slice(0, 5)
+        }
+    ] as WeeklyMatchInfoType[]);
+}
+
+type WeeklyMatchInfoType = {
+    week: number;
+    matches: MatchInfoType[];
 };

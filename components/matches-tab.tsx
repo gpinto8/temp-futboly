@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { CustomCard } from "./custom/custom-card";
 import { CustomSeparator } from "./custom/custom-separator";
 import { PersonalMatch } from "@/components/matches-tab/personal-match";
-import { getMockupMatchesHistory } from "@/utils/mocks";
+import { getMockupMatchesHistory, getMockupAllMatchesHistory } from "@/utils/mocks";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import { CustomImage } from "./custom/custom-image";
+import { WeeklyMatches } from "./matches-tab/weekly-matches";
 
 const statistics = [
     {title: "Total Wins", value: 0},
@@ -12,6 +17,7 @@ const statistics = [
 ];
 
 const matchesHistory = getMockupMatchesHistory();
+const allMatches = getMockupAllMatchesHistory();
 
 export const Matches = () => {
 
@@ -63,9 +69,21 @@ export const Matches = () => {
                 </div>
             </div>
             <CustomSeparator withText={false}/>
-            <h1 className = "text-2xl md:text-4xl font-bold">All Matches</h1>
-            <div>
-
+            <h1 className = "text-2xl md:text-4xl font-bold my-2">All Matches</h1>
+            <div className="border rounded-md shadow-lg">
+                { allMatches.map((weeklyMatches, index) => (
+                    <Accordion key={index}>
+                        <AccordionSummary aria-controls={"panel"+index+"-content"} id={"panel"+index+"-header"} expandIcon={<CustomImage imageKey="EXPAND" className="h-5 w-5"/>} className="bg-lightGray">
+                            <div className="w-full grid grid-cols-2">
+                                <p className="font-semibold">Week {weeklyMatches.week}</p>
+                                <p className="font-semibold">{weeklyMatches.matches[0].date.toLocaleString().split(",")[0]}</p>
+                            </div>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <WeeklyMatches matches={weeklyMatches.matches} />
+                        </AccordionDetails>
+                    </Accordion>
+                ))}
             </div>
         </div>
     );
