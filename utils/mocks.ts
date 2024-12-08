@@ -170,5 +170,107 @@ export const getMockupFormation = () => {
             } as PlayerType,
         ]
     } as MatchTeamType;
-
 }
+
+export const getMockupMatchesHistory = () => {
+    return ([
+        {
+            home: {
+                teamName: "Portugal",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            away: {
+                teamName: "France",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            date: new Date(Date.parse("2024-09-01")),
+            score: {
+                home: 2,
+                away: 1
+            }
+        },
+        {
+            home: {
+                teamName: "Portugal",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            away: {
+                teamName: "France",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            date: new Date(Date.parse("2024-09-05")),
+            score: {
+                home: 2,
+                away: 1
+            }
+        },{
+            home: {
+                teamName: "Portugal",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            away: {
+                teamName: "France",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            date: new Date(Date.parse("2024-09-10")),
+            score: {
+                home: 2,
+                away: 1
+            }
+        },{
+            home: {
+                teamName: "Portugal",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            away: {
+                teamName: "France",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            date: new Date(Date.parse("2024-10-01")),
+            score: {
+                home: 2,
+                away: 1
+            }
+        },{
+            home: {
+                teamName: "Portugal",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            away: {
+                teamName: "France",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            date: new Date(Date.parse("2024-10-05")),
+            score: {
+                home: 2,
+                away: 1
+            }
+        },{
+            home: {
+                teamName: "Portugal",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            away: {
+                teamName: "France",
+                teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            },
+            date: new Date(Date.now()),
+            score: {
+                home: 2,
+                away: 1
+            }
+        }
+    ]) as MatchInfoType[];
+}
+
+type MinimalMatchTeamType = Pick<MatchTeamType, "teamName" | "teamLogo">;
+
+type MatchInfoType = {
+    home: MinimalMatchTeamType;
+    away: MinimalMatchTeamType;
+    date: Date;
+    score?: {
+        home: number;
+        away: number;
+    };
+};
