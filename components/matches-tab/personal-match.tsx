@@ -12,7 +12,7 @@ type MatchInfoType = {
         home: number;
         away: number;
     };
-};
+};  //Copied from mocks.ts, to put in a shared file
 
 type PersonalMatchProps = {
     type: "past" | "upcoming";
