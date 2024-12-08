@@ -73,4 +73,8 @@ export const IMG_URLS = {
     src: 'assets/league-trophy.svg',
     alt: 'League Trophy Icon',
   },
+  EXPAND: {
+    src: 'assets/expand.svg',
+    alt: 'Expand Icon',
+  },
 };
