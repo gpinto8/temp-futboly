@@ -1,5 +1,5 @@
 import { CustomCard } from "@/components/custom/custom-card";
-import { MatchTeamType } from "@/components/live-match/live-match-section";
+import { MatchTeamType } from "@/components/tabs/live-match-tab/live-match-section";
 import { CustomImage } from "@/components/custom/custom-image";
 
 type MinimalMatchTeamType = Pick<MatchTeamType, "teamName" | "teamLogo">;

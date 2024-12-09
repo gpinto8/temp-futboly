@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { CustomCard } from "./custom/custom-card";
 import { CustomSeparator } from "./custom/custom-separator";
-import { PersonalMatch } from "@/components/matches-tab/personal-match";
+import { PersonalMatch } from "@/components/tabs/matches-tab/personal-match";
 import { getMockupMatchesHistory, getMockupAllMatchesHistory } from "@/utils/mocks";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import { CustomImage } from "./custom/custom-image";
-import { WeeklyMatches } from "./matches-tab/weekly-matches";
+import { WeeklyMatches } from "@/components/tabs/matches-tab/weekly-matches";
 
 const statistics = [
     {title: "Total Wins", value: 0},

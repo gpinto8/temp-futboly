@@ -1,4 +1,4 @@
-import { MatchTeamType, PlayerType } from "@/components/live-match/live-match-section";
+import { MatchTeamType, PlayerType } from "@/components/tabs/live-match-tab/live-match-section";
 
 export const getMockupFormation = () => {
     return {

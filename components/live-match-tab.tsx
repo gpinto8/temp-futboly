@@ -1,7 +1,7 @@
 import { CustomButton } from "@/components/custom/custom-button";
 import { CustomSeparator } from "@/components/custom/custom-separator";
-import { UpcomingMatch } from "@/components/live-match/upcoming-match";
-import { LiveMatchSection } from "@/components/live-match/live-match-section";
+import { UpcomingMatch } from "@/components/tabs/live-match-tab/upcoming-match";
+import { LiveMatchSection } from "@/components/tabs/live-match-tab/live-match-section";
 import { getMockupFormation } from "@/utils/mocks";
 
 export const LiveMatch = () => {

@@ -1,6 +1,6 @@
-import { MatchTeamType } from "@/components/live-match/live-match-section";
+import { MatchTeamType } from "@/components/tabs/live-match-tab/live-match-section";
 import { CustomSeparator } from "@/components/custom/custom-separator";
-import { CustomImage } from "../custom/custom-image";
+import { CustomImage } from "@/components/custom/custom-image";
 
 type MinimalMatchTeamType = Pick<MatchTeamType, "teamName" | "teamLogo">;
 
