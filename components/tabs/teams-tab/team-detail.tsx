@@ -17,7 +17,7 @@ export const TeamDetail = ({team}: {team: MatchTeamType}) => {
                 </div>
                 <div className="flex flex-col justify-center items-center gap-2">
                 {team.bench.map((player: PlayerType, index: number) => (
-                    <CustomCard key={index} style="gray" className="w-full">
+                    <CustomCard key={index} style="gray" size="slim" className="w-full">
                         <div className="flex justify-between items-center">
                             <div className="flex justify-between items-center">
                                 <CustomImage forceSrc={player.image} className={"border rounded-full" + (player.isCaptain ? " border-error-500" : "")}/>
