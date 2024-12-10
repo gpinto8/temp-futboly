@@ -1,12 +1,14 @@
 import { MatchTeamType, PlayerType } from "@/components/tabs/live-match-tab/live-match-section";
 import { CustomCard } from "@/components/custom/custom-card";
 import { CustomImage } from "@/components/custom/custom-image";
+import { CustomField } from "@/components/custom/custom-field";
 
 export const TeamDetail = ({team}: {team: MatchTeamType}) => {
     return (
         <div className="grid grid-cols-2">
             <div>
                 <h2 className="text-lg md:text-xl font-bold">Starting 11</h2>
+                <CustomField id="customFieldStarting11" players={team.players} module={team.module}/>
             </div>
             <div className="px-8">
                 <h2 className="text-lg md:text-xl font-bold">Bench</h2>
