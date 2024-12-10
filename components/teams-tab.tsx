@@ -1,11 +1,13 @@
 import { /*useEffect,*/ useState } from "react";
 import { CustomImage } from "@/components/custom/custom-image";
-import { getMockupPersonalTeam, getMockupTeams } from "@/utils/mocks";
+import { getMockupPersonalTeam, getMockupTeams, getMockupFormation } from "@/utils/mocks";
 import { CustomSeparator } from "@/components/custom/custom-separator";
 import { TeamRecap } from "@/components/tabs/teams-tab/team-recap";
+import { TeamDetail } from "@/components/tabs/teams-tab/team-detail";
 
 const personalTeam = getMockupPersonalTeam();
 const allTeams = getMockupTeams();
+const personalFormation = getMockupFormation();
 
 export const Teams = () => {
     const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
@@ -23,7 +25,7 @@ export const Teams = () => {
 
     return (
         <div className="flex flex-col gap-4 justify-center items-center">
-            <div className="self-start">
+            <div className="w-full self-start">
                 <h1 className="text-2xl md:text-4xl font-bold my-4">Your Team</h1>
                 <div className="flex flex-row gap-8 justify-start items-center my-2">
                     <CustomImage forceSrc={personalTeam.teamLogo} className="h-24 w-24" />
@@ -41,6 +43,9 @@ export const Teams = () => {
                             <p className="font-semibold text-gray-900">{personalTeam.leaguePosition}</p>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <TeamDetail team={personalFormation} />
                 </div>
             </div>
             <CustomSeparator withText={false} />
