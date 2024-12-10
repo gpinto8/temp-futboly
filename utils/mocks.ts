@@ -292,3 +292,40 @@ type WeeklyMatchInfoType = {
     week: number;
     matches: MatchInfoType[];
 };
+
+export const getMockupPersonalTeam = () => {
+    return {
+        teamName: 'Portugal',
+        teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
+        owner: 'John Doe',
+        leaguePosition: 1,
+        players: getMockupFormation().players,
+    };
+};
+
+export const getMockupTeams = () => {
+    const team = [
+        {
+            teamName: "Portugal",
+            teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png",
+            owner: "John Doe",
+            leaguePosition: 1,
+            players: getMockupFormation().players
+        },
+        {
+            teamName: "France",
+            teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png",
+            owner: "Capitan America",
+            leaguePosition: 2,
+            players: getMockupFormation().players
+        },
+        {
+            teamName: "Germany",
+            teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png",
+            owner: "Billo Bollo",
+            leaguePosition: 3,
+            players: getMockupFormation().players
+        }
+    ];
+    return team.concat(team).concat(team).splice(0, 7);
+}
