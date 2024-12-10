@@ -35,7 +35,7 @@ export const Matches = () => {
 
     return (
         <div>
-            <h1 className = "text-2xl md:text-4xl font-bold my-4">Your Matches</h1>
+            <h1 className="text-2xl md:text-4xl font-bold my-4">Your Matches</h1>
             <div>
                 <div id="personalMatches" className="my-4 grid grid-cols-2">
                     <div id="personaleUpcomingMatches">
