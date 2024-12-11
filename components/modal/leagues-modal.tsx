@@ -20,7 +20,7 @@ export const CreateLeagueModal = ({ buttonFull }) => {
     const [isPrivate, setIsPrivate] = useState(false);
     const { addLeague } = useSetLeague();
 
-    const openButtonStyle = (!buttonFull ? "max-w-20"  : "") + " rounded-full mb-2";
+    const openButtonStyle = (!buttonFull ? "max-w-20"  : "") + " rounded-full mb-2 px-20";
 
     const handleSubmit = async () => {
         if (!leagueName || !leaguePassword || !repeatPassword) return;  //Se uno dei valori è vuoto
