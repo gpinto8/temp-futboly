@@ -1,20 +1,25 @@
 type CustomSeparatorProps = {
-    withText: boolean;
-    text?: string;
-    className?: string;
+  withText: boolean;
+  text?: string;
 };
 
-export const CustomSeparator = ({ withText, text, className } : CustomSeparatorProps) => {
-    return (
+const Divider = () => <div className="border-t border-gray-400 flex-grow" />;
+
+export const CustomSeparator = ({
+  withText,
+  text = 'DEFAULT',
+}: CustomSeparatorProps) => {
+  return (
     <div className="flex items-center justify-center w-full my-4">
-        {withText ? (
-            <>
-            <div className="border-t border-gray-400 dark:border-white flex-grow"></div>
-            <span className="px-2 text-gray-600 dark:text-white dark:font-bold">{text ? text : "DEFAULT"}</span>
-            <div className="border-t border-gray-400 dark:border-white flex-grow"></div>
-            </>
-        ) : (
-            <div className="border-t border-gray-400 dark:border-white flex-grow"></div>
-        )}
-    </div>)
-}
+      {withText ? (
+        <>
+          <Divider />
+          <span className="px-4 text-gray-600 dark:font-bold">{text}</span>
+          <Divider />
+        </>
+      ) : (
+        <Divider />
+      )}
+    </div>
+  );
+};
