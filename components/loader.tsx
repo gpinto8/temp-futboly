@@ -13,7 +13,7 @@ export const Loader = ({ color = 'lightGray', size = 30 }: LoaderProps) => {
       size={size}
       thickness={4}
       value={100}
-      className={`text-${color}`}
+      style={{ color }}
     />
   );
 };
