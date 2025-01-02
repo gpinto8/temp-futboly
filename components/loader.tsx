@@ -13,7 +13,8 @@ export const Loader = ({ color = 'lightGray', size = 30 }: LoaderProps) => {
       size={size}
       thickness={4}
       value={100}
-      style={{ color }}
+      className={`text-${color}`}
+      style={{ color }} // This is like a fallback in case the tailwind class doesnt work some any reason
     />
   );
 };
