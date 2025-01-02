@@ -101,7 +101,7 @@ export function CustomTable<ColumnKeysProps>({
         <Loader color="main" />
       </div>
     ) : (
-      <div className="flex justify-center items-center my-2">
+      <div className="flex justify-center items-center p-4">
         <span className={isComplete?.className || 'text-gray-500'}>
           {isComplete?.text}
         </span>

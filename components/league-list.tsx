@@ -49,39 +49,40 @@ const getRows = (leagues: Array<LeaguesCollectionProps>) => {
 
 export const LeagueList = () => {
   const { getAllLeaguesByChunks } = useGetLeagues();
-  const [itemCounter, setItemCounter] = useState(0);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot>();
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [rows, setRows] = useState<
     RowsProps<LeaguesColumnKeysProps> | never[]
   >();
 
+  const leagueChunk = 10;
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (!hasMore) return;
-      const data = await getAllLeaguesByChunks(
-        itemCounter === 0 ? undefined : lastVisible,
-        5,
-      );
-      if (!data) return;
-      if (rows && rows?.length > 0 && Array.isArray(rows)) {
-        setRows([
-          ...rows,
-          ...getRows(data.leagues as LeaguesCollectionProps[]),
-        ]);
-      } else {
-        setRows(getRows(data.leagues as LeaguesCollectionProps[]));
+    (async () => {
+      const data = await getAllLeaguesByChunks(undefined, leagueChunk);
+      const leagues = data.leagues;
+      if (data) setRows(getRows(leagues));
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      // There's still data to fetch
+      if (lastVisible) {
+        const data = await getAllLeaguesByChunks(lastVisible, leagueChunk);
+        const leagues = data.leagues;
+        if (data && leagues && rows) setRows([...rows, ...getRows(leagues)]);
       }
-      setHasMore(data.hasMore);
-      setLastVisible(data.lastVisible as QueryDocumentSnapshot);
-    };
+      // There's no more data to fetch
+      else setHasMore(false);
+    })();
+  }, [lastVisible]);
 
-    fetchData();
-
-    return () => {
-      //console.log('Component unmounted');
-    };
-  }, [itemCounter]);
+  const onEndReached = async () => {
+    const data = await getAllLeaguesByChunks(lastVisible, leagueChunk);
+    const dataLastVisible = data.lastVisible;
+    if (data && dataLastVisible) setLastVisible(dataLastVisible);
+  };
 
   return (
     <div>
@@ -93,17 +94,13 @@ export const LeagueList = () => {
             rows={rows}
             elevation={1}
             className="deep-faded-shadow-around rounded-l min-h-[45vh]"
-            onEndReached={() => {
-              hasMore
-                ? setItemCounter(itemCounter + 1)
-                : null; /*We could handle better for example showing "no more leagues"*/
-            }}
+            onEndReached={onEndReached}
             isComplete={{ value: !hasMore, text: 'No more leagues' }}
           />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-4 mt-4">
-          <p className="text-lg font-semibold text-gray-500">
+          <p className="text-lg font-semibold text-gray-500 p-4">
             No leagues found
           </p>
         </div>
