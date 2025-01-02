@@ -3,7 +3,6 @@
   "explorer.fileNesting.patterns": {
     "*.tsx": "$(capture).tsx, $(capture).css, $(capture).scss"
   },
-  "explorer.autoReveal": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.configPath": ".prettierrc"
 }
