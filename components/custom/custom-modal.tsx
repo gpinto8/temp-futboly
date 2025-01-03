@@ -39,12 +39,12 @@ type CustomModalProps = {
     value: boolean;
     style: 'slim' | 'large';
   };
-  handleClose?: () => void;
+  handleClose?: () => void; // This is also triggered when the modal gets closed by clicking outside the modal itself
   openButton?: {
     label: string;
     isText?: boolean;
     className?: string;
-    handleClick?: () => void;
+    handleClick?: () => void; // This gets triggered when clicking at the CTA
     style?: CustomButtonProps['style'];
   };
   closeButton?: {

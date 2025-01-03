@@ -75,13 +75,16 @@ export const CreateLeagueModal = ({ buttonFull }) => {
   return (
     <CustomModal
       title={<p className="text-3xl font-bold">Create Your League</p>}
-      closeButton={{ label: 'Create', disabled: disabledForm }}
+      closeButton={{
+        label: 'Create',
+        disabled: disabledForm,
+        handleClick: handleSubmit,
+      }}
       openButton={{
         label: 'Create',
         style: 'main',
         className: openButtonStyle,
       }}
-      handleClose={handleSubmit}
       isDialog={{ value: true, style: 'large' }}
     >
       <div className="flex flex-col gap-4 mt-2">
