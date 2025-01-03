@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomModal } from '@/components/custom/custom-modal';
 import { CustomInput, InputProps } from '@/components/custom/custom-input';
 import { InputPassword } from '@/components/input/input-password';
@@ -20,6 +20,7 @@ export const CreateLeagueModal = ({ buttonFull }) => {
     useState<HandleChangeParamProps>();
   const [resetForm, setResetForm] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [disabledForm, setDisabledForm] = useState(true);
   const { addLeague } = useSetLeague();
 
   const openButtonStyle =
@@ -51,14 +52,30 @@ export const CreateLeagueModal = ({ buttonFull }) => {
     }
   };
 
-  const toggleIsPrivate = (event: any) => {
-    setIsPrivate(event.target.checked);
-  };
+  const toggleIsPrivate = (event: any) => setIsPrivate(event.target.checked);
+
+  useEffect(() => {
+    if (isPrivate) {
+      setDisabledForm(
+        !(
+          leagueName?.isValid &&
+          leagueName?.value &&
+          leaguePassword?.isValid &&
+          leaguePassword?.value &&
+          repeatPassword?.isValid &&
+          repeatPassword?.value &&
+          leaguePassword?.value === repeatPassword?.value
+        ),
+      );
+    } else {
+      setDisabledForm(!(leagueName?.isValid && leagueName?.value));
+    }
+  }, [isPrivate, leagueName, leaguePassword, repeatPassword]);
 
   return (
     <CustomModal
       title={<p className="text-3xl font-bold">Create Your League</p>}
-      closeButton={{ label: 'Create', disabled: !leagueName?.value }}
+      closeButton={{ label: 'Create', disabled: disabledForm }}
       openButton={{
         label: 'Create',
         style: 'main',
@@ -73,6 +90,7 @@ export const CreateLeagueModal = ({ buttonFull }) => {
             label="League Name"
             handleChange={setLeagueName}
             endAdorment={{ img: 'LEAGUE_TROPHY' }}
+            resetValue={resetForm}
           />
         </div>
         {isPrivate && (
