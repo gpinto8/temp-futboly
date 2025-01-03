@@ -1,13 +1,13 @@
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { leagueActions } from '@/store/slices/league';
-import { useGetLeagues } from './use-get-leagues';
 import { getShortBase64Id } from '@/utils/id';
 import {
   LeaguesCollectionProps,
   MappedLeaguesProps,
 } from '@/firebase/db-types';
 import { DocumentReference } from 'firebase/firestore';
+import { useSetUsers } from '../users/use-set-users';
 
 type LeagueFormDetailsProps = {
   name: string;
@@ -16,9 +16,9 @@ type LeagueFormDetailsProps = {
 };
 
 export const useSetLeague = () => {
-  const { getLeagueById } = useGetLeagues();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user); // Can't use the "useGetUsers" hook because it creates an infinite loop since it uses the this hook
+  const { deleteLeague, deleteActiveLeagueIfExists } = useSetUsers();
 
   const addLeague = async (leagueProps: LeagueFormDetailsProps) => {
     if (!leagueProps.name) return;
@@ -58,14 +58,15 @@ export const useSetLeague = () => {
   const exitLeague = async (
     leagueId: string,
     league: LeaguesCollectionProps,
-    playerId: string, // TODO: name better the user playerId -> userId
+    userId: string,
   ) => {
-    if (!leagueId || !playerId || !league) return;
+    if (!leagueId || !userId || !league) return;
 
     const newPlayers = Object.entries(league.players).filter(
-      ([player, role]) => player !== playerId,
+      ([player]) => player !== userId,
     );
 
+    // Delete the league from the leagues
     if (newPlayers.length === 0) {
       await firestoreMethods('leagues', leagueId as any).deleteDocument();
     } else {
@@ -74,6 +75,10 @@ export const useSetLeague = () => {
         newPlayers,
       );
     }
+
+    // Delete also the league's reference from user's data
+    await deleteLeague(userId, leagueId);
+    await deleteActiveLeagueIfExists(userId, leagueId);
 
     location.reload(); // TODO: set to redux the updated league data
   };
@@ -105,5 +110,10 @@ export const useSetLeague = () => {
     if (userUpdate) dispatch(leagueActions.setLeague(league)); //TODO: Dispatch also the updated user info
   };
 
-  return { addLeague, exitLeague, setLeague, addPlayerToLeague };
+  return {
+    addLeague,
+    exitLeague,
+    setLeague,
+    addPlayerToLeague,
+  };
 };

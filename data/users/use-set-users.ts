@@ -13,12 +13,14 @@ import { firestoreMethods } from '@/firebase/firestore-methods';
 import { useAppDispatch } from '@/store/hooks';
 import { userActions } from '@/store/slices/user';
 import { errorActions } from '@/store/slices/error';
+import { useGetLeagues } from '../leagues/use-get-leagues';
 
 export const useSetUsers = () => {
   const router = useRouter();
   const auth = getAuth(app);
   const firebaseErrors = getFirebaseErrors();
   const dispatch = useAppDispatch();
+  const { getLeagueRefById } = useGetLeagues();
 
   // LOGIN USER TO APP USING EMAIL/PASSWORD
   const signInUser = async (email: string, password: string) => {
@@ -79,21 +81,22 @@ export const useSetUsers = () => {
   };
 
   // SET USER TO REDUX STORE FROM ITS USER ID
-  const setUser = async (uid: string) => {
+  const setUser = async (userId: string) => {
     const data: any = await firestoreMethods(
       'users',
-      uid as any,
+      userId as any,
     ).getDocumentData();
 
     // If it exists then ok
     if (data?.username) {
-
-      dispatch(userActions.setUser({ 
-        uid, 
-        username: data?.username,
-        activeLeague: data?.activeLeague,
-        activeCompetitions: data?.activeCompetitions,
-      }));
+      dispatch(
+        userActions.setUser({
+          uid: userId,
+          username: data?.username,
+          activeLeague: data?.activeLeague,
+          activeCompetitions: data?.activeCompetitions,
+        }),
+      );
     }
     // Otherwise the user doesn't exist in Firestore so we cant't proceed
     else {
@@ -106,10 +109,40 @@ export const useSetUsers = () => {
     }
   };
 
+  // DELETE THE "activeLeague" FIELD IF THE LEAGUE ID MATCHES THE CURRENT ONE
+  const deleteActiveLeagueIfExists = async (
+    userId: string, // TODO: Maybe grab it from redux? (also below)
+    leagueId: string,
+  ) => {
+    if (userId && leagueId) {
+      const leagueRef = getLeagueRefById(leagueId);
+      if (leagueRef) {
+        await firestoreMethods('users', userId as any).deleteFieldMatchingValue(
+          'activeLeague',
+          leagueRef,
+          (currentValue, value) => currentValue.id === value.id,
+        );
+      }
+    }
+  };
+
+  // DELETE A LEAGUE FROM THE "leagues" ARRAY FIELD
+  const deleteLeague = async (userId: string, leagueId: string) => {
+    const leagueRef = getLeagueRefById(leagueId);
+    if (leagueRef) {
+      await firestoreMethods('users', userId as any).deleteValueFromArrayField(
+        'leagues',
+        leagueRef,
+      );
+    }
+  };
+
   return {
     signInUser,
     signUpUser,
     logoutUser,
     setUser,
+    deleteActiveLeagueIfExists,
+    deleteLeague,
   };
 };

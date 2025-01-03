@@ -17,9 +17,16 @@ import {
   deleteDoc,
   writeBatch,
   DocumentReference,
+  arrayRemove,
+  deleteField,
 } from 'firebase/firestore';
 import { app } from './app';
-import { CompetitionsCollectionProps, LeaguesCollectionProps, TeamsCollectionProps, UsersCollectionProps } from './db-types';
+import {
+  CompetitionsCollectionProps,
+  LeaguesCollectionProps,
+  TeamsCollectionProps,
+  UsersCollectionProps,
+} from './db-types';
 
 export const FIRESTORE_COLLECTIONS = {
   users: 'users',
@@ -44,7 +51,10 @@ export const firestoreMethods = (
     const databaseCollection = collection(database, collectionName);
     const documentToGet = documentId ? documentId : documentName;
     if (!documentToGet) {
-      console.error('No document ID specified for collection: ', collectionName);
+      console.error(
+        'No document ID specified for collection: ',
+        collectionName,
+      );
       return null;
     }
     const databaseDocument = doc(databaseCollection, documentToGet);
@@ -59,14 +69,18 @@ export const firestoreMethods = (
       const docSnapshot = await getDoc(docRef);
       return {
         ...docSnapshot.data(),
-        id: docRef.id
+        id: docRef.id,
       };
     } catch (error) {
       console.error('Error adding document: ', error);
     }
   };
 
-  const setWhereFilter = (field: string, operator: WhereFilterOp, value: any) => {
+  const setWhereFilter = (
+    field: string,
+    operator: WhereFilterOp,
+    value: any,
+  ) => {
     const database = getFirestore(app);
     const databaseCollection = collection(database, collectionName);
     if (queryFilters) {
@@ -80,70 +94,90 @@ export const firestoreMethods = (
     if (!queryFilters) return;
     try {
       const querySnapshot = await getDocs(queryFilters);
-      const docs = querySnapshot.docs.map(doc => {
+      const docs = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return data ? { id: doc.id, ...data } : { id: doc.id };
       });
 
-      if (collectionName === "competitions") {
-        return docs ? docs as CompetitionsCollectionProps[] : [];
-      } else if (collectionName === "leagues") {
-        return docs ? docs as LeaguesCollectionProps[] : [];
-      } else if (collectionName === "teams") {
-        return docs ? docs as TeamsCollectionProps[] : [];
-      } else if (collectionName === "users") {
-        return docs ? docs as UsersCollectionProps[] : [];
+      if (collectionName === 'competitions') {
+        return docs ? (docs as CompetitionsCollectionProps[]) : [];
+      } else if (collectionName === 'leagues') {
+        return docs ? (docs as LeaguesCollectionProps[]) : [];
+      } else if (collectionName === 'teams') {
+        return docs ? (docs as TeamsCollectionProps[]) : [];
+      } else if (collectionName === 'users') {
+        return docs ? (docs as UsersCollectionProps[]) : [];
       }
-      return docs ? docs as any : [];
+      return docs ? (docs as any) : [];
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
   };
 
-  const getDocsByQuery = async (field: string, operator: WhereFilterOp, value: any) => {
+  const getDocsByQuery = async (
+    field: string,
+    operator: WhereFilterOp,
+    value: any,
+  ) => {
     const database = getFirestore(app);
     const databaseCollection = collection(database, collectionName);
     try {
       const q = query(databaseCollection, where(field, operator, value));
       const querySnapshot = await getDocs(q);
-      const docs = querySnapshot.docs.map(doc => {return {id: doc.id, ...doc.data()}});
-      if (collectionName === "competitions") {
-        return docs ? docs as CompetitionsCollectionProps[] : [];
-      } else if (collectionName === "leagues") {
-        return docs ? docs as LeaguesCollectionProps[] : [];
-      } else if (collectionName === "teams") {
-        return docs ? docs as TeamsCollectionProps[] : [];
-      } else if (collectionName === "users") {
-        return docs ? docs as UsersCollectionProps[] : [];
+      const docs = querySnapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      });
+      if (collectionName === 'competitions') {
+        return docs ? (docs as CompetitionsCollectionProps[]) : [];
+      } else if (collectionName === 'leagues') {
+        return docs ? (docs as LeaguesCollectionProps[]) : [];
+      } else if (collectionName === 'teams') {
+        return docs ? (docs as TeamsCollectionProps[]) : [];
+      } else if (collectionName === 'users') {
+        return docs ? (docs as UsersCollectionProps[]) : [];
       }
-      return docs ? docs as any : [];
+      return docs ? (docs as any) : [];
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
   };
 
-  const getDocsByChunk = async (chunkSize: number, startFrom?: QueryDocumentSnapshot) => {
+  const getDocsByChunk = async (
+    chunkSize: number,
+    startFrom?: QueryDocumentSnapshot,
+  ) => {
     const database = getFirestore(app);
     const databaseCollection = collection(database, collectionName);
     try {
-      const q = startFrom 
-        ? query(databaseCollection, startAfter(startFrom), limit(chunkSize)) 
+      const q = startFrom
+        ? query(databaseCollection, startAfter(startFrom), limit(chunkSize))
         : query(databaseCollection, limit(chunkSize));
       const querySnapshot = await getDocs(q);
       const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
       const hasMore = querySnapshot.size === chunkSize;
-      const docs = querySnapshot.docs.map(doc => {return {id: doc.id, ...doc.data()}});
+      const docs = querySnapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      });
       return { docs, lastVisible: newLastVisible, hasMore };
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
-  }
+  };
 
   // GET THE DOCUMENT SNAPSHOT
   const getDocSnapshot = async () => {
     const document = getDocRef();
     if (!document) return null;
     return await getDoc(document);
+  };
+
+  // GET FIELD DATA BY THE FIELD KEY
+  const getFieldData = async (key: string) => {
+    if (key) {
+      const docSnapshot = await getDocSnapshot();
+      const value = docSnapshot?.get(key);
+      if (value) return value;
+    }
   };
 
   // GET DATA FROM A DOCUMENT
@@ -166,8 +200,7 @@ export const firestoreMethods = (
     if (!documentSnapshot || !documentSnapshot.exists()) return null;
     const data = documentSnapshot.data();
     return data ? { id: documentSnapshot.id, ...data } : null;
-  }
-
+  };
 
   const createField = async (field: string, value: any) => {
     if (field && value) {
@@ -213,13 +246,17 @@ export const firestoreMethods = (
 
       const fieldValue = fieldType === 'array' ? arrayUnion(value) : value;
       const updatingFields = { [field]: fieldValue };
-      
+
       await updateDoc(docRef, updatingFields);
       return true;
     }
   };
 
-  const deleteDocumentsByQuery = async (field: string, operator: WhereFilterOp, value: any) => {
+  const deleteDocumentsByQuery = async (
+    field: string,
+    operator: WhereFilterOp,
+    value: any,
+  ) => {
     const database = getFirestore(app);
     const databaseCollection = collection(database, collectionName);
     try {
@@ -230,20 +267,45 @@ export const firestoreMethods = (
       querySnapshot.forEach((doc) => {
         batch.delete(doc.ref);
       });
-    
+
       await batch.commit();
-      // console.log("Documenti cancellati con successo.");
     } catch (error) {
       console.error('Error getting documents: ', error);
     }
-  }
+  };
 
   const deleteDocument = async () => {
     const docRef = getDocRef();
     if (!docRef) return false;
     await deleteDoc(docRef);
     return true;
-  }
+  };
+
+  const deleteValueFromArrayField = async (
+    key: string, // TODO: map all possible collection, documents and fields possible in TS so there's no typos (in all functions), since now we just accept strings
+    value: any,
+  ) => {
+    if (key && value) {
+      const docRef = getDocRef();
+      if (docRef) await updateDoc(docRef, { [key]: arrayRemove(value) });
+    }
+  };
+
+  // DELETE THE FIELD FROM THE ONLY IF THE CURRENT VALUE IS THE SAME AS THE ONE YOU ARE PASSING (e.g the "activeLeague" of "users" .. because maybe you want to delete it if the current league you are exiting from is the same as the current one)
+  const deleteFieldMatchingValue = async (
+    key: string,
+    value: any,
+    comparator: (currentValue: any, value: any) => boolean, // We are not sure if the values to compare are primite values or not, so we just pass the comparison to the dev that want to use it
+  ) => {
+    if (key && value) {
+      const docRef = getDocRef();
+      if (docRef) {
+        const fieldValue = await getFieldData(key);
+        const matches = comparator(fieldValue, value);
+        if (matches) await updateDoc(docRef, { [key]: deleteField() });
+      }
+    }
+  };
 
   return {
     getDocRef,
@@ -259,6 +321,8 @@ export const firestoreMethods = (
     deleteDocument,
     deleteDocumentsByQuery,
     setWhereFilter,
-    executeQuery
+    executeQuery,
+    deleteValueFromArrayField,
+    deleteFieldMatchingValue,
   };
 };
