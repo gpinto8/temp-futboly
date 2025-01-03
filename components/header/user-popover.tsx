@@ -13,7 +13,10 @@ import {
   JoinPublicLeagueModal,
 } from '@/components/modal/leagues-modal';
 import { LeaguesModal } from '@/components/modal/leagues-modal';
-import { LeaguesCollectionProps, UsersCollectionProps } from '@/firebase/db-types';
+import {
+  LeaguesCollectionProps,
+  UsersCollectionProps,
+} from '@/firebase/db-types';
 // import { leagueActions } from '@/store/slices/league';
 import { Loader } from '@/components/loader';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
@@ -51,7 +54,7 @@ const getRows = (
   leagues: Array<LeaguesCollectionProps>,
   setLeagues: any,
   user: UsersCollectionProps,
-  exitLeague: any,
+  deleteElement: (league: LeaguesCollectionProps, userId: string) => void,
 ) => {
   return leagues.map((league: LeaguesCollectionProps) => {
     return {
@@ -82,7 +85,7 @@ const getRows = (
           label="Exit"
           disableElevation
           className="rounded-full text-xs py-1 my-1 px-2 h-full"
-          handleClick={() => exitLeague(league, user)}
+          handleClick={() => deleteElement(league, user.id)}
         />
       ),
     };
@@ -135,8 +138,8 @@ const UserSection = ({ handleClose, isModal }) => {
   const { exitLeague } = useSetLeague();
   const [rows, setRows] = useState<RowsProps<LeaguesColumnKeysProps>>();
 
-  const deleteElement = (league, user) => {
-    exitLeague(league.id, league, user.uid);
+  const deleteElement = (league: LeaguesCollectionProps, userId: string) => {
+    exitLeague(league.id, league, userId);
     setCheck(true);
   };
 
