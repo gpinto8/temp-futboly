@@ -13,7 +13,7 @@ export default ({
 }>) => {
   return (
     <html>
-      <body>
+      <body suppressHydrationWarning={true}>
         <StoreProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div className="flex justify-center">{children}</div>
