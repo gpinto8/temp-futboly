@@ -55,7 +55,7 @@ export const LeagueList = () => {
     RowsProps<LeaguesColumnKeysProps> | never[]
   >();
 
-  const leagueChunk = 10;
+  const leagueChunk = 15;
 
   useEffect(() => {
     (async () => {
@@ -93,7 +93,7 @@ export const LeagueList = () => {
             columns={columns}
             rows={rows}
             elevation={1}
-            className="deep-faded-shadow-around rounded-l min-h-[45vh]"
+            className="deep-faded-shadow-around rounded-l min-h-[55vh]"
             onEndReached={onEndReached}
             isComplete={{ value: !hasMore, text: 'No more leagues' }}
           />
