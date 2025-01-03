@@ -39,7 +39,7 @@ type CustomModalProps = {
     value: boolean;
     style: 'slim' | 'large';
   };
-  handleClose?: () => void; // This is also triggered when the modal gets closed by clicking outside the modal itself
+  handleClose?: () => void; // This gets triggered when the modal gets closed: by clicking outside the modal itself or by clicking the X
   openButton?: {
     label: string;
     isText?: boolean;

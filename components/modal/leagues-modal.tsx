@@ -26,6 +26,30 @@ export const CreateLeagueModal = ({ buttonFull }) => {
   const openButtonStyle =
     (!buttonFull ? 'max-w-20' : '') + ' rounded-full mb-2 px-20';
 
+  useEffect(() => {
+    if (isPrivate) {
+      setDisabledForm(
+        !(
+          leagueName?.isValid &&
+          leagueName?.value &&
+          leaguePassword?.isValid &&
+          leaguePassword?.value &&
+          repeatPassword?.isValid &&
+          repeatPassword?.value &&
+          leaguePassword?.value === repeatPassword?.value
+        ),
+      );
+    } else {
+      setDisabledForm(!(leagueName?.isValid && leagueName?.value));
+    }
+  }, [isPrivate, leagueName, leaguePassword, repeatPassword]);
+
+  const resetInputs = () => {
+    setLeagueName({ value: '', isValid: false });
+    setLeaguePassword({ value: '', isValid: false });
+    setRepeatPassword({ value: '', isValid: false });
+  };
+
   const handleSubmit = async () => {
     let response: any;
 
@@ -54,23 +78,10 @@ export const CreateLeagueModal = ({ buttonFull }) => {
 
   const toggleIsPrivate = (event: any) => setIsPrivate(event.target.checked);
 
-  useEffect(() => {
-    if (isPrivate) {
-      setDisabledForm(
-        !(
-          leagueName?.isValid &&
-          leagueName?.value &&
-          leaguePassword?.isValid &&
-          leaguePassword?.value &&
-          repeatPassword?.isValid &&
-          repeatPassword?.value &&
-          leaguePassword?.value === repeatPassword?.value
-        ),
-      );
-    } else {
-      setDisabledForm(!(leagueName?.isValid && leagueName?.value));
-    }
-  }, [isPrivate, leagueName, leaguePassword, repeatPassword]);
+  const handleClose = () => {
+    resetInputs();
+    setIsPrivate(false);
+  };
 
   return (
     <CustomModal
@@ -85,6 +96,7 @@ export const CreateLeagueModal = ({ buttonFull }) => {
         style: 'main',
         className: openButtonStyle,
       }}
+      handleClose={handleClose}
       isDialog={{ value: true, style: 'large' }}
     >
       <div className="flex flex-col gap-4 mt-2">
@@ -93,7 +105,6 @@ export const CreateLeagueModal = ({ buttonFull }) => {
             label="League Name"
             handleChange={setLeagueName}
             endAdorment={{ img: 'LEAGUE_TROPHY' }}
-            resetValue={resetForm}
           />
         </div>
         {isPrivate && (
