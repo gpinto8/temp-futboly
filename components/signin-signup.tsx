@@ -90,17 +90,17 @@ export const SignInSignUp = ({
               className="flex flex-col gap-3"
               action="#"
             >
-              <InputEmail handleChange={setEmail} resetValue={resetForm} />
-              <InputPassword
-                handleChange={setPassword}
-                resetValue={resetForm}
-              />
               {!hideUserInput && (
                 <InputUsername
                   handleChange={setUsername}
                   resetValue={resetForm}
                 />
               )}
+              <InputEmail handleChange={setEmail} resetValue={resetForm} />
+              <InputPassword
+                handleChange={setPassword}
+                resetValue={resetForm}
+              />
               <CustomButton
                 label={title}
                 disabled={buttonDisabled}
