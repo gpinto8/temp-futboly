@@ -18,7 +18,12 @@ type LeagueFormDetailsProps = {
 export const useSetLeague = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user); // Can't use the "useGetUsers" hook because it creates an infinite loop since it uses the this hook
-  const { deleteLeague, deleteActiveLeagueIfExists } = useSetUsers();
+  const {
+    deleteLeague,
+    deleteActiveLeagueIfExists,
+    setActiveLeague,
+    addLeagueToUserLeagues,
+  } = useSetUsers();
 
   const addLeague = async (leagueProps: LeagueFormDetailsProps) => {
     if (!leagueProps.name) return;
@@ -85,10 +90,9 @@ export const useSetLeague = () => {
   const addPlayerToLeague = async (leagueId: string, playerId: string) => {
     if (!leagueId || !playerId) return;
 
-    await firestoreMethods('leagues', leagueId as any).createField(
-      playerId,
-      'guest',
-    );
+    await firestoreMethods('leagues', leagueId as any).createField('players', {
+      [playerId]: 'guest',
+    });
 
     firestoreMethods('leagues', leagueId as any).getDocRef();
 
@@ -96,17 +100,11 @@ export const useSetLeague = () => {
   };
 
   // SET LEAGUE TO REDUX FROM THE USER ID --> Here I can pass directly the League object, avoid the fetch and dispatch directly the league with a "random" competition
-  const setLeague = async (league: MappedLeaguesProps, uid: string) => {
-    // Update the user active league
-    const leagueRef = firestoreMethods('leagues', league.id as any).getDocRef();
-    if (!leagueRef) return;
+  const setLeague = async (league: MappedLeaguesProps, userId: string) => {
+    await setActiveLeague(userId, league.id);
+    await addLeagueToUserLeagues(userId, league.id);
 
-    const userUpdate = await firestoreMethods(
-      'users',
-      uid as any,
-    ).replaceRefField('activeLeague', leagueRef); // Using data.id and not just id for "safety"
-
-    if (userUpdate) dispatch(leagueActions.setLeague(league)); //TODO: Dispatch also the updated user info
+    dispatch(leagueActions.setLeague(league)); //TODO: Dispatch also the updated user info
   };
 
   return {

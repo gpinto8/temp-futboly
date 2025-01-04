@@ -128,12 +128,41 @@ export const useSetUsers = () => {
 
   // DELETE A LEAGUE FROM THE "leagues" ARRAY FIELD
   const deleteLeague = async (userId: string, leagueId: string) => {
-    const leagueRef = getLeagueRefById(leagueId);
-    if (leagueRef) {
-      await firestoreMethods('users', userId as any).deleteValueFromArrayField(
-        'leagues',
-        leagueRef,
-      );
+    if (userId && leagueId) {
+      const leagueRef = getLeagueRefById(leagueId);
+      if (leagueRef) {
+        await firestoreMethods(
+          'users',
+          userId as any,
+        ).deleteValueFromArrayField('leagues', leagueRef);
+      }
+    }
+  };
+
+  // SET USER'S "activeLeague" to the league you pass
+  const setActiveLeague = async (userId: string, leagueId: string) => {
+    if (userId && leagueId) {
+      const leagueRef = getLeagueRefById(leagueId);
+      if (leagueRef) {
+        await firestoreMethods('users', userId as any).replaceRefField(
+          'activeLeague',
+          leagueRef,
+        );
+      }
+    }
+  };
+
+  // ADD LEAGUE REF TO THE USERS "leagues" ARRAY FIELD
+  const addLeagueToUserLeagues = async (userId: string, leagueId) => {
+    if (userId && leagueId) {
+      const leagueRef = getLeagueRefById(leagueId);
+      if (leagueRef) {
+        await firestoreMethods('users', userId as any).addDataToField(
+          'leagues',
+          leagueRef,
+          'array',
+        );
+      }
     }
   };
 
@@ -144,5 +173,7 @@ export const useSetUsers = () => {
     setUser,
     deleteActiveLeagueIfExists,
     deleteLeague,
+    setActiveLeague,
+    addLeagueToUserLeagues,
   };
 };
