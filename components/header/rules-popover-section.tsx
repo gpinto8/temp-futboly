@@ -48,8 +48,9 @@ export const RulesPopoverSection = () => {
   const formations = getFormations();
 
   return (
-    <div className="md:max-w-[600px] md:w-[70vw] -mt-6 flex flex-col gap-4">
+    <div className="md:max-w-[600px] md:w-[70vw] -mt-6 flex flex-col gap-6">
       <div id="rulesSection">
+        {/* MATCH BONUS */}
         <div id="matchBonus">
           <h4 className="text-pretty font-semibald text-l mb-1">Match Bonus</h4>
           <CustomCard
@@ -73,6 +74,7 @@ export const RulesPopoverSection = () => {
             ))}
           </CustomCard>
         </div>
+        {/* GOAL RANGES */}
         <div className="flex flex-col sm:flex-row justify-around items-stretch my-4 gap-4 w-full">
           <div id="goalRanges">
             <h4 className="text-pretty font-semibald text-l mb-1">
@@ -117,17 +119,18 @@ export const RulesPopoverSection = () => {
           </div>
         </div>
       </div>
-      <div id="rulesBasedOn" className="mt-0 md:mt-6">
+      {/* FORMATIONS */}
+      <div id="rulesBasedOn" className="mt-0 md:mt-6 flex flex-col gap-4">
         <h3 className="text-main text-pretty text-xl">
           Based on these real leagues:
         </h3>
-        <div className="flex flex-row md:justify-between items-center gap-4 flex-wrap md:flex-nowrap">
+        <div className="flex flex-row md:justify-between items-center gap-4 flex-wrap md:flex-nowrap w-full">
           {[1, 2, 3, 4, 5].map((i, index) => (
             <CustomCard style="gray" key={index}>
               <CustomImage
                 forceSrc="https://cdn.sportmonks.com/images/soccer/leagues/271.png"
-                width={32}
-                height={32}
+                width={64}
+                height={64}
               />
             </CustomCard>
           ))}
