@@ -23,9 +23,9 @@ export const RulesPopover = ({
       externalStatus={open}
       title=""
       handleClose={handleClose}
-      closeButton={{label: " ", hide: true}}
+      closeButton={{ label: ' ', hide: true }}
     >
-      <RulesSection />
+      <RulesSection hideCloseButton />
     </CustomModal>
   ) : (
     <Popover
@@ -35,21 +35,37 @@ export const RulesPopover = ({
       onClose={handleClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     >
-      <RulesSection />
+      <RulesSection handleClose={handleClose} />
     </Popover>
   );
 };
 
-const RulesSection = () => {
+type RulesSectionProps = {
+  hideCloseButton?: boolean;
+  handleClose?: () => void;
+};
+
+const RulesSection = ({ hideCloseButton, handleClose }: RulesSectionProps) => {
   const matchBonusRules = getMatchBonus();
   const goalRanges = getGoalRanges();
   const formations = getFormations();
 
   return (
-    <>
+    <div className="md:max-w-[600px] md:w-[70vw] -mt-6 md:mt-2 flex flex-col gap-4">
+      {!hideCloseButton && (
+        <div className="flex justify-end w-full px-4">
+          <CustomImage
+            imageKey="CLOSE_ICON"
+            className="h-4 w-4"
+            width={16}
+            height={16}
+            onClick={handleClose}
+          />
+        </div>
+      )}
       <div
         id="rulesTitle"
-        className="flex flex-row items-center justify-center mt-2"
+        className="flex flex-row items-center justify-center mb-4"
       >
         <h2 className="text-main text-pretty text-2xl mr-2">Futboly's</h2>
         <h2 className="font-semibold text-pretty text-2xl">League Rules</h2>
@@ -57,11 +73,15 @@ const RulesSection = () => {
       <div id="rulesSection" className="px-2 sm:px-4">
         <div id="matchBonus">
           <h4 className="text-pretty font-semibald text-l mb-1">Match Bonus</h4>
-          <CustomCard style="gray" id="matchBonusContent" className="text-sm">
+          <CustomCard
+            style="gray"
+            id="matchBonusContent"
+            className="text-sm flex gap-4 md:gap-1 flex-wrap justify-start"
+          >
             {matchBonusRules.map((div, index) => (
               <div
                 key={index}
-                className="flex flex-row justify-between items-center gap-1"
+                className="flex flex-col md:flex-row justify-between items-center gap-1 md:w-[-webkit-fill-available]"
               >
                 {div.map((rule, index) => (
                   <RulesPair
@@ -74,12 +94,16 @@ const RulesSection = () => {
             ))}
           </CustomCard>
         </div>
-        <div className="flex flex-column sm:flex-row justify-around items-stretch my-4 gap-4">
+        <div className="flex flex-col sm:flex-row justify-around items-stretch my-4 gap-4 w-full">
           <div id="goalRanges">
             <h4 className="text-pretty font-semibald text-l mb-1">
               Goal Ranges
             </h4>
-            <CustomCard style="gray" id="goalRangesContent" className="text-sm">
+            <CustomCard
+              style="gray"
+              id="goalRangesContent"
+              className="text-sm h-full"
+            >
               {goalRanges.map((range, index) => (
                 <div
                   key={index}
@@ -94,11 +118,15 @@ const RulesSection = () => {
             <h4 className="text-pretty font-semibald text-l mb-1">
               Formations
             </h4>
-            <CustomCard style="gray" id="formationsContent" className="text-sm">
+            <CustomCard
+              style="gray"
+              id="formationsContent"
+              className="text-sm flex flex-col md:flex-row gap-6 h-full"
+            >
               {formations.map((formation, index) => (
                 <div
                   key={index}
-                  className="flex flex-row justify-between items-center gap-2"
+                  className="flex flex-row justify-center items-center gap-2"
                 >
                   <FormationsPair
                     title={formation?.title}
@@ -110,13 +138,13 @@ const RulesSection = () => {
           </div>
         </div>
       </div>
-      <div id="rulesBasedOn">
-        <h3 className="text-main text-pretty pl-4 text-xl mt-2">
+      <div id="rulesBasedOn" className="mt-0 md:mt-6">
+        <h3 className="text-main text-pretty pl-4 text-xl">
           Based on these real leagues:
         </h3>
-        <div className="flex flex-row justify-between items-center px-4 py-2">
+        <div className="flex flex-row md:justify-between items-center p-2 gap-4 flex-wrap md:flex-nowrap">
           {[1, 2, 3, 4, 5].map((i, index) => (
-            <CustomCard style="light" key={index}>
+            <CustomCard style="gray" key={index}>
               <CustomImage
                 forceSrc="https://cdn.sportmonks.com/images/soccer/leagues/271.png"
                 className="mx-2"
@@ -127,7 +155,7 @@ const RulesSection = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -161,7 +189,7 @@ const RulesPair = ({ title, desc }: RulesPairProps) => {
 
 const FormationsPair = ({ title, desc }: FormationsPairProps) => {
   return (
-    <div className="max-w-[350px] text-center">
+    <div className="text-center h-full md:flex md:flex-col md:gap-2">
       <p className="text-nowrap font-semibold">{title}:</p>
       <div className="flex flex-row flex-wrap justify-center items-center">
         {desc?.map((formation, index) => (
