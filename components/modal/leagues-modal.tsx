@@ -149,6 +149,7 @@ export const JoinPublicLeagueModal = ({
   const [leaguePasswordInput, setLeaguePasswordInput] =
     useState<HandleChangeParamProps | null>(null);
   const [resetForm, setResetForm] = useState(false);
+  const [disabledForm, setDisabledForm] = useState(true);
   const { addPlayerToLeague } = useSetLeague();
   const user = useAppSelector((state) => state.user);
 
@@ -163,6 +164,11 @@ export const JoinPublicLeagueModal = ({
     }
     setResetForm(true);
   };
+
+  useEffect(
+    () => setDisabledForm(!leaguePasswordInput?.value),
+    [leaguePasswordInput],
+  );
 
   const handleClose = () => {
     setResetForm(true);
@@ -182,6 +188,7 @@ export const JoinPublicLeagueModal = ({
         style: 'main',
         className: 'mt-4 rounded-full',
         handleClick: handleClick,
+        disabled: disabledForm,
       }}
       openButton={{
         label: 'Join',
@@ -196,11 +203,11 @@ export const JoinPublicLeagueModal = ({
         <CustomInput label="League ID" initialValue={league.name} disabled />
       </div>
       {league.isPrivate && (
-        <CustomInput
+        <InputPassword
           label="League Password"
-          type="password"
           handleChange={setLeaguePasswordInput}
           resetValue={resetForm}
+          avoidPattern // Because the password can be whatever (it doesn't respect the password requirements of our password inputs)
         />
       )}
     </CustomModal>

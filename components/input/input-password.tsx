@@ -5,9 +5,15 @@ type InputPasswordProps = {
   label?: string;
   resetValue: InputProps['resetValue'];
   handleChange: InputProps['handleChange'];
+  avoidPattern?: boolean;
 };
 
-export const InputPassword = ({ resetValue, handleChange, label }: InputPasswordProps) => {
+export const InputPassword = ({
+  resetValue,
+  handleChange,
+  label,
+  avoidPattern,
+}: InputPasswordProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const togglePasword = () => setShowPassword(!showPassword);
 
@@ -15,7 +21,7 @@ export const InputPassword = ({ resetValue, handleChange, label }: InputPassword
 
   return (
     <CustomInput
-      label={(label) ? label : "Password"}
+      label={label ? label : 'Password'}
       handleChange={handleChange}
       type={showPassword ? 'text' : 'password'}
       endAdorment={{
@@ -24,7 +30,7 @@ export const InputPassword = ({ resetValue, handleChange, label }: InputPassword
           img: showPassword ? 'EYE_OPEN_ICON' : 'EYE_CLOSE_ICON',
         },
       }}
-      pattern={pattern}
+      pattern={avoidPattern ? undefined : pattern}
       resetValue={resetValue}
     />
   );
