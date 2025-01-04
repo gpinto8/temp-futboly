@@ -16,7 +16,7 @@ export default ({
       <body suppressHydrationWarning={true}>
         <StoreProvider>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div className="flex justify-center">{children}</div>
+            <div className="flex justify-center mx-4">{children}</div>
             <CustomSnackbar />
           </LocalizationProvider>
         </StoreProvider>

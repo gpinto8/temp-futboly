@@ -34,7 +34,7 @@ export default () => {
   return loading ? (
     <PageLoader />
   ) : (
-    <div className="mx-6 md:mx-12 max-w-[1500px] w-full">
+    <div className="md:mx-12 max-w-[1500px] w-full">
       {hasUserLeagues ? (
         <HomePageLayout>
           <div className="flex flex-col gap-10">
