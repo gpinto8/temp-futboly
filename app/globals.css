@@ -16,6 +16,7 @@
 
 ::-webkit-scrollbar {
     width: 20px;
+    height: 20px;  /* For when the scroll is horizontal */
 }
 
 ::-webkit-scrollbar-track {
@@ -35,7 +36,7 @@
 
 .main-scrollbar::-webkit-scrollbar {
     width: 12px;
-    height: 14px;  /* For when the scroll is horizontal */
+    height: 12px;  /* For when the scroll is horizontal */
 }
 
 .main-scrollbar::-webkit-scrollbar-thumb {
