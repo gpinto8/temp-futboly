@@ -62,12 +62,11 @@ export const useSetLeague = () => {
   ) => {
     if (!leagueId || !userId || !league) return;
 
-    const newPlayers = Object.entries(league.players).filter(
-      ([player]) => player !== userId,
-    );
+    const newPlayers = { ...league.players };
+    delete newPlayers[userId];
 
     // Delete the league from the leagues
-    if (newPlayers.length === 0) {
+    if (Object.keys(newPlayers)?.length === 0) {
       await firestoreMethods('leagues', leagueId as any).deleteDocument();
     } else {
       await firestoreMethods('leagues', leagueId as any).replaceField(
