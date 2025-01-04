@@ -142,12 +142,9 @@ export const CustomModal = ({
           >
             <div className="flex flex-col gap-4 h-full">
               <div
-                className={
-                  'mx-2 flex align-center ' +
-                  (typeof title !== 'string'
-                    ? 'justify-between'
-                    : 'justify-end')
-                }
+                className={`mx-2 flex w-full items-baseline ${
+                  typeof title !== 'string' ? 'justify-between' : 'justify-end '
+                }`}
               >
                 {typeof title !== 'string' && title}
                 <CustomImage
