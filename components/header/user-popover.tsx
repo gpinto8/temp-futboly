@@ -17,6 +17,7 @@ import {
 import { Loader } from '@/components/loader';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useSetLeague } from '@/data/leagues/use-set-league';
+import { CustomPopover } from '../custom/custom-popover';
 
 type LeaguesColumnKeysProps =
   | 'ICON'
@@ -87,9 +88,9 @@ const getRows = (
   });
 };
 
-type UserSectionProps = { handleClose: () => void; isModal?: boolean };
+type UserSectionProps = { handleClose: () => void };
 
-const UserSection = ({ handleClose, isModal }: UserSectionProps) => {
+const UserSection = ({ handleClose }: UserSectionProps) => {
   const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
   const { getLeaguesByUid } = useGetLeagues();
@@ -115,33 +116,7 @@ const UserSection = ({ handleClose, isModal }: UserSectionProps) => {
   }, [check]);
 
   return (
-    <div className="px-0 sm:mx-2 md:px-4 mt-2 rounded-2xl md:max-w-[500px] md:w-[50vw]">
-      {!isModal && (
-        <div
-          id="rulesTitle"
-          className="p-2 flex flex-row items-center justify-between"
-        >
-          <div className="flex">
-            Hello, <div className="ml-1 font-bold">{user.username}</div>
-          </div>
-          <div id="closeUserPopover">
-            <button
-              onClick={handleClose}
-              type="button"
-              className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-            >
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">Close User Popover</span>
-              <CustomImage
-                imageKey="CLOSE_ICON"
-                className="h-4 w-4"
-                width={16}
-                height={16}
-              />
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="rounded-2xl md:max-w-[500px] md:w-[50vw]">
       <div
         id="actualLeague"
         className="my-6 flex flex-col gap-2 items-center justify-center"
@@ -209,7 +184,7 @@ const UserSection = ({ handleClose, isModal }: UserSectionProps) => {
       </div>
       <div
         id="leagueActions"
-        className="mt-2 flex flex-row gap-2 py-2 justify-between items-center"
+        className="flex flex-row gap-2 justify-between items-center"
       >
         <CreateLeagueModal buttonFull />
         <LeaguesModal />
@@ -239,17 +214,27 @@ export const UserPopover = ({
       handleClose={handleClose}
       closeButton={{ label: ' ', hide: true }}
     >
-      <UserSection isModal handleClose={handleClose} />
+      <UserSection handleClose={handleClose} />
     </CustomModal>
   ) : (
-    <Popover
+    <CustomPopover
       id={id}
       open={open}
       anchorEl={anchorEl}
       onClose={handleClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      titleComponent={
+        <div
+          id="rulesTitle"
+          className="flex flex-row items-center justify-between"
+        >
+          <div className="flex">
+            Hello, <div className="ml-1 font-bold">{user.username}</div>
+          </div>
+        </div>
+      }
     >
       <UserSection handleClose={handleClose} />
-    </Popover>
+    </CustomPopover>
   );
 };
