@@ -2,22 +2,18 @@ import { useState, useEffect } from 'react';
 import Popover from '@mui/material/Popover';
 import { useBreakpoint } from '@/utils/use-breakpoint';
 import { CustomModal } from '@/components/custom/custom-modal';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { CustomCard } from '@/components/custom/custom-card';
 import { CustomTable } from '@/components/custom/custom-table';
 import { ColumnsProps, RowsProps } from '../custom/custom-table';
 import { CustomButton } from '@/components/custom/custom-button';
 import { CustomImage } from '../custom/custom-image';
-import {
-  CreateLeagueModal,
-  JoinPublicLeagueModal,
-} from '@/components/modal/leagues-modal';
+import { CreateLeagueModal } from '@/components/modal/leagues-modal';
 import { LeaguesModal } from '@/components/modal/leagues-modal';
 import {
   LeaguesCollectionProps,
   UsersCollectionProps,
 } from '@/firebase/db-types';
-// import { leagueActions } from '@/store/slices/league';
 import { Loader } from '@/components/loader';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useSetLeague } from '@/data/leagues/use-set-league';
@@ -68,7 +64,6 @@ const getRows = (
       LEAGUE: league.name,
       TEAM: 'Team',
       PLAYERS: Object.keys(league.players).length.toString() + ' / 10',
-      // COMPETITIONS: league.competitions.length,
       COMPETITIONS: 10,
       SELECT: (
         <CustomButton
@@ -92,50 +87,15 @@ const getRows = (
   });
 };
 
-export const UserPopover = ({
-  id,
-  open,
-  anchorEl,
-  functions,
-}: UserPopoverProps) => {
-  const { handleClose } = functions;
-  const user = useAppSelector((state) => state.user);
+type UserSectionProps = { handleClose: () => void; isModal?: boolean };
 
-  return useBreakpoint() === 'sm' ? (
-    <CustomModal
-      hasOpenButton={false}
-      externalStatus={open}
-      title={
-        <div className="flex text-2xl">
-          Hello, <div className="ml-1 font-bold">{user.username}</div>
-        </div>
-      }
-      handleClose={handleClose}
-      closeButton={{ label: ' ', hide: true }}
-    >
-      <UserSection isModal={true} handleClose={handleClose} />
-    </CustomModal>
-  ) : (
-    <Popover
-      id={id}
-      open={open}
-      anchorEl={anchorEl}
-      onClose={handleClose}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-    >
-      <UserSection isModal={false} handleClose={handleClose} />
-    </Popover>
-  );
-};
-
-const UserSection = ({ handleClose, isModal }) => {
-  const [check, setCheck] = useState(true);
+const UserSection = ({ handleClose, isModal }: UserSectionProps) => {
   const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
   const { getLeaguesByUid } = useGetLeagues();
-  //const dispatch = useAppDispatch();
   const { setLeague } = useSetLeague();
   const { exitLeague } = useSetLeague();
+  const [check, setCheck] = useState(true);
   const [rows, setRows] = useState<RowsProps<LeaguesColumnKeysProps>>();
 
   const deleteElement = (league: LeaguesCollectionProps, userId: string) => {
@@ -144,26 +104,14 @@ const UserSection = ({ handleClose, isModal }) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       if (!check) return;
       const data = await getLeaguesByUid(user.id);
-      if (!data) return;
-      setRows(
-        getRows(
-          data as LeaguesCollectionProps[],
-          setLeague,
-          user,
-          deleteElement,
-        ),
-      );
-      setCheck(false);
-    };
-
-    fetchData();
-
-    return () => {
-      //console.log('Component unmounted');
-    };
+      if (data) {
+        setRows(getRows(data, setLeague, user, deleteElement));
+        setCheck(false);
+      }
+    })();
   }, [check]);
 
   return (
@@ -222,13 +170,6 @@ const UserSection = ({ handleClose, isModal }) => {
                 width={48}
                 height={48}
               />
-              <p className="text-nowrap font-medium text-gray-500 text-sm">
-                {/*
-                  league?.competitions?.find(
-                    (competition) => competition.active,
-                  )?.name
-                */}
-              </p>
             </div>
             <div className="flex flex-col items-center justify-center mx-4">
               <CustomImage
@@ -274,5 +215,41 @@ const UserSection = ({ handleClose, isModal }) => {
         <LeaguesModal />
       </div>
     </div>
+  );
+};
+
+export const UserPopover = ({
+  id,
+  open,
+  anchorEl,
+  functions,
+}: UserPopoverProps) => {
+  const { handleClose } = functions;
+  const user = useAppSelector((state) => state.user);
+
+  return useBreakpoint() === 'sm' ? (
+    <CustomModal
+      hasOpenButton={false}
+      externalStatus={open}
+      title={
+        <div className="flex text-2xl">
+          Hello, <div className="ml-1 font-bold">{user.username}</div>
+        </div>
+      }
+      handleClose={handleClose}
+      closeButton={{ label: ' ', hide: true }}
+    >
+      <UserSection isModal handleClose={handleClose} />
+    </CustomModal>
+  ) : (
+    <Popover
+      id={id}
+      open={open}
+      anchorEl={anchorEl}
+      onClose={handleClose}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+    >
+      <UserSection handleClose={handleClose} />
+    </Popover>
   );
 };
