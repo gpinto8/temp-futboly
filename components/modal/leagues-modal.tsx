@@ -149,7 +149,7 @@ export const JoinPublicLeagueModal = ({
   const [leaguePasswordInput, setLeaguePasswordInput] =
     useState<HandleChangeParamProps | null>(null);
   const [resetForm, setResetForm] = useState(false);
-  const [disabledForm, setDisabledForm] = useState(true);
+  const [disabledForm, setDisabledForm] = useState(league?.isPrivate);
   const { addPlayerToLeague } = useSetLeague();
   const user = useAppSelector((state) => state.user);
 
@@ -165,10 +165,9 @@ export const JoinPublicLeagueModal = ({
     setResetForm(true);
   };
 
-  useEffect(
-    () => setDisabledForm(!leaguePasswordInput?.value),
-    [leaguePasswordInput],
-  );
+  useEffect(() => {
+    if (leaguePasswordInput) setDisabledForm(!leaguePasswordInput?.value);
+  }, [leaguePasswordInput]);
 
   const handleClose = () => {
     setResetForm(true);
