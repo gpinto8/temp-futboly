@@ -142,7 +142,7 @@ export const CustomModal = ({
           >
             <div className="flex flex-col gap-4 h-full">
               <div
-                className={`mx-2 flex w-full items-baseline ${
+                className={`flex w-full items-baseline ${
                   typeof title !== 'string' ? 'justify-between' : 'justify-end '
                 }`}
               >
