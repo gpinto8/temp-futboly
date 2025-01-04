@@ -41,13 +41,13 @@ type UserPopoverProps = {
 };
 
 const columns: ColumnsProps<LeaguesColumnKeysProps> = [
-  { id: 'ICON', label: ' ', minWidth: 20, align: 'center' },
-  { id: 'LEAGUE', label: 'League', minWidth: 50, align: 'center' },
-  { id: 'TEAM', label: 'Team', minWidth: 30, align: 'center' },
-  { id: 'PLAYERS', label: 'Players', minWidth: 30, align: 'center' },
-  { id: 'COMPETITIONS', label: 'Competitions', minWidth: 30, align: 'center' },
-  { id: 'SELECT', label: 'Select', minWidth: 30, align: 'center' },
-  { id: 'EXIT', label: 'Exit', minWidth: 30, align: 'center' },
+  { id: 'ICON', label: ' ', minWidth: 25, align: 'center' },
+  { id: 'LEAGUE', label: 'League', minWidth: 150 },
+  { id: 'TEAM', label: 'Team', minWidth: 100, align: 'center' },
+  { id: 'PLAYERS', label: 'Players', minWidth: 75, align: 'center' },
+  { id: 'COMPETITIONS', label: 'Comps', minWidth: 75, align: 'center' },
+  { id: 'SELECT', label: ' ', minWidth: 75, align: 'center' },
+  { id: 'EXIT', label: ' ', minWidth: 75, align: 'center' },
 ];
 
 const getRows = (
@@ -252,7 +252,7 @@ const UserSection = ({ handleClose, isModal }) => {
             <CustomTable<LeaguesColumnKeysProps>
               rows={rows}
               columns={columns as ColumnsProps<LeaguesColumnKeysProps>}
-              elevation={1}
+              elevation={0}
               className="flex flex-col min-h-[30vh] overflow-y main-scrollbar"
               customizeColumns={{ className: 'text-xs text-dark' }}
               customizeRows={{ className: 'text-sm text-dark' }}

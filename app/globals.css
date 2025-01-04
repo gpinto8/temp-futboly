@@ -35,6 +35,7 @@
 
 .main-scrollbar::-webkit-scrollbar {
     width: 12px;
+    height: 14px;  /* For when the scroll is horizontal */
 }
 
 .main-scrollbar::-webkit-scrollbar-thumb {
