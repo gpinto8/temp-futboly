@@ -12,7 +12,9 @@ import { LeagueList } from '@/components/league-list';
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 
-export const CreateLeagueModal = ({ buttonFull }) => {
+type CreateLeagueModalProps = { buttonFull?: boolean };
+
+export const CreateLeagueModal = ({ buttonFull }: CreateLeagueModalProps) => {
   const [leagueName, setLeagueName] = useState<HandleChangeParamProps>();
   const [leaguePassword, setLeaguePassword] =
     useState<HandleChangeParamProps>();
@@ -23,8 +25,9 @@ export const CreateLeagueModal = ({ buttonFull }) => {
   const [disabledForm, setDisabledForm] = useState(true);
   const { addLeague } = useSetLeague();
 
-  const openButtonStyle =
-    (!buttonFull ? 'max-w-20' : '') + ' rounded-full mb-2 px-20';
+  const openButtonStyle = `rounded-full ${
+    buttonFull ? 'w-full' : 'max-w-20 mb-2 px-20'
+  }`;
 
   useEffect(() => {
     if (isPrivate) {

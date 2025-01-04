@@ -17,7 +17,7 @@ const FirstTime = () => (
               Play with your friends with a <strong>private league</strong> or
               make new ones with a <strong>public league!</strong>
             </p>
-            <CreateLeagueModal buttonFull={false} />
+            <CreateLeagueModal />
           </div>
         </div>
         <CustomSeparator withText={true} text="OR" />

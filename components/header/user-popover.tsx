@@ -266,8 +266,8 @@ const UserSection = ({ handleClose, isModal }) => {
           )}
         </div>
       </div>
-      <div id="leagueActions" className="flex flex-row gap-4 mx-4 py-2">
-        <CreateLeagueModal buttonFull={true} />
+      <div id="leagueActions" className="flex flex-row gap-2 py-2 justify-between items-center">
+        <CreateLeagueModal buttonFull />
         <LeaguesModal />
       </div>
     </div>
