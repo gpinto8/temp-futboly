@@ -20,7 +20,7 @@ type LeaguesColumnKeysProps =
 
 const columns: ColumnsProps<LeaguesColumnKeysProps> = [
   { id: 'PRIVATE', label: ' ', minWidth: 50, align: 'center' },
-  { id: 'NAME', label: 'Name', minWidth: 150 },
+  { id: 'NAME', label: 'Name', minWidth: 200 },
   { id: 'WEEK', label: 'Week', minWidth: 75 },
   { id: 'PLAYERS', label: 'Players', minWidth: 75 },
   { id: 'ACTIONS', label: ' ', minWidth: 75, align: 'center' },
