@@ -16,7 +16,7 @@ export const CustomPopover = ({
     <Popover {...(props as any)}>
       <div className="!p-4">
         <div
-          className={`flex w-full ${
+          className={`flex w-full items-baseline ${
             !!titleComponent ? 'justify-between' : 'justify-end '
           }`}
         >

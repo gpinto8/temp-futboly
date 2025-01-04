@@ -25,7 +25,7 @@ export const RulesPopover = ({
       handleClose={handleClose}
       closeButton={{ label: ' ', hide: true }}
     >
-      <RulesSection hideCloseButton />
+      <RulesSection />
     </CustomModal>
   ) : (
     <CustomPopover
@@ -37,37 +37,25 @@ export const RulesPopover = ({
       titleComponent={
         <div
           id="rulesTitle"
-          className="w-full flex flex-row items-center justify-center mb-4"
+          className="w-full flex flex-row items-center justify-center mb-10"
         >
           <h2 className="text-main text-pretty text-2xl mr-2">Futboly's</h2>
           <h2 className="font-semibold text-pretty text-2xl">League Rules</h2>
         </div>
       }
     >
-      <RulesSection handleClose={handleClose} />
+      <RulesSection />
     </CustomPopover>
   );
 };
 
-type RulesSectionProps = {
-  hideCloseButton?: boolean;
-  handleClose?: () => void;
-};
-
-const RulesSection = ({ hideCloseButton, handleClose }: RulesSectionProps) => {
+const RulesSection = () => {
   const matchBonusRules = getMatchBonus();
   const goalRanges = getGoalRanges();
   const formations = getFormations();
 
   return (
     <div className="md:max-w-[600px] md:w-[70vw] -mt-6 flex flex-col gap-4">
-      <div
-        id="rulesTitle"
-        className="flex flex-row items-center justify-center mb-4"
-      >
-        <h2 className="text-main text-pretty text-2xl mr-2">Futboly's</h2>
-        <h2 className="font-semibold text-pretty text-2xl">League Rules</h2>
-      </div>
       <div id="rulesSection">
         <div id="matchBonus">
           <h4 className="text-pretty font-semibald text-l mb-1">Match Bonus</h4>
