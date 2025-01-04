@@ -48,7 +48,7 @@ type CustomModalProps = {
     style?: CustomButtonProps['style'];
   };
   closeButton?: {
-    label: string;
+    label?: string;
     handleClick?: () => void;
     className?: string;
     disabled?: boolean;

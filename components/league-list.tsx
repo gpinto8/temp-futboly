@@ -47,7 +47,9 @@ const getRows = (leagues: Array<LeaguesCollectionProps>) => {
   });
 };
 
-export const LeagueList = () => {
+type LeagueListProps = { hideShadow?: boolean };
+
+export const LeagueList = ({ hideShadow }: LeagueListProps) => {
   const { getAllLeaguesByChunks } = useGetLeagues();
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot>();
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -92,8 +94,10 @@ export const LeagueList = () => {
           <CustomTable
             columns={columns}
             rows={rows}
-            elevation={1}
-            className="deep-faded-shadow-around rounded-l min-h-[55vh]"
+            elevation={!hideShadow ? 1 : 0}
+            className={`${
+              !hideShadow ? 'deep-faded-shadow-around' : ''
+            } rounded-l min-h-[55vh]`}
             onEndReached={onEndReached}
             isComplete={{ value: !hasMore, text: 'No more leagues' }}
           />

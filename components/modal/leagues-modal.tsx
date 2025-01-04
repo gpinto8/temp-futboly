@@ -225,11 +225,11 @@ export const LeaguesModal = () => {
         className: 'rounded-full text-xs py-1 my-1 px-4',
         style: 'black',
       }}
-      closeButton={{ label: 'Close', style: 'main' }}
+      closeButton={{ hide: true }}
       isDialog={{ value: true, style: 'large' }}
       className="min-w-[95%]"
     >
-      <LeagueList />
+      <LeagueList hideShadow />
     </CustomModal>
   );
 };
