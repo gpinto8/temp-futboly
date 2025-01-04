@@ -167,7 +167,7 @@ const UserSection = ({ handleClose, isModal }) => {
   }, [check]);
 
   return (
-    <div className="px-0 sm:mx-2 md:px-4 mt-2 rounded-2xl md:min-w-[500px]">
+    <div className="px-0 sm:mx-2 md:px-4 mt-2 rounded-2xl md:max-w-[500px] md:w-[50vw]">
       {!isModal && (
         <div
           id="rulesTitle"
@@ -196,9 +196,9 @@ const UserSection = ({ handleClose, isModal }) => {
       )}
       <div
         id="actualLeague"
-        className="my-4 flex flex-col gap-2 items-center justify-center"
+        className="my-6 flex flex-col gap-2 items-center justify-center"
       >
-        <div className="flex flex-col items-center justfy-center">
+        <div className="flex flex-col items-center justfy-center gap-2">
           <CustomImage
             forceSrc="https://cdn.sportmonks.com/images/soccer/leagues/271.png"
             width={48}
@@ -266,7 +266,10 @@ const UserSection = ({ handleClose, isModal }) => {
           )}
         </div>
       </div>
-      <div id="leagueActions" className="flex flex-row gap-2 py-2 justify-between items-center">
+      <div
+        id="leagueActions"
+        className="mt-2 flex flex-row gap-2 py-2 justify-between items-center"
+      >
         <CreateLeagueModal buttonFull />
         <LeaguesModal />
       </div>
