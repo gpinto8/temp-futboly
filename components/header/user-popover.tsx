@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Popover from '@mui/material/Popover';
 import { useBreakpoint } from '@/utils/use-breakpoint';
 import { CustomModal } from '@/components/custom/custom-modal';
 import { useAppSelector } from '@/store/hooks';
@@ -48,12 +47,18 @@ const columns: ColumnsProps<LeaguesColumnKeysProps> = [
 ];
 
 const getRows = (
-  leagues: Array<LeaguesCollectionProps>,
+  leagues: LeaguesCollectionProps[],
   setLeagues: any,
   user: UsersCollectionProps,
   deleteElement: (league: LeaguesCollectionProps, userId: string) => void,
+  isLeagueUserActive: (
+    user: UsersCollectionProps,
+    leagues: LeaguesCollectionProps,
+  ) => boolean,
 ) => {
   return leagues.map((league: LeaguesCollectionProps) => {
+    const leagueActive = isLeagueUserActive(user, league);
+
     return {
       ICON: (
         <CustomImage
@@ -68,16 +73,18 @@ const getRows = (
       COMPETITIONS: 10,
       SELECT: (
         <CustomButton
-          style="outlineMain"
-          label="Select"
+          style={leagueActive ? 'black' : 'main'}
+          label={leagueActive ? 'Selected' : 'Select'}
           disableElevation
           className="rounded-full text-xs py-1 my-1 px-4 h-full"
           handleClick={() => setLeagues(league, user.id)}
+          disabled={leagueActive}
+          avoidDisabledStyles={leagueActive}
         />
       ),
       EXIT: (
         <CustomButton
-          style="outlineMain"
+          style="outlineError"
           label="Exit"
           disableElevation
           className="rounded-full text-xs py-1 my-1 px-2 h-full"
@@ -88,14 +95,11 @@ const getRows = (
   });
 };
 
-type UserSectionProps = { handleClose: () => void };
-
-const UserSection = ({ handleClose }: UserSectionProps) => {
+const UserSection = () => {
   const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
   const { getLeaguesByUid } = useGetLeagues();
-  const { setLeague } = useSetLeague();
-  const { exitLeague } = useSetLeague();
+  const { setLeague, exitLeague, isLeagueUserActive } = useSetLeague();
   const [check, setCheck] = useState(true);
   const [rows, setRows] = useState<RowsProps<LeaguesColumnKeysProps>>();
 
@@ -109,7 +113,9 @@ const UserSection = ({ handleClose }: UserSectionProps) => {
       if (!check) return;
       const data = await getLeaguesByUid(user.id);
       if (data) {
-        setRows(getRows(data, setLeague, user, deleteElement));
+        setRows(
+          getRows(data, setLeague, user, deleteElement, isLeagueUserActive),
+        );
         setCheck(false);
       }
     })();
@@ -214,7 +220,7 @@ export const UserPopover = ({
       handleClose={handleClose}
       closeButton={{ label: ' ', hide: true }}
     >
-      <UserSection handleClose={handleClose} />
+      <UserSection />
     </CustomModal>
   ) : (
     <CustomPopover
@@ -234,7 +240,7 @@ export const UserPopover = ({
         </div>
       }
     >
-      <UserSection handleClose={handleClose} />
+      <UserSection />
     </CustomPopover>
   );
 };

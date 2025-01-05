@@ -5,6 +5,7 @@ import { getShortBase64Id } from '@/utils/id';
 import {
   LeaguesCollectionProps,
   MappedLeaguesProps,
+  UsersCollectionProps,
 } from '@/firebase/db-types';
 import { DocumentReference } from 'firebase/firestore';
 import { useSetUsers } from '../users/use-set-users';
@@ -107,10 +108,21 @@ export const useSetLeague = () => {
     dispatch(leagueActions.setLeague(league)); //TODO: Dispatch also the updated user info
   };
 
+  // CHECK IF THE USER'S ACTIVE IS THE SAME AS THE LEAGUE ID YOU ARE PASSING (E.G FOR THE USER POPOVER LEAGUE LIST)
+  const isLeagueUserActive = (
+    user: UsersCollectionProps,
+    league: LeaguesCollectionProps,
+  ) => {
+    const userActiveLeague = user.activeLeague?.id;
+    const leagueId = league.id;
+    return !!(userActiveLeague === leagueId);
+  };
+
   return {
     addLeague,
     exitLeague,
     setLeague,
     addPlayerToLeague,
+    isLeagueUserActive,
   };
 };

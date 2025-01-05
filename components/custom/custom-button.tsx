@@ -3,14 +3,14 @@ import { Loader } from '../loader';
 
 export type CustomButtonProps = {
   label: string;
-  style?: 'main' | 'error' | 'black' | 'outlineMain';
+  style?: 'main' | 'error' | 'outlineError' | 'black' | 'outlineMain';
   handleClick?: (event?: any) => void;
   className?: string;
   disabled?: boolean;
   type?: string;
   isLoading?: boolean;
   disableElevation?: boolean;
-  ref?: any;
+  avoidDisabledStyles?: boolean;
 };
 
 export const CustomButton = ({
@@ -22,18 +22,24 @@ export const CustomButton = ({
   isLoading,
   style = 'main',
   disableElevation,
+  avoidDisabledStyles,
 }: CustomButtonProps) => {
   const buttonStyles = {
     main: 'hover:bg-mainDark bg-main text-white',
     error: 'hover:bg-errorDark bg-error text-white',
+    outlineError:
+      'hover:bg-error-100 bg-white text-error border border-solid border-error',
     black: 'hover:bg-blackLight bg-black text-white',
     outlineMain:
-      'bg-white text-main border border-solid border-main hover:bg-main-100',
+      'hover:bg-main-100 bg-white text-main border border-solid border-main',
   };
 
   const classes = `${
-    disabled ? '!bg-gray !text-gray-100' : buttonStyles[style]
+    disabled && !avoidDisabledStyles
+      ? '!bg-gray !text-gray-100'
+      : buttonStyles[style]
   } ${className}`;
+
   return (
     <Button
       type={type as any}
