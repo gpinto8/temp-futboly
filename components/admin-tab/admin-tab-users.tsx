@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { MappedLeaguesProps } from '@/firebase/db-types';
 
-type AdminColumnKeysProps = 'INDEX' | 'USER' | 'TEAM' | 'ACTIONS';
+type AdminColumnKeysProps = 'INDEX' | 'USER' | 'ROLE' | 'TEAM' | 'ACTIONS';
 
 export const AdminTabUsers = () => {
   const league: MappedLeaguesProps = useAppSelector((state) => state.league);
@@ -16,24 +16,29 @@ export const AdminTabUsers = () => {
     const setUsersRows = async () => {
       const users = league.players;
       const userRows = users.map((user, index) => ({
-        INDEX: index,
-        // USER: user?.ownerUsername, // Why owner?
+        INDEX: index + 1,
         USER: user.username,
-        // TEAM: user?.team, // Also league doesn not have teams, just competitions do
-        TEAM: "TODO",
-        ACTIONS: user.role !== "owner" && (
+        TEAM: 'TODO',
+        ROLE: user.role,
+        ACTIONS: (
           <CustomButton
             label="Kick"
             style="error"
             className="!w-1/4 !h-1/4"
             handleClick={() => removeUserFromLeague(user?.uid)}
+            disabled={user.role === 'owner'}
           />
         ),
       }));
       setRows(userRows);
     };
 
-    if (league && league.id && String(league.id).trim() !== '' && league.players) {
+    if (
+      league &&
+      league.id &&
+      String(league.id).trim() !== '' &&
+      league.players
+    ) {
       setUsersRows();
     }
   }, [league]);
@@ -41,6 +46,7 @@ export const AdminTabUsers = () => {
   const columns: ColumnsProps<AdminColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },
     { label: 'User', id: 'USER', minWidth: 100 },
+    { label: 'Role', id: 'ROLE', minWidth: 100, align: 'center' },
     { label: 'Team', id: 'TEAM', minWidth: 100 },
     { label: 'Actions', id: 'ACTIONS', align: 'center', minWidth: 100 },
   ];
