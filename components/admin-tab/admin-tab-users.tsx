@@ -24,7 +24,7 @@ export const AdminTabUsers = () => {
           <CustomButton
             label="Kick"
             style="error"
-            className="!w-1/4 !h-1/4"
+            className="!w-fit !h-fit"
             handleClick={() => removeUserFromLeague(user?.uid)}
             disabled={user.role === 'owner'}
           />
