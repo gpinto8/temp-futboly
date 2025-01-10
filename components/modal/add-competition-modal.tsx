@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomInput } from '../custom/custom-input';
 import { CustomModal } from '../custom/custom-modal';
 import { ColumnsProps, RowsProps } from '../custom/custom-table';
@@ -12,14 +12,14 @@ import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { MappedLeaguesProps, UsersCollectionProps } from '@/firebase/db-types';
 
-type TeamsColumnsKeysProps = 'ID' | 'PLAYER';// | 'OWNER';
+type TeamsColumnsKeysProps = 'ID' | 'PLAYER';
 
 const getRows = (league: MappedLeaguesProps | undefined) => {
   if (!league) return [];
   return league.players.map((player, index) => {
     return {
       ID: index + 1,
-      PLAYER: player.username
+      PLAYER: player.username,
     };
   });
 };
@@ -38,50 +38,35 @@ export const AddCompetitionModal = () => {
   const [endDate, setEndDate] = useState<Timestamp>();
 
   const columns: ColumnsProps<TeamsColumnsKeysProps> = [
-    { label: 'Position', id: 'PLAYER', align: 'center', minWidth: 100 }
+    { label: 'Player', id: 'PLAYER', align: 'center', minWidth: 100 },
   ];
-
-  // const columns: ColumnsProps<TeamsColumnsKeysProps> = [
-  //   { label: 'Position', id: 'TEAM', align: 'center', minWidth: 100 },
-  //   { label: 'Rating', id: 'OWNER', align: 'center', minWidth: 100 },
-  // ];
-
-  // const rows: RowsProps<TeamsColumnsKeysProps> = [
-  //   { ID: 1, TEAM: 'Team1', OWNER: 'xd' },
-  //   { ID: 2, TEAM: 'Team2', OWNER: 'xd' },
-  //   { ID: 3, TEAM: 'Team3', OWNER: 'xd' },
-  //   { ID: 4, TEAM: 'Team4', OWNER: 'xd' },
-  //   { ID: 5, TEAM: 'Team5', OWNER: 'xd' },
-  //   { ID: 6, TEAM: 'Team6', OWNER: 'xd' },
-  //   { ID: 7, TEAM: 'Team7', OWNER: 'xd' },
-  //   { ID: 8, TEAM: 'Team8', OWNER: 'xd' },
-  //   { ID: 9, TEAM: 'Team9', OWNER: 'xd' },
-  //   { ID: 10, TEAM: 'Team10', OWNER: 'xd' },
-  // ];
 
   const rows: RowsProps<TeamsColumnsKeysProps> = getRows(league);
 
   const handleCreate = async () => {
-    console.log('Creating competition');
     if (!league) return;
+
     const playersNames = selectedRows.map((row) => row.PLAYER);
-    const playersRefs = Object.values(league.players).filter((player) => playersNames.includes(player.username)).map((player) => getUserRefById(player.uid)) as DocumentReference<UsersCollectionProps>[];
+    const playersRefs = Object.values(league.players)
+      .filter((player) => playersNames.includes(player.username))
+      .map((player) =>
+        getUserRefById(player.uid),
+      ) as DocumentReference<UsersCollectionProps>[];
     const leagueRef = getLeagueRefById(league.id);
 
     if (endDate && startDate && name && playersRefs.length && leagueRef) {
-      const newCompetition = await addCompetition({
+      await addCompetition({
         name,
         startDate,
         endDate,
         specificPosition: false,
         league: leagueRef,
         currentWeek: 0,
-        //maxWeek: maxWeek ?? 0,
         maxWeek: 10,
         players: playersRefs ?? [],
         teams: [],
         standings: null,
-        matchSchedule: null
+        matchSchedule: null,
       });
     }
   };
@@ -106,6 +91,7 @@ export const AddCompetitionModal = () => {
         label: 'Add competition',
         className: '!w-[180px]',
         handleClick: undefined,
+        avoidFitWidth: true,
       }}
       closeButton={{
         label: 'Create competition',
@@ -114,10 +100,6 @@ export const AddCompetitionModal = () => {
       }}
       handleClose={undefined}
     >
-        {/*
-  specificPosition: boolean;
-  players: DocumentReference<UsersCollectionProps>[];
-  teams: DocumentReference<TeamsCollectionProps>[]; */}
       <div className="flex flex-col gap-6 h-full">
         <div className="flex flex-col gap-8 h-full">
           <div className="flex flex-col gap-2">
