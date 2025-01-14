@@ -4,12 +4,12 @@ import { useAppSelector } from '@/store/hooks';
 import Chip from '@mui/material/Chip';
 import { CustomButton } from '@/components/custom/custom-button';
 import { CustomCard } from '@/components/custom/custom-card';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
 import { ImageUrlsProps } from '@/utils/img-urls';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
-import { LeaguesCollectionProps, MappedLeaguesProps, UsersCollectionProps } from '@/firebase/db-types';
+import { LeaguesCollectionProps } from '@/firebase/db-types';
 
 type BannerCardProps = {
   title: string;
@@ -99,16 +99,24 @@ const GameSection = () => {
 };
 
 export const OverviewBanner = () => {
-  const { user, league }: {user: UsersCollectionProps | undefined, league: LeaguesCollectionProps | MappedLeaguesProps | undefined} = useAppSelector((state) => {return { "user": state.user, "league": state.league }});
+  const user = useAppSelector((state) => state.user);
+  const competition = useAppSelector((state) => state.competition);
+  const league = useAppSelector((state) => state.league);
+
   const [overviewData, setOverviewData] = useState<BannerCardProps[]>([]);
   const { getLeague } = useGetLeagues();
-  const { getActiveCompetitionByUid } = useGetCompetitions(); //TODO: substitute with hook that takes it from redux
+  const { getActiveCompetition } = useGetCompetitions(); //TODO: substitute with hook that takes it from redux
 
   useEffect(() => {
-    const updateBanners = async () => {
+    if (
+      user?.id &&
+      user.id?.trim() !== '' &&
+      league?.id &&
+      league.id?.trim() !== ''
+    ) {
       if (!user || !league) return;
-      const activeCompetition = await getActiveCompetitionByUid(league.id, user); //getActiveCompetition();
-      const currentLeague = await getLeague();
+      const activeCompetition = getActiveCompetition();
+      const currentLeague = getLeague();
 
       const leagueData: BannerCardProps = {
         title: 'League',
@@ -125,7 +133,12 @@ export const OverviewBanner = () => {
         imageKey: 'AT_ICON',
         entries: [
           { key: 'Name', value: activeCompetition?.name },
-          { key: 'Week', value: activeCompetition?.currentWeek ? Number(activeCompetition.currentWeek) : undefined },
+          {
+            key: 'Week',
+            value: activeCompetition?.currentWeek
+              ? +activeCompetition.currentWeek
+              : undefined,
+          },
           { key: 'Teams', value: activeCompetition?.players.length },
         ],
       };
@@ -141,11 +154,8 @@ export const OverviewBanner = () => {
       };
 
       setOverviewData([leagueData, competitionData, teamData]);
-    };
-    if (user && user.id && String(user.id).trim() !== "" && league && league.id && String(league.id).trim() !== "") {
-      updateBanners();
     }
-  }, [league]);
+  }, [league, competition]);
 
   return (
     <div className='flex flex-col gap-4 justify-between items-center border border-gray rounded-lg shadow-xl p-4 px-8 dark:bg-gray-100 dark:text-gray-900"'>

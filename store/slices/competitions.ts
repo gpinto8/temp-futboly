@@ -1,44 +1,46 @@
 import { CompetitionsCollectionProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// type InitialStateProps = CompetitionsCollectionProps & {
-//     documentId?: '';
-//     ownerUsername?: '';
-// };
+type InitialStateProps = {
+  competitions: CompetitionsCollectionProps[];
+  activeCompetition?: CompetitionsCollectionProps;
+};
 
-const initialState: Partial<CompetitionsCollectionProps> = {
-    id: '',
-    name: '',
-    //startDate: '',
-    //endDate: '',
-    specificPosition: false,
-    //league: '',
-    currentWeek: 0,
-    maxWeek: 0,
-    teams: [],
-    standings: [],
-    matchSchedule: [],
+const initialState: InitialStateProps = {
+  competitions: [],
+  activeCompetition: undefined,
 };
 
 const competitionSlice = createSlice({
-    name: 'competition',
-    initialState,
-    reducers: {
-        setCompetition(state, action: PayloadAction<CompetitionsCollectionProps>) {
-            const competition = action.payload;
-            state.id = competition.id;
-            state.name = competition.name;
-            state.startDate = competition.startDate;
-            state.endDate = competition.endDate;
-            state.specificPosition = competition.specificPosition;
-            state.league = competition.league;
-            state.currentWeek = competition.currentWeek;
-            state.maxWeek = competition.maxWeek;
-            state.teams = competition.teams;
-            state.standings = competition.standings;
-            state.matchSchedule = competition.matchSchedule;
-        },
+  name: 'competition',
+  initialState,
+  reducers: {
+    // Adds a competitions to the all the competitions
+    setCompetition(state, action: PayloadAction<CompetitionsCollectionProps>) {
+      const competition = action.payload;
+      const filteredCompetitions = [
+        ...(state.competitions
+          ? state.competitions.filter((comp) => comp?.id !== competition.id)
+          : []),
+      ];
+      state.competitions = [...filteredCompetitions, competition];
     },
+
+    // Replaces all the competitions array with the payload you pass (useful on mounting (for ex.))
+    setAllCompetitions(
+      state,
+      action: PayloadAction<CompetitionsCollectionProps[]>,
+    ) {
+      state.competitions = action.payload;
+    },
+
+    setActiveCompetition(
+      state,
+      action: PayloadAction<CompetitionsCollectionProps | undefined>,
+    ) {
+      state.activeCompetition = action.payload;
+    },
+  },
 });
 
 export const competitionActions = competitionSlice.actions;

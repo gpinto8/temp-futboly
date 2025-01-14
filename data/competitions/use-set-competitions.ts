@@ -1,17 +1,39 @@
 import { firestoreMethods } from '@/firebase/firestore-methods';
-import { CompetitionsCollectionProps, UsersCollectionProps, MappedCompetitionsProps } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionProps,
+  UsersCollectionProps,
+  MappedCompetitionsProps,
+} from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { competitionActions } from '@/store/slices/competitions';
 import { DocumentReference } from 'firebase/firestore';
 import { useGetCompetitions } from './use-get-competitions';
-import { leagueActions } from '@/store/slices/league';
 
 export const useSetCompetitions = () => {
-  const competitionState = useAppSelector((state) => state.competition);
   const user = useAppSelector((state) => state.user);
-  const leagueState = useAppSelector((state) => state.league);
   const dispatch = useAppDispatch();
-  const { getCompetitionById } = useGetCompetitions();
+  const {
+    getCompetitions,
+    getActiveCompetition,
+    getCompetitionById,
+    getCompetitionsByLeagueId,
+    getActiveCompetitionByUid,
+  } = useGetCompetitions();
+
+  // SET ALL FETCHED COMPETITIONS TO THE REDUX STATE
+  const setCompetitions = async (leagueId: string) => {
+    if (leagueId) {
+      const competitions = await getCompetitionsByLeagueId(leagueId);
+      if (competitions) {
+        dispatch(competitionActions.setAllCompetitions(competitions));
+      }
+
+      const activeCompetition = await getActiveCompetitionByUid(leagueId, user);
+      if (activeCompetition) {
+        dispatch(competitionActions.setActiveCompetition(activeCompetition));
+      }
+    }
+  };
 
   // ADD A COMPETITION TO CURRENT LEAGUE
   const addCompetition = async (
@@ -19,10 +41,19 @@ export const useSetCompetitions = () => {
   ) => {
     if (competition) {
       if (!(competition.players.length > 0)) {
-        const userRef: DocumentReference<UsersCollectionProps>= firestoreMethods('users', user.id as any).getDocRef() as DocumentReference<UsersCollectionProps>;
+        const userRef: DocumentReference<UsersCollectionProps> =
+          firestoreMethods(
+            'users',
+            user.id as any,
+          ).getDocRef() as DocumentReference<UsersCollectionProps>;
         competition.players = [userRef];
       }
-      const objCreated = await firestoreMethods('competitions', 'id').createDocument(competition);
+
+      const objCreated = await firestoreMethods(
+        'competitions',
+        'id',
+      ).createDocument(competition);
+
       if (objCreated) {
         dispatch(competitionActions.setCompetition(objCreated));
         return objCreated as CompetitionsCollectionProps;
@@ -32,66 +63,79 @@ export const useSetCompetitions = () => {
     }
   };
 
-  const setActiveCompetition = async (competitionId: CompetitionsCollectionProps['id'] | undefined, user: UsersCollectionProps, leagueId: string, competition?: CompetitionsCollectionProps | MappedCompetitionsProps ) => {
+  const setActiveCompetition = async (
+    competitionId: CompetitionsCollectionProps['id'] | undefined,
+    user: UsersCollectionProps,
+    leagueId: string,
+    competition?: CompetitionsCollectionProps | MappedCompetitionsProps,
+  ) => {
     const setActiveCompetitionToUser = async (competitionId: string) => {
-      const competitionRef = firestoreMethods('competitions', competitionId as any).getDocRef();
+      const competitionRef = firestoreMethods(
+        'competitions',
+        competitionId as any,
+      ).getDocRef();
       if (!competitionRef) return;
+
       const createField = user.activeCompetitions ? false : true;
       if (createField) {
-        const userUpdate = await firestoreMethods('users', user.id as any).createField(`activeCompetitions`, { [leagueId]: competitionRef });
+        await firestoreMethods('users', user.id as any).createField(
+          `activeCompetitions`,
+          { [leagueId]: competitionRef },
+        );
       } else {
-        const userUpdate = await firestoreMethods('users', user.id as any).replaceRefField(`activeCompetitions.${leagueId}`, competitionRef);
-      }  
-      // if (userUpdate) {
-      //   dispatch(competitionActions.setCompetition(competition));  //TODO: Dispatch also the updated user info
-      // }
+        await firestoreMethods('users', user.id as any).replaceRefField(
+          `activeCompetitions.${leagueId}`,
+          competitionRef,
+        );
+      }
     };
 
     if (competition) {
       await setActiveCompetitionToUser(competition.id as string);
-      dispatch(competitionActions.setCompetition(competition));
+      dispatch(competitionActions.setActiveCompetition(competition));
     } else {
       const competition = await getCompetitionById(competitionId as any);
       if (competition) {
-        dispatch(competitionActions.setCompetition(competition));
-      } else {
-        console.error('No competition found');
+        dispatch(competitionActions.setActiveCompetition(competition));
       }
     }
   };
-
-  // // SET A COMPETITION AS ACTIVE FROM CURRENT LEAGUE   --> Commented because it is tricky to handle when you swap between leagues,
-  // const setActiveCompetition = async (
-  //   id: CompetitionsCollectionProps['id'] | undefined,
-  // ) => {
-  //   if (!id) {
-
-  //   }
-  //   const mergedCompetitions = league?.competitions.map((competition) => {
-  //     return {
-  //       ...competition,
-  //       active: !!(competition.id === id),
-  //     };
-  //   });
-  //   await firestoreMethods('leagues', league.documentId as any).replaceField(
-  //     'competitions',
-  //     mergedCompetitions,
-  //   );
-  //   dispatch(leagueActions.setAllCompetitions(mergedCompetitions));
-  // };
 
   // DELETE COMPETITION FROM CURRENT LEAGUE
   const deleteCompetition = async (
     competitionId: CompetitionsCollectionProps['id'],
   ) => {
-    await firestoreMethods('teams', "id").deleteDocumentsByQuery('competition', '==', competitionId);
-    await firestoreMethods('competitions', competitionState.id as any).deleteDocument(); //Deletes the object
-    
-      // dispatch(leagueActions.setAllCompetitions(filteredCompetitions)); We need to get the competitions and once we have then then we filter the deleted one and update the state
-      // location.reload();
-      const filteredCompetitions = leagueState.leagueCompetitions?.filter(competition => competition.id !== competitionId);
-      dispatch(leagueActions.setLeagueCompetitions(filteredCompetitions ? filteredCompetitions : []));
+    // ??
+    await firestoreMethods('teams', 'id').deleteDocumentsByQuery(
+      'competition',
+      '==',
+      competitionId,
+    );
+
+    // Deletes the object
+    await firestoreMethods(
+      'competitions',
+      competitionId as any,
+    ).deleteDocument();
+
+    // Update the redux state
+    const competitions = getCompetitions();
+    const filteredCompetitions = competitions?.filter(
+      (competition) => competition.id !== competitionId,
+    );
+    dispatch(competitionActions.setAllCompetitions(filteredCompetitions));
+
+    // Checking if the current active competition is being deleted, so we remove its redux state data
+    const currentCompetition = getActiveCompetition();
+    if (currentCompetition?.id === competitionId) {
+      dispatch(competitionActions.setActiveCompetition(undefined));
+    }
   };
 
-  return { setActiveCompetition, addCompetition, deleteCompetition };
+  return {
+    setCompetitions,
+    setActiveCompetition,
+    addCompetition,
+    deleteCompetition,
+  };
 };
