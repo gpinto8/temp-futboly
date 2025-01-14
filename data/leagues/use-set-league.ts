@@ -101,11 +101,16 @@ export const useSetLeague = () => {
   };
 
   // SET LEAGUE TO REDUX FROM THE USER ID --> Here I can pass directly the League object, avoid the fetch and dispatch directly the league with a "random" competition
-  const setLeague = async (league: MappedLeaguesProps, userId: string) => {
+  const setLeague = async (
+    league: MappedLeaguesProps,
+    userId: string,
+    refreshPage?: boolean,
+  ) => {
     await setActiveLeague(userId, league.id);
     await addLeagueToUserLeagues(userId, league.id);
 
     dispatch(leagueActions.setLeague(league)); //TODO: Dispatch also the updated user info
+    if (refreshPage) location.reload();
   };
 
   // CHECK IF THE USER'S ACTIVE IS THE SAME AS THE LEAGUE ID YOU ARE PASSING (E.G FOR THE USER POPOVER LEAGUE LIST)

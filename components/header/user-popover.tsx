@@ -9,10 +9,7 @@ import { CustomButton } from '@/components/custom/custom-button';
 import { CustomImage } from '../custom/custom-image';
 import { CreateLeagueModal } from '@/components/modal/leagues-modal';
 import { LeaguesModal } from '@/components/modal/leagues-modal';
-import {
-  LeaguesCollectionProps,
-  UsersCollectionProps,
-} from '@/firebase/db-types';
+import { LeaguesCollectionProps } from '@/firebase/db-types';
 import { Loader } from '@/components/loader';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useSetLeague } from '@/data/leagues/use-set-league';
@@ -46,55 +43,6 @@ const columns: ColumnsProps<LeaguesColumnKeysProps> = [
   { id: 'EXIT', label: ' ', minWidth: 75, align: 'center' },
 ];
 
-const getRows = (
-  leagues: LeaguesCollectionProps[],
-  setLeagues: any,
-  user: UsersCollectionProps,
-  deleteElement: (league: LeaguesCollectionProps, userId: string) => void,
-  isLeagueUserActive: (
-    user: UsersCollectionProps,
-    leagues: LeaguesCollectionProps,
-  ) => boolean,
-) => {
-  return leagues.map((league: LeaguesCollectionProps) => {
-    const leagueActive = isLeagueUserActive(user, league);
-
-    return {
-      ICON: (
-        <CustomImage
-          forceSrc="https://cdn.sportmonks.com/images/soccer/leagues/271.png"
-          width={16}
-          height={16}
-        />
-      ),
-      LEAGUE: league.name,
-      TEAM: 'Team',
-      PLAYERS: Object.keys(league.players).length.toString() + ' / 10',
-      COMPETITIONS: 10,
-      SELECT: (
-        <CustomButton
-          style={leagueActive ? 'black' : 'main'}
-          label={leagueActive ? 'Selected' : 'Select'}
-          disableElevation
-          className="rounded-full text-xs py-1 my-1 px-4 h-full"
-          handleClick={() => setLeagues(league, user.id)}
-          disabled={leagueActive}
-          avoidDisabledStyles={leagueActive}
-        />
-      ),
-      EXIT: (
-        <CustomButton
-          style="outlineError"
-          label="Exit"
-          disableElevation
-          className="rounded-full text-xs py-1 my-1 px-2 h-full"
-          handleClick={() => deleteElement(league, user.id)}
-        />
-      ),
-    };
-  });
-};
-
 const UserSection = () => {
   const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
@@ -103,19 +51,61 @@ const UserSection = () => {
   const [check, setCheck] = useState(true);
   const [rows, setRows] = useState<RowsProps<LeaguesColumnKeysProps>>();
 
-  const deleteElement = (league: LeaguesCollectionProps, userId: string) => {
-    exitLeague(league.id, league, userId);
-    setCheck(true);
+  const getRows = (leagues: LeaguesCollectionProps[]) => {
+    return leagues.map((league) => {
+      const leagueActive = isLeagueUserActive(user, league);
+
+      return {
+        ICON: (
+          <CustomImage
+            forceSrc="https://cdn.sportmonks.com/images/soccer/leagues/271.png"
+            width={16}
+            height={16}
+          />
+        ),
+        LEAGUE: league.name,
+        TEAM: 'Team',
+        PLAYERS: Object.keys(league.players).length.toString() + ' / 10',
+        COMPETITIONS: 10,
+        SELECT: (
+          <CustomButton
+            style={leagueActive ? 'black' : 'main'}
+            label={leagueActive ? 'Selected' : 'Select'}
+            disableElevation
+            className="rounded-full text-xs py-1 my-1 px-4 h-full"
+            handleClick={() =>
+              setLeague(
+                league as any, // TODO: create just "MappedLeaguesProps" or "LeaguesCollectionProps" .. having both is confusing
+                user.id,
+                true,
+              )
+            }
+            disabled={leagueActive}
+          />
+        ),
+        EXIT: (
+          <CustomButton
+            style="error"
+            label="Exit"
+            disableElevation
+            className="rounded-full text-xs py-1 my-1 px-2 h-full"
+            handleClick={() => {
+              exitLeague(league.id, league, user.id);
+              setCheck(true);
+            }}
+          />
+        ),
+      };
+    });
   };
 
   useEffect(() => {
     (async () => {
       if (!check) return;
+
       const data = await getLeaguesByUid(user.id);
       if (data) {
-        setRows(
-          getRows(data, setLeague, user, deleteElement, isLeagueUserActive),
-        );
+        setRows(getRows(data));
         setCheck(false);
       }
     })();
