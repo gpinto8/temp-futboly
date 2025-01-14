@@ -21,6 +21,8 @@ export type LeaguesCollectionProps = {
   players: {
     [key: string]: 'owner' | 'guest';
   };
+  owner: string;
+  ownerUsername: string;
 };
 
 // COMPETITIONS
@@ -35,19 +37,23 @@ export type CompetitionsCollectionProps = {
   maxWeek: Number;
   players: DocumentReference<UsersCollectionProps>[];
   teams: DocumentReference<TeamsCollectionProps>[];
-  standings: {
-    teamId: DocumentReference<TeamsCollectionProps>;
-    points: Number;
-  }[] | null;
-  matchSchedule: {
-    week: Number;
-    home: DocumentReference<TeamsCollectionProps>;
-    away: DocumentReference<TeamsCollectionProps>;
-    result: {
-      home: Number;
-      away: Number;
-    };
-  }[] | null;
+  standings:
+    | {
+        teamId: DocumentReference<TeamsCollectionProps>;
+        points: Number;
+      }[]
+    | null;
+  matchSchedule:
+    | {
+        week: Number;
+        home: DocumentReference<TeamsCollectionProps>;
+        away: DocumentReference<TeamsCollectionProps>;
+        result: {
+          home: Number;
+          away: Number;
+        };
+      }[]
+    | null;
 };
 
 // TEAMS
@@ -70,13 +76,13 @@ export type TeamsCollectionProps = {
 
 export type MappedPlayerProps = {
   uid: string;
-  role: "owner" | "guest";
+  role: 'owner' | 'guest';
   username: string;
 };
 
 export type MappedLeaguesProps = Omit<LeaguesCollectionProps, 'players'> & {
   players: MappedPlayerProps[];
-  ownerUsername: string | "";
+  ownerUsername: string | '';
   competitionsNo?: number | undefined;
   leagueCompetitions?: MappedCompetitionsProps[] | undefined;
 };

@@ -1,39 +1,32 @@
-import { MappedCompetitionsProps, MappedLeaguesProps } from '@/firebase/db-types';
+import { MappedLeaguesProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// type InitialStateProps = LeaguesCollectionProps & {
-//     id?: '';
-//     ownerUsername?: '';
-// };
-
 const initialState: MappedLeaguesProps = {
-    id: '',
-    name: '',
-    leaguePassword: '',
-    shortId: '',
-    isPrivate: false,
-    players: [],
-    ownerUsername: '',
+  id: '',
+  name: '',
+  leaguePassword: '',
+  shortId: '',
+  isPrivate: false,
+  players: [],
+  ownerUsername: '',
+  owner: '',
 };
 
 const leagueSlice = createSlice({
-    name: 'league',
-    initialState,
-    reducers: {
-        setLeague(state, action: PayloadAction<MappedLeaguesProps>) {
-            const { id, name, leaguePassword, shortId, isPrivate, players, ownerUsername } = action.payload;
-            state.id = id;
-            state.name = name;
-            state.leaguePassword = leaguePassword;
-            state.shortId = shortId;
-            state.isPrivate = isPrivate;
-            state.players = players;
-            state.ownerUsername = ownerUsername;
-        },
-        setLeagueCompetitions(state, action: PayloadAction<MappedCompetitionsProps[]>) {
-            state.leagueCompetitions = action.payload;
-        },
+  name: 'league',
+  initialState,
+  reducers: {
+    setLeague(state, action: PayloadAction<MappedLeaguesProps>) {
+      state.id = action.payload.id;
+      state.name = action.payload.name;
+      state.leaguePassword = action.payload.leaguePassword;
+      state.shortId = action.payload.shortId;
+      state.isPrivate = action.payload.isPrivate;
+      state.players = action.payload.players;
+      state.ownerUsername = action.payload.ownerUsername;
+      state.owner = action.payload.owner;
     },
+  },
 });
 
 export const leagueActions = leagueSlice.actions;

@@ -8,22 +8,37 @@ import { CompetitionsTab } from './competitions-tab';
 import { LiveMatch } from './live-match-tab';
 import { Matches } from './matches-tab';
 import { Teams } from './teams-tab';
+import { useGetLeagues } from '@/data/leagues/use-get-leagues';
+import { useEffect, useState } from 'react';
 
 export const AppTabs = () => {
+  const { isUserLeagueOwner } = useGetLeagues();
+
+  const [tabComponents, setTabComponents] = useState([
+    { label: 'Competitions', Component: () => <CompetitionsTab /> },
+    { label: 'Standings', Component: () => <StandingsTab /> },
+    { label: 'Teams', Component: () => <Teams /> },
+    { label: 'Matches', Component: () => <Matches /> },
+    { label: 'Live Match', Component: () => <LiveMatch /> },
+  ]);
+
+  const isUserOwner = isUserLeagueOwner();
+  useEffect(() => {
+    if (isUserOwner) {
+      setTabComponents([
+        ...tabComponents,
+        { label: 'Admin', Component: () => <AdminTab /> },
+      ]);
+    }
+  }, [isUserOwner]);
+
   const {
     currentComponentId,
     components,
     setComponentId,
     SwitchedComponent,
     isCurrentId,
-  } = useSwitchComponents([
-    { label: 'Competitions', Component: () => <CompetitionsTab /> },
-    { label: 'Standings', Component: () => <StandingsTab /> },
-    { label: 'Teams', Component: () => <Teams /> },
-    { label: 'Matches', Component: () => <Matches /> },
-    { label: 'Live Match', Component: () => <LiveMatch/> },
-    { label: 'Admin', Component: () => <AdminTab /> },
-  ]);
+  } = useSwitchComponents(tabComponents);
 
   const theme = createTheme({
     palette: {
