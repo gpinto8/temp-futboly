@@ -89,7 +89,7 @@ export const AddCompetitionModal = () => {
       title="Create a new competition"
       openButton={{
         label: 'Add competition',
-        className: '!w-[180px]',
+        className: 'md:!w-[180px]',
         handleClick: undefined,
         avoidFitWidth: true,
       }}
