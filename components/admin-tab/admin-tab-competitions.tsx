@@ -43,13 +43,17 @@ export const AdminTabCompetitions = () => {
   ];
 
   return (
-    <div className="h-[400px]">
-      <CustomTable<AdminColumnKeysProps>
-        rows={rows}
-        columns={columns}
-        maxWidth={1000}
-        elevation={0}
-      />
+    <div className="h-[400px] flex justify-center">
+      {getCompetitions()?.length ? (
+        <CustomTable<AdminColumnKeysProps>
+          rows={rows}
+          columns={columns}
+          maxWidth={1000}
+          elevation={0}
+        />
+      ) : (
+        <div>There are no competitions created yet.</div>
+      )}
     </div>
   );
 };
