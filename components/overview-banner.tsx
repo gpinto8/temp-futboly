@@ -41,11 +41,13 @@ const BannerCard = ({ title, imageKey, entries }: BannerCardProps) => {
       <div className="flex flex-col gap-1 h-full">
         {entries && Object.values(entries)?.some((entry) => entry.value) ? (
           entries.map(({ key, value }, index) => (
-            <div key={index} className="line-clamp-1">
+            <div key={index} className="flex gap-2">
               <span className="text-pretty text-sm text-gray font-semibold">
                 {key}:{' '}
               </span>
-              <span className="text-pretty text-sm font-bold">{value}</span>
+              <span className="text-pretty text-sm font-bold max-w-[50ch] overflow-hidden">
+                {value}
+              </span>
             </div>
           ))
         ) : (
