@@ -39,7 +39,7 @@ export const useSetLeague = () => {
     });
 
     const leagueShortID = getShortBase64Id();
-    if (leagueShortID === 'Error') return; //Handle better the error re trying or using another ID
+    if (leagueShortID === 'Error') return; // TODO: Handle better the error re trying or using another id
 
     const updateResult = await firestoreMethods(
       'leagues',
@@ -55,6 +55,9 @@ export const useSetLeague = () => {
       leagueRef,
       'array',
     );
+
+    // Set the new league as current
+    await setActiveLeague(user.id, leagueData.id);
 
     location.reload(); // TODO: set to redux the updated league data
 
