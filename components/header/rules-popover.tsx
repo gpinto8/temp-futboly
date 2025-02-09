@@ -6,7 +6,7 @@ import { RulesPopoverSection } from './rules-popover-section';
 const Title = () => (
   <div
     id="rulesTitle"
-    className="w-full flex flex-row items-center justify-center mb-10"
+    className="w-full flex flex-row items-center justify-center mb-10 flex-wrap"
   >
     <h2 className="text-main text-pretty text-2xl mr-2">Futboly's</h2>
     <h2 className="font-semibold text-pretty text-2xl">League Rules</h2>
