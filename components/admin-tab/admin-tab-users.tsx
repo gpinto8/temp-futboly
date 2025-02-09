@@ -19,7 +19,13 @@ export const AdminTabUsers = () => {
         INDEX: index + 1,
         USER: user.username,
         TEAM: 'TODO',
-        ROLE: user.role,
+        ROLE: (
+          <span
+            className={`${user.role === 'owner' ? 'text-error font-bold' : ''}`}
+          >
+            {user.role}
+          </span>
+        ),
         ACTIONS: (
           <CustomButton
             label="Kick"
