@@ -74,7 +74,17 @@ export const SignInSignUp = ({
     } else {
       setButtonDisabled(!mandatoryInputsValid);
     }
+
+    setResetForm(false);
   }, [email, password, username]);
+
+  useEffect(() => {
+    if (resetForm) {
+      setEmail({ value: '', isValid: false });
+      setPassword({ value: '', isValid: false });
+      setUsername({ value: '', isValid: false });
+    }
+  }, [resetForm]);
 
   return (
     <div className="flex px-4 py-12 md:px-12 gap-12 h-screen w-screen">

@@ -8,10 +8,15 @@ const errorSlice = createSlice({
   reducers: {
     setError: (state, action) => {
       const { message } = action.payload;
-      if (message) {
-        const endDotMessage = message.at(-1) === '.' ? message : message + '.';
-        state.message = endDotMessage;
+
+      // To reset the value
+      if (message === '') {
+        state.message = '';
+        return;
       }
+
+      const endDotMessage = message.at(-1) === '.' ? message : message + '.';
+      state.message = endDotMessage;
     },
   },
 });

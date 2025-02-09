@@ -10,16 +10,21 @@ export const CustomSnackbar = () => {
   const [open, setOpen] = useState(false);
 
   const dispatch = useAppDispatch();
-  const message = useAppSelector(state => state.error.message);
+  const message = useAppSelector((state) => state.error.message);
 
   useEffect(() => {
     if (message) setOpen(true);
   }, [message]);
 
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = async (
+    event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
     if (reason === 'clickaway') return;
-    setOpen(false);
+
     dispatch(errorActions.setError({ message: '' }));
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    setOpen(false);
   };
 
   return (
@@ -30,7 +35,12 @@ export const CustomSnackbar = () => {
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert onClose={handleClose} severity="error" variant="filled" className="bg-error">
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          variant="filled"
+          className="bg-error"
+        >
           {message}
         </Alert>
       </Snackbar>
