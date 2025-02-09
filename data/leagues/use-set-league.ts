@@ -91,14 +91,17 @@ export const useSetLeague = () => {
     location.reload(); // TODO: set to redux the updated league data
   };
 
-  const addPlayerToLeague = async (leagueId: string, playerId: string) => {
-    if (!leagueId || !playerId) return;
+  const addUserToLeague = async (leagueId: string, userId: string) => {
+    if (!leagueId || !userId) return;
 
     await firestoreMethods('leagues', leagueId as any).createField('players', {
-      [playerId]: 'guest',
+      [userId]: 'guest',
     });
 
     firestoreMethods('leagues', leagueId as any).getDocRef();
+
+    // Set the joining league as current
+    await setActiveLeague(userId, leagueId);
 
     location.reload(); // TODO: set to redux the updated league data
   };
@@ -130,7 +133,7 @@ export const useSetLeague = () => {
     addLeague,
     exitLeague,
     setLeague,
-    addPlayerToLeague,
+    addUserToLeague,
     isLeagueUserActive,
   };
 };

@@ -153,18 +153,16 @@ export const JoinPublicLeagueModal = ({
     useState<HandleChangeParamProps | null>(null);
   const [resetForm, setResetForm] = useState(false);
   const [disabledForm, setDisabledForm] = useState(league?.isPrivate);
-  const { addPlayerToLeague } = useSetLeague();
+  const { addUserToLeague } = useSetLeague();
   const user = useAppSelector((state) => state.user);
 
   const handleClick = async () => {
     if (league?.isPrivate) {
-      //Verificare che la pw sia corretta
       if (leaguePasswordInput?.value === league?.leaguePassword) {
-        await addPlayerToLeague(league.id, user.id);
+        await addUserToLeague(league.id, user.id);
       }
-    } else {
-      await addPlayerToLeague(league.id, user.id);
-    }
+    } else await addUserToLeague(league.id, user.id);
+
     setResetForm(true);
   };
 
