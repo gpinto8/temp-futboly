@@ -36,6 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # Local files
-./jest.config.js
-./jest.setup.ts
-/test
+jest.config.js
+jest.setup.ts
+test/
