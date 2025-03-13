@@ -6,21 +6,23 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
 
 type IconPickerProps = {
   className?: string;
+  getLogoId?: (selectedLogoId: string) => void;
 };
 
-export const TeamLogoPicker = ({ className }: IconPickerProps) => {
-  const logos = realTeamLogos();
+// This component is based on the "real-team-logos" file, that contains some real logos since we are not managing custom logos yet
+export const TeamLogoPicker = ({ className, getLogoId }: IconPickerProps) => {
   const title = 'Logo';
 
-  const [selectedLogo, setSelectedLogo] = useState(logos[0].id);
-
+  const [selectedLogo, setSelectedLogo] = useState(realTeamLogos[0].id);
   const handleChange = (event: SelectChangeEvent) =>
     setSelectedLogo(event.target.value as string);
+
+  useEffect(() => getLogoId?.(selectedLogo), [getLogoId]);
 
   return (
     <FormControl className={className}>
@@ -31,7 +33,7 @@ export const TeamLogoPicker = ({ className }: IconPickerProps) => {
         onChange={handleChange}
         className="h-[58px]"
       >
-        {logos.map((logo) => (
+        {realTeamLogos.map((logo) => (
           <MenuItem value={logo.id} className="w-full flex justify-center">
             <CustomImage
               className="w-10 h-10"

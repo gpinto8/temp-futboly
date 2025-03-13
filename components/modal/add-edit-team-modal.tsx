@@ -15,21 +15,39 @@ import { TeamLogoPicker } from '../team-logo-picker';
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
-type AddEditTeamModalProps = {
+export type AddEditTeamModalProps = {
   isEdit?: boolean;
   row?: any;
+  onSetTeam?: (data: {
+    logoId: string;
+    name: string;
+    owner: string;
+    coach: string;
+  }) => void;
 };
 
-export const AddEditTeamModal = ({ row, isEdit }: AddEditTeamModalProps) => {
+type ExtractType<T> = T extends (arg: infer U) => any ? U : never;
+export type AddEditTeamModalSetTeamDataProps = ExtractType<
+  AddEditTeamModalProps['onSetTeam']
+>;
+
+export const AddEditTeamModal = ({
+  row,
+  isEdit,
+  onSetTeam,
+}: AddEditTeamModalProps) => {
   console.log({ row, isEdit });
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
 
+  const [logoId, setLogoId] = useState('');
   const [name, setName] = useState<HandleChangeParamProps>();
   const [coach, setCoach] = useState<HandleChangeParamProps>();
   const [owner, setOwner] = useState<HandleChangeParamProps>();
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
+
+  const [disabled, setDisabled] = useState(true);
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
     { label: 'Player', id: 'PLAYER', minWidth: 200 },
@@ -84,6 +102,19 @@ export const AddEditTeamModal = ({ row, isEdit }: AddEditTeamModalProps) => {
     })();
   }, [players, selectedPlayerIds]);
 
+  useEffect(() => {
+    const allowPlayersCondition = isEdit ? selectedPlayerIds?.length : true;
+    const shouldDisable = !!(
+      logoId &&
+      name?.value &&
+      coach?.value &&
+      owner?.value &&
+      allowPlayersCondition
+    );
+
+    setDisabled(!shouldDisable);
+  }, [logoId, name, coach, owner, selectedPlayerIds]);
+
   // When opening the edit modal, we fetch all the first x players
   const getPlayers = async () => {
     const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
@@ -117,8 +148,15 @@ export const AddEditTeamModal = ({ row, isEdit }: AddEditTeamModalProps) => {
     setSelectedPlayerIds(playerIds);
   };
 
-  const handleEdit = () => {
-    console.log({ name, owner, selectedPlayerIds });
+  const handleSetTeam = () => {
+    if (logoId && name && owner && coach) {
+      onSetTeam?.({
+        logoId,
+        name: name.value,
+        owner: owner.value,
+        coach: coach.value,
+      });
+    }
   };
 
   return (
@@ -133,7 +171,8 @@ export const AddEditTeamModal = ({ row, isEdit }: AddEditTeamModalProps) => {
       }}
       closeButton={{
         label: `${isEdit ? 'Edit' : 'Create'} team`,
-        handleClick: handleEdit,
+        handleClick: handleSetTeam,
+        disabled,
       }}
       handleClose={handleClose}
     >
@@ -143,7 +182,7 @@ export const AddEditTeamModal = ({ row, isEdit }: AddEditTeamModalProps) => {
             <div className="font-bold">Choose information:</div>
             {/* ICON & NAME */}
             <div className="flex flex-col gap-2 md:flex-row">
-              <TeamLogoPicker />
+              <TeamLogoPicker getLogoId={setLogoId} />
               <CustomInput label="Name" handleChange={setName} />
             </div>
             {/* COACH & OWNER */}

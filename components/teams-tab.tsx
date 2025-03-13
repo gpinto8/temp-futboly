@@ -3,7 +3,10 @@ import { CustomImage } from './custom/custom-image';
 import { getMockupPersonalTeam, getMockupTeams } from '@/utils/mocks';
 import { CustomSeparator } from './custom/custom-separator';
 import { CustomCard } from './custom/custom-card';
-import { AddEditTeamModal } from './modal/add-edit-team-modal';
+import {
+  AddEditTeamModal,
+  AddEditTeamModalSetTeamDataProps,
+} from './modal/add-edit-team-modal';
 
 const personalTeam = getMockupPersonalTeam();
 const allTeams = getMockupTeams();
@@ -19,11 +22,15 @@ export const Teams = () => {
     }
   }, []);
 
+  const handleCreateTeam = (data: AddEditTeamModalSetTeamDataProps) => {
+    console.log('data', data);
+  };
+
   return (
     <>
       <div className="flex flex-col gap-2 justify-center items-center my-10">
         <div>You haven't created your team yet.</div>
-        <AddEditTeamModal />
+        <AddEditTeamModal onSetTeam={handleCreateTeam} />
       </div>
       <div className="flex flex-col gap-4 justify-center items-center">
         <div className="self-start">
