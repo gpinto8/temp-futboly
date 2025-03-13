@@ -37,7 +37,9 @@ export const CustomInput = ({
   disabled,
   initialValue,
 }: InputProps) => {
-  const [value, setValue] = initialValue ? useState(initialValue) : useState('');
+  const [value, setValue] = initialValue
+    ? useState(initialValue)
+    : useState('');
   const [error, setError] = useState(false);
   const { img, button } = endAdorment || {};
 

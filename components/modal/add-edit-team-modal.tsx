@@ -9,16 +9,25 @@ import { fetchSportmonksApiClient } from '@/sportmonks/fetch-api-client';
 import { PlayersGetAllQueryParamProps } from '@/pages/api/sportmonks/players/get-all';
 import { getPlayerRating } from '@/sportmonks/common-methods';
 import { SelectableTable } from '../table/selectable-table';
+import { TeamLogoPicker } from '../team-logo-picker';
+
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
-export const EditTeamModal = (row: any) => {
+type AddEditTeamModalProps = {
+  isEdit?: boolean;
+  row?: any;
+};
+
+export const AddEditTeamModal = ({ row, isEdit }: AddEditTeamModalProps) => {
+  console.log({ row, isEdit });
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
 
   const [name, setName] = useState<HandleChangeParamProps>();
+  const [coach, setCoach] = useState<HandleChangeParamProps>();
   const [owner, setOwner] = useState<HandleChangeParamProps>();
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
@@ -114,33 +123,50 @@ export const EditTeamModal = (row: any) => {
 
   return (
     <CustomModal
-      title={`${row?.row?.TEAM}`}
-      unboldedTitle="'s team"
+      title={isEdit ? `${row?.TEAM}` : 'Create your team'}
+      unboldedTitle={isEdit ? "'s team" : ''}
       openButton={{
-        label: 'Edit',
-        className: '!w-1/4 !h-3/4',
+        label: isEdit ? 'Edit' : 'Create your team',
+        className: isEdit ? '!w-1/4 !h-3/4' : 'w-full md:w-fit',
         handleClick: getPlayers,
+        style: isEdit ? 'black' : 'main',
       }}
-      closeButton={{ label: 'Edit team', handleClick: handleEdit }}
+      closeButton={{
+        label: `${isEdit ? 'Edit' : 'Create'} team`,
+        handleClick: handleEdit,
+      }}
       handleClose={handleClose}
     >
       <div className="flex flex-col gap-6 h-full">
         <div className="flex flex-col gap-8 h-full">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <div className="font-bold">Choose information:</div>
+            {/* ICON & NAME */}
             <div className="flex flex-col gap-2 md:flex-row">
+              <TeamLogoPicker />
               <CustomInput label="Name" handleChange={setName} />
+            </div>
+            {/* COACH & OWNER */}
+            <div className="flex flex-col gap-2 md:flex-row">
+              <CustomInput label="Coach" handleChange={setCoach} />
               <CustomInput label="Owner" handleChange={setOwner} />
             </div>
           </div>
+          {/* PLAYERS */}
           <div className="flex flex-col gap-2 h-full">
             <div className="font-bold">Choose players:</div>
-            <SelectableTable<PlayersColumnKeysProps>
-              columns={columns}
-              rows={rows}
-              onEndReached={handleEndReached}
-              getSelectedRows={handleSelectedRows}
-            />
+            {isEdit ? (
+              <SelectableTable<PlayersColumnKeysProps>
+                columns={columns}
+                rows={rows}
+                onEndReached={handleEndReached}
+                getSelectedRows={handleSelectedRows}
+              />
+            ) : (
+              <div className="my-2 mx-auto ">
+                Ask your admin to add the players.
+              </div>
+            )}
           </div>
         </div>
       </div>
