@@ -49,3 +49,6 @@ export const realTeamLogos: RealTeamLogoProps[] = [
     alt: 'Real Madrid Logo Icon',
   },
 ];
+
+export const getRealTeamLogoById = (id: string) =>
+  realTeamLogos.find((logo) => logo.id === id);
