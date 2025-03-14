@@ -36,18 +36,18 @@ export type CompetitionsCollectionProps = {
   currentWeek: Number;
   maxWeek: Number;
   players: DocumentReference<UsersCollectionProps>[];
-  teams: DocumentReference<TeamsCollectionProps>[];
+  teams: DocumentReference<CompetitionsCollectionTeamsProps>[];
   standings:
     | {
-        teamId: DocumentReference<TeamsCollectionProps>;
+        teamId: DocumentReference<CompetitionsCollectionTeamsProps>;
         points: Number;
       }[]
     | null;
   matchSchedule:
     | {
         week: Number;
-        home: DocumentReference<TeamsCollectionProps>;
-        away: DocumentReference<TeamsCollectionProps>;
+        home: DocumentReference<CompetitionsCollectionTeamsProps>;
+        away: DocumentReference<CompetitionsCollectionTeamsProps>;
         result: {
           home: Number;
           away: Number;
@@ -57,21 +57,22 @@ export type CompetitionsCollectionProps = {
 };
 
 // TEAMS
-export type TeamsCollectionProps = {
-  id: string;
-  uid: DocumentReference<UsersCollectionProps>;
-  league: DocumentReference<LeaguesCollectionProps>;
-  competition: DocumentReference<CompetitionsCollectionProps>;
+export type CompetitionsCollectionTeamsProps = {
+  shortId: string;
+  userRef: DocumentReference<UsersCollectionProps>;
+  leagueRef: DocumentReference<LeaguesCollectionProps>;
+  competitionRef: DocumentReference<CompetitionsCollectionProps>;
   name: string;
-  logo: string; // Actual Sportmonks ID
-  formation: string; // String with module
-  players: {
-    sportmonksID: string;
-    actualPosition: {
-      isBenched: Boolean;
-      slot: Number;
-    };
-  }[];
+  coach: string;
+  logoId: string;
+  // formation: string; // String with module
+  // players: {
+  //   sportmonksID: string;
+  //   actualPosition: {
+  //     isBenched: Boolean;
+  //     slot: Number;
+  //   };
+  // }[];
 };
 
 export type MappedPlayerProps = {

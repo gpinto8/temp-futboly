@@ -1,9 +1,9 @@
 import { CustomImage } from '@/components/custom/custom-image';
-import { AddEditTeamModalSetTeamDataProps } from '@/components/modal/add-edit-team-modal';
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 
 type TeamCardProps = {
-  team?: AddEditTeamModalSetTeamDataProps;
+  team?: CompetitionsCollectionTeamsProps;
 };
 
 export const TeamCard = ({ team }: TeamCardProps) => {

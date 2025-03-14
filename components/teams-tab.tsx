@@ -8,14 +8,51 @@ import { AllTeams } from './tabs/teams-tab/all-teams';
 import { YourTeam } from './tabs/teams-tab/your-team';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useGetTeams } from '@/data/teams/use-get-teams';
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { getShortBase64Id } from '@/utils/id';
+import { useGetLeagues } from '@/data/leagues/use-get-leagues';
+import { useGetUsers } from '@/data/users/use-get-users';
 
 export const TeamsTab = () => {
   const { getActiveCompetition } = useGetCompetitions();
   const { addTeam } = useSetTeams();
   const { getTeam } = useGetTeams();
 
+  const { getCurrentUserRef } = useGetUsers();
+  const { getCurrentActiveCompetitionRef } = useGetCompetitions();
+  const { getCurrentSelectedLeagueRef } = useGetLeagues();
+
+  const userRef = getCurrentUserRef();
+  const leagueRef = getCurrentSelectedLeagueRef();
+  const competitionRef = getCurrentActiveCompetitionRef();
+
   const handleCreateTeam = (data: AddEditTeamModalSetTeamDataProps) => {
-    if (data) addTeam(data);
+    const shortId = getShortBase64Id();
+    const name = data.name;
+    const coach = data.coach;
+    const logoId = data.logoId;
+
+    if (
+      shortId &&
+      userRef &&
+      leagueRef &&
+      competitionRef &&
+      name &&
+      coach &&
+      logoId
+    ) {
+      const data: CompetitionsCollectionTeamsProps = {
+        shortId,
+        userRef,
+        leagueRef,
+        competitionRef,
+        name,
+        coach,
+        logoId,
+      };
+
+      if (data) addTeam?.(data);
+    }
   };
 
   return (

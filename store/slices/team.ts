@@ -1,13 +1,11 @@
-import { AddEditTeamModalSetTeamDataProps } from '@/components/modal/add-edit-team-modal';
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type InitialStateProps = {
-  teams: { [competitionId: string]: AddEditTeamModalSetTeamDataProps };
-  currentTeam?: AddEditTeamModalSetTeamDataProps; // Based on current competition
+  currentTeam?: CompetitionsCollectionTeamsProps; // Based on current competition
 };
 
 const initialState: InitialStateProps = {
-  teams: {},
   currentTeam: undefined,
 };
 
@@ -17,19 +15,10 @@ const teamSlice = createSlice({
   reducers: {
     setCurrentTeam: (
       state,
-      action: PayloadAction<AddEditTeamModalSetTeamDataProps>,
+      action: PayloadAction<CompetitionsCollectionTeamsProps>,
     ) => {
       const currentTeam = action.payload;
       if (currentTeam) state.currentTeam = currentTeam;
-    },
-    setTeam: (
-      state,
-      action: PayloadAction<{
-        [competitionId: string]: AddEditTeamModalSetTeamDataProps;
-      }>,
-    ) => {
-      const team = action.payload;
-      state.teams = { ...state.teams, ...team };
     },
   },
 });

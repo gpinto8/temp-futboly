@@ -46,10 +46,17 @@ export const useGetUsers = () => {
       : (null as null);
   };
 
+  // GET CURRENT USER REF FIREBASE DATA
+  const getCurrentUserRef = () => {
+    const currentUser = getUser()?.id;
+    if (currentUser) return getUserRefById(currentUser);
+  };
+
   return {
     getUser,
     removeUserFromLeague,
     getUserFromUui,
     getUserRefById,
+    getCurrentUserRef,
   };
 };

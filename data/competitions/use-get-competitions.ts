@@ -157,6 +157,12 @@ export const useGetCompetitions = () => {
       : (null as null);
   };
 
+  // GET CURRENT ACTIVE COMPETITION REF FIREBASE DATA
+  const getCurrentActiveCompetitionRef = () => {
+    const currentCompetition = getActiveCompetition()?.id;
+    if (currentCompetition) return getCompetitionRefById(currentCompetition);
+  };
+
   return {
     getCompetitions,
     getCompetitionById,
@@ -166,5 +172,6 @@ export const useGetCompetitions = () => {
     getActiveCompetition,
     getActiveCompetitionByUid,
     getCompetitionRefById,
+    getCurrentActiveCompetitionRef,
   };
 };
