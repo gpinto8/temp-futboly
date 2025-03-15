@@ -26,7 +26,7 @@ const competitionSlice = createSlice({
       state.competitions = [...filteredCompetitions, competition];
     },
 
-    // Replaces all the competitions array with the payload you pass (e.g useful on mounting)
+    // Replaces all the (current league?) competitions array with the payload you pass (e.g useful on mounting)
     setAllCompetitions(
       state,
       action: PayloadAction<CompetitionsCollectionProps[]>,

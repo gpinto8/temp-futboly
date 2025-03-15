@@ -14,16 +14,16 @@ type AdminColumnKeysProps =
   | 'ACTIONS';
 
 export const AdminTabTeams = () => {
-  const { getAllTeams } = useGetTeams();
+  const { getAllTeamsFromAllCompetitions } = useGetTeams();
   const { deleteTeam } = useSetTeams();
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
 
   useEffect(() => {
     (async () => {
-      const alTeams = await getAllTeams(true);
+      const allTeams = await getAllTeamsFromAllCompetitions();
 
-      if (alTeams) {
-        const _rows: RowsProps<AdminColumnKeysProps> = alTeams.map(
+      if (allTeams) {
+        const _rows: RowsProps<AdminColumnKeysProps> = allTeams.map(
           (team, i) => {
             const {
               competitionName,

@@ -2,11 +2,42 @@ import { useAppSelector } from '@/store/hooks';
 import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { useGetUsers } from '../users/use-get-users';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { useGetLeagues } from '../leagues/use-get-leagues';
+
+type CompetitionsCollectionTeamsExtraProps =
+  CompetitionsCollectionTeamsProps & {
+    ownerUsername?: string;
+    competitionName?: string;
+  };
 
 export const useGetTeams = () => {
   const team = useAppSelector((state) => state.team);
-  const { getActiveCompetition, getCompetitionById } = useGetCompetitions();
+  const {
+    getActiveCompetition,
+    getCompetitionById,
+    getCompetitionsByLeagueId,
+  } = useGetCompetitions();
   const { getUserFromUui } = useGetUsers();
+  const { getLeague } = useGetLeagues();
+
+  const mapTeamWithExtraProps = async (
+    team: CompetitionsCollectionTeamsProps,
+  ) => {
+    const userId = team.userRef.id;
+    const userData = await getUserFromUui(userId);
+    const ownerUsername = userData?.username;
+
+    const competitionId = team.competitionRef.id;
+    const competitionData = await getCompetitionById(competitionId);
+    const competitionName = competitionData?.name;
+
+    const newTeam: CompetitionsCollectionTeamsExtraProps = {
+      ...team,
+      ownerUsername,
+      competitionName,
+    };
+    return newTeam;
+  };
 
   // GET CURRENT TEAM FROM REDUX BASED ON CURRENT ACTIVE COMPETITION
   const getTeam = () => team?.currentTeam;
@@ -28,38 +59,48 @@ export const useGetTeams = () => {
   const getAllTeams = async (incluceExtraProps?: boolean) => {
     const currentCompetition = getActiveCompetition();
     const competitionTeams = currentCompetition?.teams;
+    if (!competitionTeams?.length) return;
 
-    let allTeams: (CompetitionsCollectionTeamsProps & {
-      ownerUsername?: string;
-      competitionName?: string;
-    })[] = [];
+    let allTeams: CompetitionsCollectionTeamsExtraProps[] = [];
 
-    if (competitionTeams) {
-      if (incluceExtraProps) {
-        const teams: any = [];
-
-        for await (const team of competitionTeams) {
-          const userId = team.userRef.id;
-          const userData = await getUserFromUui(userId);
-          const ownerUsername = userData?.username;
-
-          const competitionId = team.competitionRef.id;
-          const competitionData = await getCompetitionById(competitionId);
-          const competitionName = competitionData?.name;
-
-          teams.push({ ...team, ownerUsername, competitionName });
-        }
-
-        allTeams = teams;
-      } else allTeams = competitionTeams;
+    if (incluceExtraProps) {
+      const teams: any = [];
+      for await (const team of competitionTeams) {
+        const mappedTeam = await mapTeamWithExtraProps(team);
+        teams.push(mappedTeam);
+      }
+      allTeams = teams;
+    } else {
+      allTeams = competitionTeams;
     }
 
     if (allTeams?.length) return allTeams;
+  };
+
+  // GET ALL THE TEAMS FROM ALL THE COMPETITIONS BASED ON CURRENT LEAGUE
+  const getAllTeamsFromAllCompetitions = async () => {
+    const currentLeagueId = getLeague()?.id;
+    const currentLeagueCompetitions = await getCompetitionsByLeagueId(
+      currentLeagueId,
+    );
+
+    const allTeams = currentLeagueCompetitions
+      .map((competition) => competition.teams)
+      .flat();
+
+    let mappedTeams: CompetitionsCollectionTeamsExtraProps[] = [];
+    for await (const team of allTeams) {
+      const mappedTeam = await mapTeamWithExtraProps(team);
+      mappedTeams.push(mappedTeam);
+    }
+
+    if (mappedTeams?.length) return mappedTeams;
   };
 
   return {
     getTeam,
     getTeamByUid,
     getAllTeams,
+    getAllTeamsFromAllCompetitions,
   };
 };

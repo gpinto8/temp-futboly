@@ -7,8 +7,8 @@ import { useGetTeams } from './use-get-teams';
 
 export const useSetTeams = () => {
   const dispatch = useAppDispatch();
-  const { getActiveCompetition } = useGetCompetitions();
-  const { getTeamByUid } = useGetTeams();
+  const { getActiveCompetition, getCompetitionById } = useGetCompetitions();
+  const { getTeamByUid, getTeam } = useGetTeams();
 
   // ADD TEAM TO CURRENT COMPETITION AND MAKE IT THE CURRENT ONE
   const addTeam = (team: CompetitionsCollectionTeamsProps) => {
@@ -16,13 +16,15 @@ export const useSetTeams = () => {
     const competitionDocId = currentCompetition?.id;
 
     if (competitionDocId && team) {
+      // Update it on firebase
       firestoreMethods('competitions', competitionDocId as any).addDataToField(
         'teams',
         team,
         'array',
-      ); // Update it on firebase
+      );
 
-      dispatch(teamActions.setCurrentTeam(team)); // Update redux as the current team
+      // Update redux as the current team
+      dispatch(teamActions.setCurrentTeam(team));
     }
   };
 
@@ -35,13 +37,26 @@ export const useSetTeams = () => {
     }
   };
 
-  const deleteTeam = (competitionId: string, teamShortId: string) => {
-    console.log({ competitionId, teamShortId });
+  // DELETE A TEAM BASED ON THE COMPETITION AND THE SHORT ID TEAM PROP
+  const deleteTeam = async (competitionId: string, teamShortId: string) => {
+    const competitionData = await getCompetitionById(competitionId);
+    if (competitionData) {
+      const filteredTeams = competitionData?.teams.filter(
+        (team) => team.shortId !== teamShortId,
+      );
 
-    firestoreMethods('competitions', competitionId as any).replaceField(
-      'teams',
-      [],
-    ); // Update it on firebase
+      // Update it on firebase
+      firestoreMethods('competitions', competitionId as any).replaceField(
+        'teams',
+        filteredTeams,
+      );
+
+      // If the deleted team is the current one then delete it from redux too
+      const currentTeamShortId = getTeam()?.shortId;
+      if (currentTeamShortId === teamShortId) {
+        dispatch(teamActions.deleteCurrentTeam());
+      }
+    }
   };
 
   return {

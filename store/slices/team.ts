@@ -20,6 +20,7 @@ const teamSlice = createSlice({
       const currentTeam = action.payload;
       if (currentTeam) state.currentTeam = currentTeam;
     },
+    deleteCurrentTeam: (state) => (state.currentTeam = undefined),
   },
 });
 
