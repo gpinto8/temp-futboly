@@ -5,10 +5,9 @@ import { DocumentReference } from 'firebase/firestore';
 
 export const useGetUsers = () => {
   const league = useAppSelector((state) => state.league);
+  const user = useAppSelector((state) => state.user);
 
-  const getUser = () => {
-    return useAppSelector((state) => state.user) as UsersCollectionProps;
-  };
+  const getUser = () => user;
 
   const getUserFromUui = async (uid: string) => {
     if (uid) {

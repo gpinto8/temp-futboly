@@ -15,28 +15,26 @@ import { TeamLogoPicker } from '../team-logo-picker';
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
-export type AddEditTeamModalProps = {
-  isEdit?: boolean;
-  row?: any;
-  onSetTeam?: (data: {
-    logoId: string;
-    name: string;
-    owner: string;
-    coach: string;
-  }) => void;
+export type AddEditTeamModalDataProps = {
+  logoId: string;
+  name: string;
+  owner: string;
+  coach: string;
 };
 
-type ExtractType<T> = T extends (arg: infer U) => any ? U : never;
-export type AddEditTeamModalSetTeamDataProps = ExtractType<
-  AddEditTeamModalProps['onSetTeam']
->;
+export type AddEditTeamModalProps = {
+  data?: Partial<AddEditTeamModalDataProps>;
+  isEdit?: boolean;
+  onSetData?: (data: AddEditTeamModalDataProps) => void;
+  onMount?: () => void;
+};
 
 export const AddEditTeamModal = ({
-  row,
+  data,
   isEdit,
-  onSetTeam,
+  onSetData,
+  onMount,
 }: AddEditTeamModalProps) => {
-  console.log({ row, isEdit });
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
@@ -102,6 +100,7 @@ export const AddEditTeamModal = ({
     })();
   }, [players, selectedPlayerIds]);
 
+  // Disable the inputs if they are not valid
   useEffect(() => {
     const allowPlayersCondition = isEdit ? selectedPlayerIds?.length : true;
     const shouldDisable = !!(
@@ -137,6 +136,11 @@ export const AddEditTeamModal = ({
     if (players) setPlayers([...players, ...data.data]);
   };
 
+  const handleOpen = async () => {
+    onMount?.();
+    await getPlayers();
+  };
+
   const handleClose = () => {
     setPageCounter(1); // Resetting the count so the next time we open up the modal we start from the beginning and not from the part we left it on
   };
@@ -149,8 +153,8 @@ export const AddEditTeamModal = ({
   };
 
   const handleSetTeam = () => {
-    if (logoId && name && owner && coach) {
-      onSetTeam?.({
+    if (logoId && name?.isValid && owner?.isValid && coach?.isValid) {
+      onSetData?.({
         logoId,
         name: name.value,
         owner: owner.value,
@@ -161,12 +165,12 @@ export const AddEditTeamModal = ({
 
   return (
     <CustomModal
-      title={isEdit ? `${row?.TEAM}` : 'Create your team'}
+      title={isEdit ? `${data?.name}` : 'Create your team'}
       unboldedTitle={isEdit ? "'s team" : ''}
       openButton={{
         label: isEdit ? 'Edit' : 'Create your team',
         className: isEdit ? '!w-1/4 !h-3/4' : 'w-full md:w-fit',
-        handleClick: getPlayers,
+        handleClick: handleOpen,
         style: isEdit ? 'black' : 'main',
       }}
       closeButton={{
@@ -182,13 +186,29 @@ export const AddEditTeamModal = ({
             <div className="font-bold">Choose information:</div>
             {/* ICON & NAME */}
             <div className="flex flex-col gap-2 md:flex-row">
-              <TeamLogoPicker getLogoId={setLogoId} />
-              <CustomInput label="Name" handleChange={setName} />
+              <TeamLogoPicker
+                initialValue={data?.logoId}
+                getLogoId={setLogoId}
+              />
+              <CustomInput
+                initialValue={data?.name}
+                label="Name"
+                handleChange={setName}
+              />
             </div>
             {/* COACH & OWNER */}
             <div className="flex flex-col gap-2 md:flex-row">
-              <CustomInput label="Coach" handleChange={setCoach} />
-              <CustomInput label="Owner" handleChange={setOwner} />
+              <CustomInput
+                initialValue={data?.coach}
+                label="Coach"
+                handleChange={setCoach}
+              />
+              <CustomInput
+                initialValue={data?.owner}
+                label="Owner"
+                handleChange={setOwner}
+                disabled
+              />
             </div>
           </div>
           {/* PLAYERS */}

@@ -1,7 +1,7 @@
 import { CustomSeparator } from './custom/custom-separator';
 import {
   AddEditTeamModal,
-  AddEditTeamModalSetTeamDataProps,
+  AddEditTeamModalDataProps,
 } from './modal/add-edit-team-modal';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { AllTeams } from './tabs/teams-tab/all-teams';
@@ -12,21 +12,26 @@ import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { getShortBase64Id } from '@/utils/id';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
+import { useEffect } from 'react';
 
 export const TeamsTab = () => {
-  const { getActiveCompetition } = useGetCompetitions();
-  const { addTeam } = useSetTeams();
-  const { getTeam } = useGetTeams();
-
-  const { getCurrentUserRef } = useGetUsers();
-  const { getCurrentActiveCompetitionRef } = useGetCompetitions();
+  const { getCurrentUserRef, getUser } = useGetUsers();
+  const { getCurrentActiveCompetitionRef, getActiveCompetition } =
+    useGetCompetitions();
   const { getCurrentSelectedLeagueRef } = useGetLeagues();
+  const { getTeam } = useGetTeams();
+  const { addTeam, setCurrentTeam } = useSetTeams();
 
   const userRef = getCurrentUserRef();
   const leagueRef = getCurrentSelectedLeagueRef();
   const competitionRef = getCurrentActiveCompetitionRef();
 
-  const handleCreateTeam = (data: AddEditTeamModalSetTeamDataProps) => {
+  useEffect(() => {
+    const userId = getUser()?.id;
+    if (userId) setCurrentTeam(userId);
+  }, []);
+
+  const handleCreateTeam = (data: AddEditTeamModalDataProps) => {
     const shortId = getShortBase64Id();
     const name = data.name;
     const coach = data.coach;
@@ -67,7 +72,10 @@ export const TeamsTab = () => {
             You haven't created your team yet for the "
             <strong>{getActiveCompetition()?.name}</strong>" competition.
           </div>
-          <AddEditTeamModal onSetTeam={handleCreateTeam} />
+          <AddEditTeamModal
+            data={{ owner: getUser()?.username }}
+            onSetData={handleCreateTeam}
+          />
         </div>
       ) : (
         <div className="flex flex-col gap-4 justify-center items-center">

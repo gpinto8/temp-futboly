@@ -36,7 +36,7 @@ export type CompetitionsCollectionProps = {
   currentWeek: Number;
   maxWeek: Number;
   players: DocumentReference<UsersCollectionProps>[];
-  teams: DocumentReference<CompetitionsCollectionTeamsProps>[];
+  teams: CompetitionsCollectionTeamsProps[];
   standings:
     | {
         teamId: DocumentReference<CompetitionsCollectionTeamsProps>;

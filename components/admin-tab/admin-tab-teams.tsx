@@ -1,21 +1,37 @@
 import { CustomButton } from '../custom/custom-button';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
-import { AddEditTeamModal } from '../modal/add-edit-team-modal';
+import {
+  AddEditTeamModal,
+  AddEditTeamModalDataProps,
+} from '../modal/add-edit-team-modal';
 
 type AdminColumnKeysProps = 'INDEX' | 'TEAM' | 'OWNER' | 'PLAYERS' | 'ACTIONS';
 
 export const AdminTabTeams = () => {
   const rows: RowsProps<AdminColumnKeysProps> = [
     { INDEX: 1, TEAM: 'Team1', OWNER: 'gpinto8', PLAYERS: 49 },
-  ].map((row, i) => ({
-    ...row,
-    ACTIONS: (
-      <div className="flex gap-1">
-        <AddEditTeamModal key={i} row={row} isEdit />
-        <CustomButton label="Delete" style="error" className="!w-1/4 !h-1/4" />
-      </div>
-    ),
-  }));
+  ].map((row, i) => {
+    const data: AddEditTeamModalDataProps = {
+      logoId: '',
+      name: row.TEAM,
+      owner: row.OWNER,
+      coach: '',
+    };
+
+    return {
+      ...row,
+      ACTIONS: (
+        <div className="flex gap-1">
+          <AddEditTeamModal key={i} data={data} isEdit />
+          <CustomButton
+            label="Delete"
+            style="error"
+            className="!w-1/4 !h-1/4"
+          />
+        </div>
+      ),
+    };
+  });
 
   const columns: ColumnsProps<AdminColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },

@@ -10,15 +10,21 @@ import { useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
 
 type IconPickerProps = {
+  initialValue?: string;
   className?: string;
   getLogoId?: (selectedLogoId: string) => void;
 };
 
 // This component is based on the "real-team-logos" file, that contains some real logos since we are not managing custom logos yet
-export const TeamLogoPicker = ({ className, getLogoId }: IconPickerProps) => {
+export const TeamLogoPicker = ({
+  initialValue,
+  className,
+  getLogoId,
+}: IconPickerProps) => {
   const title = 'Logo';
+  const newInitialValue = initialValue || realTeamLogos[0].id;
 
-  const [selectedLogo, setSelectedLogo] = useState(realTeamLogos[0].id);
+  const [selectedLogo, setSelectedLogo] = useState(newInitialValue);
   const handleChange = (event: SelectChangeEvent) =>
     setSelectedLogo(event.target.value as string);
 
@@ -33,8 +39,12 @@ export const TeamLogoPicker = ({ className, getLogoId }: IconPickerProps) => {
         onChange={handleChange}
         className="h-[58px]"
       >
-        {realTeamLogos.map((logo) => (
-          <MenuItem value={logo.id} className="w-full flex justify-center">
+        {realTeamLogos.map((logo, i) => (
+          <MenuItem
+            key={i}
+            value={logo.id}
+            className="w-full flex justify-center"
+          >
             <CustomImage
               className="w-10 h-10"
               forceSrc={logo.src}

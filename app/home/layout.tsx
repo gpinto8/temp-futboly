@@ -28,7 +28,6 @@ export default ({ children }: any) => {
   useEffect(() => {
     (async () => {
       const uid = user?.id;
-      console.log('UID presente: ' + uid);
       if (uid) {
         const league = await getActiveLeagueByUid(uid, user);
         if (league) {

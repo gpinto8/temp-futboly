@@ -3,12 +3,14 @@ import { teamActions } from '@/store/slices/team';
 import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { useGetTeams } from './use-get-teams';
 
 export const useSetTeams = () => {
   const dispatch = useAppDispatch();
   const { getActiveCompetition } = useGetCompetitions();
+  const { getTeamByUid } = useGetTeams();
 
-  // ADD TEAM TO CURRENT COMPETITION
+  // ADD TEAM TO CURRENT COMPETITION AND MAKE IT THE CURRENT ONE
   const addTeam = (team: CompetitionsCollectionTeamsProps) => {
     const currentCompetition = getActiveCompetition();
     const competitionDocId = currentCompetition?.id;
@@ -20,11 +22,21 @@ export const useSetTeams = () => {
         'array',
       ); // Update it on firebase
 
-      dispatch(teamActions.setCurrentTeam(team)); // Update redux
+      dispatch(teamActions.setCurrentTeam(team)); // Update redux as the current team
+    }
+  };
+
+  // GET THE FIREBASE TEAM TO REDUX
+  const setCurrentTeam = (userId: string) => {
+    const team = getTeamByUid(userId);
+
+    if (team) {
+      dispatch(teamActions.setCurrentTeam(team)); // Update redux as the current team
     }
   };
 
   return {
     addTeam,
+    setCurrentTeam,
   };
 };
