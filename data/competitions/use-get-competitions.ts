@@ -27,23 +27,19 @@ export const useGetCompetitions = () => {
   const getCompetitions = () =>
     competition.competitions.map((competition) => mapCompetition(competition));
 
-  // GET COMPETITION BY ID --> TO GET THE ACTIVE WE JUST NEED TO PASS THE ID FORM THE USER FIELD
-  const getCompetitionById = async (
-    id: DocumentReference<CompetitionsCollectionProps>,
-  ) => {
+  // GET COMPETITION BY THE COMPETITION DOCUMENT ID
+  const getCompetitionById = async (id: string) => {
     const competition = await firestoreMethods(
       'competitions',
       id as any,
     ).getDocumentData();
 
     if (competition) {
-      const mappedCompetitions = await mapCompetition(
+      const mappedCompetitions = mapCompetition(
         competition as CompetitionsCollectionProps,
       );
       return mappedCompetitions as MappedCompetitionsProps;
-    } else {
-      return null as null;
-    }
+    } else return null;
   };
 
   const getCompetitionByRef = async (

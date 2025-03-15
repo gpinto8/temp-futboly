@@ -1,40 +1,72 @@
+import { useEffect, useState } from 'react';
 import { CustomButton } from '../custom/custom-button';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
-import {
-  AddEditTeamModal,
-  AddEditTeamModalDataProps,
-} from '../modal/add-edit-team-modal';
+import { AddEditTeamModal } from '../modal/add-edit-team-modal';
+import { useGetTeams } from '@/data/teams/use-get-teams';
+import { useSetTeams } from '@/data/teams/use-set-teams';
 
-type AdminColumnKeysProps = 'INDEX' | 'TEAM' | 'OWNER' | 'PLAYERS' | 'ACTIONS';
+type AdminColumnKeysProps =
+  | 'INDEX'
+  | 'COMPETITION'
+  | 'TEAM'
+  | 'OWNER'
+  | 'PLAYERS'
+  | 'ACTIONS';
 
 export const AdminTabTeams = () => {
-  const rows: RowsProps<AdminColumnKeysProps> = [
-    { INDEX: 1, TEAM: 'Team1', OWNER: 'gpinto8', PLAYERS: 49 },
-  ].map((row, i) => {
-    const data: AddEditTeamModalDataProps = {
-      logoId: '',
-      name: row.TEAM,
-      owner: row.OWNER,
-      coach: '',
-    };
+  const { getAllTeams } = useGetTeams();
+  const { deleteTeam } = useSetTeams();
+  const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
 
-    return {
-      ...row,
-      ACTIONS: (
-        <div className="flex gap-1">
-          <AddEditTeamModal key={i} data={data} isEdit />
-          <CustomButton
-            label="Delete"
-            style="error"
-            className="!w-1/4 !h-1/4"
-          />
-        </div>
-      ),
-    };
-  });
+  useEffect(() => {
+    (async () => {
+      const alTeams = await getAllTeams(true);
+
+      if (alTeams) {
+        const _rows: RowsProps<AdminColumnKeysProps> = alTeams.map(
+          (team, i) => {
+            const {
+              competitionName,
+              shortId,
+              logoId,
+              name,
+              ownerUsername,
+              coach,
+              competitionRef,
+            } = team;
+
+            return {
+              INDEX: i + 1,
+              COMPETITION: competitionName,
+              TEAM: name,
+              OWNER: ownerUsername,
+              PLAYERS: '',
+              ACTIONS: (
+                <div className="flex gap-1">
+                  <AddEditTeamModal
+                    data={{ logoId, name, owner: team?.ownerUsername, coach }}
+                    isEdit
+                  />
+                  <CustomButton
+                    label="Delete"
+                    style="error"
+                    className="!w-1/4 !h-1/4"
+                    handleClick={() => deleteTeam(competitionRef.id, shortId)}
+                  />
+                </div>
+              ),
+            };
+          },
+        );
+
+        if (_rows) setRows(_rows);
+      }
+    })();
+  }, []);
 
   const columns: ColumnsProps<AdminColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: 'Competition', id: 'COMPETITION', minWidth: 100 },
     { label: 'Team', id: 'TEAM', minWidth: 100 },
     { label: 'Owner', id: 'OWNER', minWidth: 100 },
     { label: 'Players', id: 'PLAYERS', align: 'center', minWidth: 50 },
@@ -43,7 +75,6 @@ export const AdminTabTeams = () => {
 
   return (
     <div className="h-[400px] ">
-      TODO
       <CustomTable<AdminColumnKeysProps>
         rows={rows}
         columns={columns}

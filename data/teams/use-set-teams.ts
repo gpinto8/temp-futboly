@@ -35,8 +35,18 @@ export const useSetTeams = () => {
     }
   };
 
+  const deleteTeam = (competitionId: string, teamShortId: string) => {
+    console.log({ competitionId, teamShortId });
+
+    firestoreMethods('competitions', competitionId as any).replaceField(
+      'teams',
+      [],
+    ); // Update it on firebase
+  };
+
   return {
     addTeam,
     setCurrentTeam,
+    deleteTeam,
   };
 };
