@@ -25,7 +25,7 @@ export type AddEditTeamModalDataProps = {
 export type AddEditTeamModalProps = {
   data?: Partial<AddEditTeamModalDataProps>;
   isEdit?: boolean;
-  onSetData?: (data: AddEditTeamModalDataProps) => void;
+  onSetData?: (data: Omit<AddEditTeamModalDataProps, 'owner'>) => void;
   onMount?: () => void;
 };
 
@@ -42,7 +42,6 @@ export const AddEditTeamModal = ({
   const [logoId, setLogoId] = useState('');
   const [name, setName] = useState<HandleChangeParamProps>();
   const [coach, setCoach] = useState<HandleChangeParamProps>();
-  const [owner, setOwner] = useState<HandleChangeParamProps>();
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
   const [disabled, setDisabled] = useState(true);
@@ -107,12 +106,11 @@ export const AddEditTeamModal = ({
       logoId &&
       name?.value &&
       coach?.value &&
-      owner?.value &&
       allowPlayersCondition
     );
 
     setDisabled(!shouldDisable);
-  }, [logoId, name, coach, owner, selectedPlayerIds]);
+  }, [logoId, name, coach, selectedPlayerIds]);
 
   // When opening the edit modal, we fetch all the first x players
   const getPlayers = async () => {
@@ -153,13 +151,8 @@ export const AddEditTeamModal = ({
   };
 
   const handleSetTeam = () => {
-    if (logoId && name?.isValid && owner?.isValid && coach?.isValid) {
-      onSetData?.({
-        logoId,
-        name: name.value,
-        owner: owner.value,
-        coach: coach.value,
-      });
+    if (logoId && name?.isValid && coach?.isValid) {
+      onSetData?.({ logoId, name: name.value, coach: coach.value });
     }
   };
 
@@ -203,12 +196,7 @@ export const AddEditTeamModal = ({
                 label="Coach"
                 handleChange={setCoach}
               />
-              <CustomInput
-                initialValue={data?.owner}
-                label="Owner"
-                handleChange={setOwner}
-                disabled
-              />
+              <CustomInput initialValue={data?.owner} label="Owner" disabled />
             </div>
           </div>
           {/* PLAYERS */}
