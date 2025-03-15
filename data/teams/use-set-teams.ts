@@ -51,6 +51,9 @@ export const useSetTeams = () => {
         filteredTeams,
       );
 
+      // Refresh the admin team tabs
+      dispatch(teamActions.refreshAdminTeams());
+
       // If the deleted team is the current one then delete it from redux too
       const currentTeamShortId = getTeam()?.shortId;
       if (currentTeamShortId === teamShortId) {

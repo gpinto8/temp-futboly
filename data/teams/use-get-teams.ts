@@ -94,7 +94,7 @@ export const useGetTeams = () => {
       mappedTeams.push(mappedTeam);
     }
 
-    if (mappedTeams?.length) return mappedTeams;
+    return mappedTeams;
   };
 
   return {
