@@ -4,6 +4,7 @@ import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { useGetTeams } from './use-get-teams';
+import merge from 'lodash/merge';
 
 export const useSetTeams = () => {
   const dispatch = useAppDispatch();
@@ -38,11 +39,11 @@ export const useSetTeams = () => {
   };
 
   // DELETE A TEAM BASED ON THE COMPETITION AND THE SHORT ID TEAM PROP
-  const deleteTeam = async (competitionId: string, teamShortId: string) => {
+  const deleteTeam = async (competitionId: string, shortId: string) => {
     const competitionData = await getCompetitionById(competitionId);
     if (competitionData) {
       const filteredTeams = competitionData?.teams.filter(
-        (team) => team.shortId !== teamShortId,
+        (team) => team.shortId !== shortId,
       );
 
       // Update it on firebase
@@ -56,8 +57,52 @@ export const useSetTeams = () => {
 
       // If the deleted team is the current one then delete it from redux too
       const currentTeamShortId = getTeam()?.shortId;
-      if (currentTeamShortId === teamShortId) {
+      if (currentTeamShortId === shortId) {
         dispatch(teamActions.deleteCurrentTeam());
+      }
+    }
+  };
+
+  // EDIT A TEAM BASED ON THE COMPETITION AND THE SHORT ID TEAM PROP
+  const editTeam = async (
+    competitionId: string,
+    shortId: string,
+    newTeam: Partial<CompetitionsCollectionTeamsProps>,
+  ) => {
+    const competitionData = await getCompetitionById(competitionId);
+    if (competitionData) {
+      const allTeams = competitionData?.teams;
+
+      // First find the team to change from all the competitions and edit it
+      const foundTeam = allTeams.find((team) => team.shortId === shortId);
+      if (foundTeam) {
+        const mergedTeam: CompetitionsCollectionTeamsProps = merge(
+          foundTeam,
+          newTeam,
+        );
+
+        if (mergedTeam) {
+          // Then place it inside the other teams, removing the old one with this new edited one
+          const filteredTeams = competitionData?.teams.filter(
+            (team) => team.shortId !== shortId,
+          );
+          const newAllTeams = [...filteredTeams, mergedTeam];
+
+          // Update it on firebase
+          firestoreMethods('competitions', competitionId as any).replaceField(
+            'teams',
+            newAllTeams,
+          );
+
+          // Refresh the admin team tabs
+          dispatch(teamActions.refreshAdminTeams());
+
+          // If the edited team is the current one then update it on redux too
+          const currentTeamShortId = getTeam()?.shortId;
+          if (currentTeamShortId === shortId) {
+            dispatch(teamActions.setCurrentTeam(mergedTeam));
+          }
+        }
       }
     }
   };
@@ -66,5 +111,6 @@ export const useSetTeams = () => {
     addTeam,
     setCurrentTeam,
     deleteTeam,
+    editTeam,
   };
 };

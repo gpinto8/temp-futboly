@@ -17,7 +17,7 @@ type AdminColumnKeysProps =
 export const AdminTabTeams = () => {
   const teams = useAppSelector((state) => state.team);
   const { getAllTeamsFromAllCompetitions } = useGetTeams();
-  const { deleteTeam } = useSetTeams();
+  const { deleteTeam, editTeam } = useSetTeams();
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
 
   const getAllTeamsAndUpdateRows = async () => {
@@ -45,6 +45,7 @@ export const AdminTabTeams = () => {
             <AddEditTeamModal
               data={{ logoId, name, owner: team?.ownerUsername, coach }}
               isEdit
+              onSetData={(team) => editTeam(competitionRef.id, shortId, team)}
             />
             <CustomButton
               label="Delete"

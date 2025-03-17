@@ -18,14 +18,14 @@ type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 export type AddEditTeamModalDataProps = {
   logoId: string;
   name: string;
-  owner: string;
+  owner?: string;
   coach: string;
 };
 
 export type AddEditTeamModalProps = {
   data?: Partial<AddEditTeamModalDataProps>;
   isEdit?: boolean;
-  onSetData?: (data: Omit<AddEditTeamModalDataProps, 'owner'>) => void;
+  onSetData?: (data: AddEditTeamModalDataProps) => void;
   onMount?: () => void;
 };
 
@@ -41,10 +41,12 @@ export const AddEditTeamModal = ({
 
   const [logoId, setLogoId] = useState(data?.logoId);
   const [name, setName] = useState<HandleChangeParamProps>({
-    value: data?.name || '',
+    value: `${data?.name}`,
+    isValid: !!data?.name,
   });
   const [coach, setCoach] = useState<HandleChangeParamProps>({
-    value: data?.coach || '',
+    value: `${data?.coach}`,
+    isValid: !!data?.coach,
   });
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
