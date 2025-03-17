@@ -41,11 +41,11 @@ export const AddEditTeamModal = ({
 
   const [logoId, setLogoId] = useState(data?.logoId);
   const [name, setName] = useState<HandleChangeParamProps>({
-    value: `${data?.name}`,
+    value: data?.name || '',
     isValid: !!data?.name,
   });
   const [coach, setCoach] = useState<HandleChangeParamProps>({
-    value: `${data?.coach}`,
+    value: data?.coach || '',
     isValid: !!data?.coach,
   });
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
