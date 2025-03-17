@@ -77,4 +77,8 @@ export const IMG_URLS = {
     src: 'assets/expand.svg',
     alt: 'Expand Icon',
   },
+  GRAY_FIELD: {
+    src: 'assets/gray-field.svg',
+    alt: 'Gray Field Background',
+  },
 };

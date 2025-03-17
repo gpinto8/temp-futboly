@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local files
+jest.config.js
+jest.setup.ts
+/tests
+TODO.md
