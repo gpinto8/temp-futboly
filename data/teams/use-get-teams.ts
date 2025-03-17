@@ -55,6 +55,22 @@ export const useGetTeams = () => {
     }
   };
 
+  // GET TEAM BY USER ID AND COMPETITION ID
+  const getTeamByUidAndCompetitionId = async (
+    uid: string,
+    competitionId: string,
+  ) => {
+    const currentCompetition = await getCompetitionById(competitionId);
+    const competitionTeams = currentCompetition?.teams;
+
+    if (competitionTeams) {
+      const currentUserTeam = competitionTeams?.find(
+        (team) => team.userRef.id === uid,
+      );
+      if (currentUserTeam) return currentUserTeam;
+    }
+  };
+
   // GET ALL TEAMS FROM CURRENT COMPETITION
   const getAllTeams = async (incluceExtraProps?: boolean) => {
     const currentCompetition = getActiveCompetition();
@@ -100,6 +116,7 @@ export const useGetTeams = () => {
   return {
     getTeam,
     getTeamByUid,
+    getTeamByUidAndCompetitionId,
     getAllTeams,
     getAllTeamsFromAllCompetitions,
   };

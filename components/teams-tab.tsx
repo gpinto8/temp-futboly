@@ -12,7 +12,6 @@ import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { getShortBase64Id } from '@/utils/id';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
-import { useEffect } from 'react';
 
 export const TeamsTab = () => {
   const { getCurrentUserRef, getUser } = useGetUsers();
@@ -20,16 +19,11 @@ export const TeamsTab = () => {
     useGetCompetitions();
   const { getCurrentSelectedLeagueRef } = useGetLeagues();
   const { getTeam } = useGetTeams();
-  const { addTeam, setCurrentTeam } = useSetTeams();
+  const { addTeam } = useSetTeams();
 
   const userRef = getCurrentUserRef();
   const leagueRef = getCurrentSelectedLeagueRef();
   const competitionRef = getCurrentActiveCompetitionRef();
-
-  useEffect(() => {
-    const userId = getUser()?.id;
-    if (userId) setCurrentTeam(userId);
-  }, []);
 
   const handleCreateTeam = (data: AddEditTeamModalDataProps) => {
     const shortId = getShortBase64Id();

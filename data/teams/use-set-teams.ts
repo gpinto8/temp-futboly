@@ -9,7 +9,7 @@ import merge from 'lodash/merge';
 export const useSetTeams = () => {
   const dispatch = useAppDispatch();
   const { getActiveCompetition, getCompetitionById } = useGetCompetitions();
-  const { getTeamByUid, getTeam } = useGetTeams();
+  const { getTeamByUid, getTeam, getTeamByUidAndCompetitionId } = useGetTeams();
 
   // ADD TEAM TO CURRENT COMPETITION AND MAKE IT THE CURRENT ONE
   const addTeam = (team: CompetitionsCollectionTeamsProps) => {
@@ -29,13 +29,24 @@ export const useSetTeams = () => {
     }
   };
 
-  // GET THE FIREBASE TEAM TO REDUX
-  const setCurrentTeam = (userId: string) => {
+  // SAVE THE FIREBASE TEAM TO REDUX (COMPETITION HAS TO EXISTS IN ORDER TO USE THIS ONE)
+  const setTeam = (userId: string) => {
     const team = getTeamByUid(userId);
 
+    if (team) dispatch(teamActions.setCurrentTeam(team)); // Update redux as the current team
+  };
+
+  // GET THE FIREBASE TEAM BY USER ID AND COMPETITION ID AND SAVE IT TO REDUX
+  const setTeamByIds = async (userId?: string, competitionId?: string) => {
+    if (!userId || !competitionId) {
+      dispatch(teamActions.deleteCurrentTeam()); // If there are no data for fetching the team, reset the team (regardless of its existance)
+      return;
+    }
+
+    const team = await getTeamByUidAndCompetitionId(userId, competitionId);
     if (team) {
       dispatch(teamActions.setCurrentTeam(team)); // Update redux as the current team
-    }
+    } else dispatch(teamActions.deleteCurrentTeam()); // If the team doesn't exist, then update that on redux too
   };
 
   // DELETE A TEAM BASED ON THE COMPETITION AND THE SHORT ID TEAM PROP
@@ -109,7 +120,8 @@ export const useSetTeams = () => {
 
   return {
     addTeam,
-    setCurrentTeam,
+    setTeam,
+    setTeamByIds,
     deleteTeam,
     editTeam,
   };
