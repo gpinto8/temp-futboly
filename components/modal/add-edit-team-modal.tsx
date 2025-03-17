@@ -39,9 +39,13 @@ export const AddEditTeamModal = ({
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
 
-  const [logoId, setLogoId] = useState('');
-  const [name, setName] = useState<HandleChangeParamProps>();
-  const [coach, setCoach] = useState<HandleChangeParamProps>();
+  const [logoId, setLogoId] = useState(data?.logoId);
+  const [name, setName] = useState<HandleChangeParamProps>({
+    value: data?.name || '',
+  });
+  const [coach, setCoach] = useState<HandleChangeParamProps>({
+    value: data?.coach || '',
+  });
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
 
   const [disabled, setDisabled] = useState(true);
@@ -158,7 +162,7 @@ export const AddEditTeamModal = ({
 
   return (
     <CustomModal
-      title={isEdit ? `${data?.name}` : 'Create your team'}
+      title={isEdit ? `${name.value}` : 'Create your team'}
       unboldedTitle={isEdit ? "'s team" : ''}
       openButton={{
         label: isEdit ? 'Edit' : 'Create your team',
@@ -179,12 +183,9 @@ export const AddEditTeamModal = ({
             <div className="font-bold">Choose information:</div>
             {/* ICON & NAME */}
             <div className="flex flex-col gap-2 md:flex-row">
-              <TeamLogoPicker
-                initialValue={data?.logoId}
-                getLogoId={setLogoId}
-              />
+              <TeamLogoPicker initialValue={logoId} getLogoId={setLogoId} />
               <CustomInput
-                initialValue={data?.name}
+                initialValue={name.value}
                 label="Name"
                 handleChange={setName}
               />
@@ -192,7 +193,7 @@ export const AddEditTeamModal = ({
             {/* COACH & OWNER */}
             <div className="flex flex-col gap-2 md:flex-row">
               <CustomInput
-                initialValue={data?.coach}
+                initialValue={coach.value}
                 label="Coach"
                 handleChange={setCoach}
               />
