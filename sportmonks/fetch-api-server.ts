@@ -6,28 +6,30 @@ const SPORTMONKS_DATA = {
     'PLAYERS/GET_BY_ID': 'football/players',
   },
   INCLUDES: {
-    'TEAMS': 'teams',
+    TEAMS: 'teams',
     'TEAMS.TEAM': 'teams.team',
-    'POSITION': 'position',
-    'DETAILED_POSITION': 'detailedPosition',
-    'STATISTICS': 'statistics',
+    POSITION: 'position',
+    DETAILED_POSITION: 'detailedPosition',
+    STATISTICS: 'statistics',
     'STATISTICS.DETAIL': 'statistics.details',
   },
 };
 
-// This is meant to be used on the "pages/api" folder to build the apis to Sportmonks
+// This is meant to be used on the "pages/api" folder to build our Next APIs using Sportmonks'
 export const fetchSportmonksApiServer = async (
   { path, id }: { path: keyof (typeof SPORTMONKS_DATA)['APIS']; id?: number },
   page?: number,
-  includes?: (keyof (typeof SPORTMONKS_DATA)['INCLUDES'])[]
+  includes?: (keyof (typeof SPORTMONKS_DATA)['INCLUDES'])[],
 ) => {
   let pathUrl = SPORTMONKS_DATA.APIS[path];
   if (id) pathUrl += `/${id}`;
 
-  const apiKey = '9QudD8bREVydDeSDCCkPHerTQ3TrzmbP0YCOJqTmc0C37eLwRFVYSx7SExnA'; // TODO: TO REMOVE
+  const apiKey = process.env.SPORTMONKS_API_KEY;
   const currentPage = page || 1;
-  const includeQueryParams = includes?.map(include => SPORTMONKS_DATA.INCLUDES[include]).join(';');
+  const includeQueryParams = includes
+    ?.map((include) => SPORTMONKS_DATA.INCLUDES[include])
+    .join(';');
 
   const url = `${SPORTMONKS_DATA.URL}/${pathUrl}?api_token=${apiKey}&page=${currentPage}&include=${includeQueryParams}`;
-  return await fetch(url).then(response => response.json());
+  return await fetch(url).then((response) => response.json());
 };
