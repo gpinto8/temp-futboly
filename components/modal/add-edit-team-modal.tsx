@@ -13,7 +13,12 @@ import { TeamLogoPicker } from '../team-logo-picker';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
-type PlayersColumnKeysProps = 'ID' | 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
+type PlayersColumnKeysProps =
+  | 'INDEX'
+  | 'PLAYER'
+  | 'POSITION'
+  | 'RATING'
+  | 'CLUB';
 
 export type AddEditTeamModalDataProps = {
   logoId: string;
@@ -74,7 +79,7 @@ export const AddEditTeamModal = ({
     const club = teams?.[0]?.team.short_code;
 
     return {
-      ID: index + 1,
+      INDEX: index + 1,
       PLAYER: (
         <div className="flex gap-1">
           <Avatar
@@ -153,7 +158,7 @@ export const AddEditTeamModal = ({
   const handleSelectedRows = (
     selectedRows: RowsProps<PlayersColumnKeysProps>,
   ) => {
-    const playerIds = selectedRows.map((row) => row.ID);
+    const playerIds = selectedRows.map((row) => row.INDEX);
     setSelectedPlayerIds(playerIds);
   };
 
