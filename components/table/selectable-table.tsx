@@ -21,6 +21,7 @@ type SelectableTableProps<ColumnKeysProps> = {
   onEndReached?: CustomTableProps<
     SelectableTableColumnKeysProps<ColumnKeysProps>
   >['onEndReached'];
+  initialSelectedRows: RowsProps<ColumnKeysProps>;
   getSelectedRows?: (selectedRows: RowsProps<ColumnKeysProps>) => void;
 };
 
@@ -57,12 +58,9 @@ export function SelectableTable<ColumnKeysProps>({
   columns: _columns,
   rows: _rows,
   onEndReached,
+  initialSelectedRows,
   getSelectedRows,
 }: SelectableTableProps<ColumnKeysProps>) {
-  const [selectedRows, setSelectedRows] = useState<
-    RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>
-  >([]);
-
   const mapRows = (rows: RowsProps<ColumnKeysProps>) => {
     return rows.map((row, index) => {
       const id = (row as any)?.INDEX || ++index;
@@ -81,6 +79,10 @@ export function SelectableTable<ColumnKeysProps>({
     });
   };
 
+  const [selectedRows, setSelectedRows] = useState<
+    RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>
+  >(initialSelectedRows?.length ? mapRows(initialSelectedRows) : []);
+
   const [rows, setRows] = useState(mapRows(_rows));
 
   const getMergedRows = (
@@ -89,7 +91,8 @@ export function SelectableTable<ColumnKeysProps>({
     >['rows'],
   ) => {
     const selectedExcludedRows = rows.filter(
-      (row) => !selectedRows.some((selectedRow) => selectedRow.INDEX === row.INDEX),
+      (row) =>
+        !selectedRows.some((selectedRow) => selectedRow.INDEX === row.INDEX),
     );
 
     const mergedRows = mapRows([...selectedRows, ...selectedExcludedRows]);

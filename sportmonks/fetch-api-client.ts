@@ -17,8 +17,8 @@ export const fetchSportmonksApiClient = async <QueryParameters>(
         .map(([key, value]) => `${key}=${value}`)
         .join('&')
     : '';
-  const queryParameters = _queryParameters ? `&${_queryParameters}` : '';
+  const queryParameters = _queryParameters || '';
 
-  const url = `${baseUrl}/${urlPath}${queryParameters}`;
+  const url = `${baseUrl}/${urlPath}?${queryParameters}`;
   return await fetch(url).then((response) => response.json());
 };

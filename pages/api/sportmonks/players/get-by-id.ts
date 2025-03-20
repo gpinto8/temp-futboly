@@ -8,12 +8,11 @@ export type PlayersGetIdQueryParamProps = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { id }: PlayersGetIdQueryParamProps = req.query;
 
-  const data = await fetchSportmonksApiServer({ path: 'PLAYERS/GET_BY_ID', id }, undefined, [
-    'POSITION',
-    'DETAILED_POSITION',
-    'TEAMS.TEAM',
-    'STATISTICS.DETAIL',
-  ]);
+  const data = await fetchSportmonksApiServer(
+    { path: 'PLAYERS/GET_BY_ID', id },
+    undefined,
+    ['POSITION', 'DETAILED_POSITION', 'TEAMS.TEAM', 'STATISTICS.DETAIL'],
+  );
 
   res.status(200).json(data);
 };

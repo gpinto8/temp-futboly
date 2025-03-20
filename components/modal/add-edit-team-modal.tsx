@@ -10,11 +10,13 @@ import { PlayersGetAllQueryParamProps } from '@/pages/api/sportmonks/players/get
 import { getPlayerRating } from '@/sportmonks/common-methods';
 import { SelectableTable } from '../table/selectable-table';
 import { TeamLogoPicker } from '../team-logo-picker';
+import { PlayersGetIdQueryParamProps } from '@/pages/api/sportmonks/players/get-by-id';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 type PlayersColumnKeysProps =
   | 'INDEX'
+  | 'ID'
   | 'PLAYER'
   | 'POSITION'
   | 'RATING'
@@ -54,11 +56,17 @@ export const AddEditTeamModal = ({
     value: data?.coach || '',
     isValid: !!data?.coach,
   });
-  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>(
+    data?.selectedPlayerIds || [],
+  );
 
   const [disabled, setDisabled] = useState(true);
+  const [initialSelectedPlayers, setInitialSelectedPlayers] = useState<
+    RowsProps<PlayersColumnKeysProps>
+  >([]);
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
+    { label: 'ID', id: 'ID', minWidth: 50 },
     { label: 'Player', id: 'PLAYER', minWidth: 200 },
     { label: 'Position', id: 'POSITION', align: 'center', minWidth: 100 },
     { label: 'Rating', id: 'RATING', align: 'center', minWidth: 50 },
@@ -80,6 +88,7 @@ export const AddEditTeamModal = ({
 
     return {
       INDEX: index + 1,
+      ID: id,
       PLAYER: (
         <div className="flex gap-1">
           <Avatar
@@ -146,8 +155,24 @@ export const AddEditTeamModal = ({
     if (players) setPlayers([...players, ...data.data]);
   };
 
-  const handleOpen = async () => {
+  // The modal mounts whenever the parent component mounts, but our meaning of "mount" is whenever the modal is visible, so whenever that happens, we can do our shit (e.g some fetchs, which is not recommended to do in the parent component mount phase since we could be having a list of bunch instances of this modal (e.g. in the "Teams" admin tab) and do lots of fetching unnecessary)
+  const handleMount = async () => {
+    console.log('handleMount');
     onMount?.();
+
+    // If there are any initial players, then display them to the table
+    if (data?.selectedPlayerIds) {
+      const response =
+        await fetchSportmonksApiClient<PlayersGetIdQueryParamProps>(
+          'PLAYERS/GET-BY-ID',
+          { id: 14 },
+        );
+      console.log({ response });
+    }
+  };
+
+  const handleOpen = async () => {
+    handleMount();
     await getPlayers();
   };
 
@@ -222,6 +247,7 @@ export const AddEditTeamModal = ({
                 columns={columns}
                 rows={rows}
                 onEndReached={handleEndReached}
+                initialSelectedRows={initialSelectedPlayers}
                 getSelectedRows={handleSelectedRows}
               />
             ) : (

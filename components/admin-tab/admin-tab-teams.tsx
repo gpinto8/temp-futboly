@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { CustomButton } from '../custom/custom-button';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
-import { AddEditTeamModal } from '../modal/add-edit-team-modal';
+import {
+  AddEditTeamModal,
+  AddEditTeamModalDataProps,
+} from '../modal/add-edit-team-modal';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useAppSelector } from '@/store/hooks';
@@ -33,7 +36,28 @@ export const AdminTabTeams = () => {
         ownerUsername,
         coach,
         competitionRef,
+        players,
       } = team;
+
+      const selectedPlayerIds = players?.map((player) => player.sportmonksId);
+      const data = {
+        logoId,
+        name,
+        owner: ownerUsername,
+        coach,
+        selectedPlayerIds,
+      };
+
+      const handleEditTeam = (team: AddEditTeamModalDataProps) => {
+        const newTeam: Partial<CompetitionsCollectionTeamsProps> = {
+          ...team,
+          players: team?.selectedPlayerIds?.map((sportmonksId) => ({
+            sportmonksId,
+          })),
+        };
+
+        editTeam(competitionRef.id, shortId, newTeam);
+      };
 
       return {
         INDEX: i + 1,
@@ -43,19 +67,7 @@ export const AdminTabTeams = () => {
         PLAYERS: '',
         ACTIONS: (
           <div className="flex gap-1">
-            <AddEditTeamModal
-              data={{ logoId, name, owner: team?.ownerUsername, coach }}
-              isEdit
-              onSetData={(team) => {
-                const newTeam: Partial<CompetitionsCollectionTeamsProps> = {
-                  ...team,
-                  players: team?.selectedPlayerIds?.map((sportmonksId) => ({
-                    sportmonksId,
-                  })),
-                };
-                editTeam(competitionRef.id, shortId, newTeam);
-              }}
-            />
+            <AddEditTeamModal data={data} isEdit onSetData={handleEditTeam} />
             <CustomButton
               label="Delete"
               style="error"

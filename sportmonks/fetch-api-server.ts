@@ -26,9 +26,11 @@ export const fetchSportmonksApiServer = async (
 
   const apiKey = process.env.SPORTMONKS_API_KEY;
   const currentPage = page || 1;
-  const includeQueryParams = includes
+
+  const _includeQueryParams = includes
     ?.map((include) => SPORTMONKS_DATA.INCLUDES[include])
     .join(';');
+  const includeQueryParams = _includeQueryParams || '';
 
   const url = `${SPORTMONKS_DATA.URL}/${pathUrl}?api_token=${apiKey}&page=${currentPage}&include=${includeQueryParams}`;
   return await fetch(url).then((response) => response.json());
