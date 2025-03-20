@@ -157,13 +157,24 @@ export const AddEditTeamModal = ({
 
     // If there are any initial players, then display them to the table
     if (data?.selectedPlayerIds) {
-      const response = await fetchSportmonksApi('football/players', `${14}`);
-      console.log({ response });
+      let playersData: any = [];
+
+      for await (const playerId of data?.selectedPlayerIds) {
+        const response = await fetchSportmonksApi(
+          'football/players',
+          `${playerId}`,
+        );
+        const data = response.data;
+        if (data) playersData.push(data);
+      }
+
+      const mappedPlayers = playersData.map(mapPlayerRow);
+      setInitialSelectedPlayers(mappedPlayers);
     }
   };
 
   const handleOpen = async () => {
-    handleMount();
+    await handleMount();
     await getPlayers();
   };
 
@@ -174,7 +185,7 @@ export const AddEditTeamModal = ({
   const handleSelectedRows = (
     selectedRows: RowsProps<PlayersColumnKeysProps>,
   ) => {
-    const playerIds = selectedRows.map((row) => row.INDEX);
+    const playerIds = selectedRows.map((row) => row.ID);
     setSelectedPlayerIds(playerIds);
   };
 

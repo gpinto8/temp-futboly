@@ -13,7 +13,8 @@ export const DATA = {
 
 export type DataPath = (typeof DATA.PATHS)[number];
 export type DataIncludes = (typeof DATA.INCLUDES)[number][];
-export type ResponseData = {
+
+export type SportmonksResponseData = {
   data: any;
   rate_limit: any;
   subscription: any;
@@ -62,5 +63,5 @@ export const fetchSportmonksApi = async (
 
   const url = `${baseUrl}${queryParameters}`;
   const data = await fetch(url).then((response) => response.json());
-  return data as ResponseData;
+  return data as SportmonksResponseData;
 };

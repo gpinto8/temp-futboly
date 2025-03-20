@@ -81,9 +81,15 @@ export function SelectableTable<ColumnKeysProps>({
 
   const [selectedRows, setSelectedRows] = useState<
     RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>
-  >(initialSelectedRows?.length ? mapRows(initialSelectedRows) : []);
-
+  >([]);
   const [rows, setRows] = useState(mapRows(_rows));
+
+  const columns: ColumnsProps<SelectableTableColumnKeysProps<ColumnKeysProps>> =
+    [
+      { label: '#', id: 'INDEX', minWidth: 30 },
+      ..._columns,
+      { label: '', id: 'ACTIONS', align: 'center', minWidth: 30 },
+    ];
 
   const getMergedRows = (
     rows: CustomTableProps<
@@ -109,19 +115,18 @@ export function SelectableTable<ColumnKeysProps>({
     setRows(mergedRows.length ? mergedRows : mapRows(_rows));
   }, [_rows]); // Re-execute the rows in case the "_rows" prop changes (e.g. when the rows are being fetched)
 
-  const columns: ColumnsProps<SelectableTableColumnKeysProps<ColumnKeysProps>> =
-    [
-      { label: '#', id: 'INDEX', minWidth: 30 },
-      ..._columns,
-      { label: '', id: 'ACTIONS', align: 'center', minWidth: 30 },
-    ];
-
   useEffect(() => {
     const mergedRows = getMergedRows(rows);
 
     getSelectedRows?.(selectedRows);
     setRows(mergedRows);
   }, [selectedRows]);
+
+  useEffect(() => {
+    if (initialSelectedRows?.length) {
+      setSelectedRows(mapRows(initialSelectedRows));
+    }
+  }, [initialSelectedRows]);
 
   return (
     <CustomTable<ColumnKeysProps>
