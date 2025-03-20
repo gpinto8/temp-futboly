@@ -7,8 +7,19 @@ export const YourTeam = () => {
 
   return (
     <div className="self-start">
-      <h1 className="text-2xl md:text-4xl font-bold mb-6">Your Team</h1>
-      <TeamCard team={currentTeam} />
+      {/* YOUR TEAM */}
+      <div className="flex flex-col gap-12">
+        <div className="w-full">
+          <h1 className="text-2xl md:text-4xl font-bold mb-6">Your Team</h1>
+          <TeamCard team={currentTeam} />
+        </div>
+        {/* PLAYERS */}
+        <div className="w-full">
+          {currentTeam?.players?.map((player) => (
+            <div>{player.sportmonksId}</div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -20,6 +20,7 @@ export type AddEditTeamModalDataProps = {
   name: string;
   owner?: string;
   coach: string;
+  selectedPlayerIds?: number[];
 };
 
 export type AddEditTeamModalProps = {
@@ -157,8 +158,14 @@ export const AddEditTeamModal = ({
   };
 
   const handleSetTeam = () => {
-    if (logoId && name?.isValid && coach?.isValid) {
-      onSetData?.({ logoId, name: name.value, coach: coach.value });
+    const allowPlayersCondition = isEdit ? selectedPlayerIds?.length : true;
+    if (logoId && name?.isValid && coach?.isValid && allowPlayersCondition) {
+      onSetData?.({
+        logoId,
+        name: name.value,
+        coach: coach.value,
+        selectedPlayerIds: isEdit ? selectedPlayerIds : undefined,
+      });
     }
   };
 

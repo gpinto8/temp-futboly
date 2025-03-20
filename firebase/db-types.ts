@@ -66,13 +66,13 @@ export type CompetitionsCollectionTeamsProps = {
   coach: string;
   logoId: string;
   // formation: string; // String with module
-  // players: {
-  //   sportmonksID: string;
-  //   actualPosition: {
-  //     isBenched: Boolean;
-  //     slot: Number;
-  //   };
-  // }[];
+  players: {
+    sportmonksId: number;
+    // actualPosition: {
+    //   isBenched: Boolean;
+    //   slot: Number;
+    // };
+  }[];
 };
 
 export type MappedPlayerProps = {

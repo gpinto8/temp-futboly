@@ -5,6 +5,7 @@ import { AddEditTeamModal } from '../modal/add-edit-team-modal';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useAppSelector } from '@/store/hooks';
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 
 type AdminColumnKeysProps =
   | 'INDEX'
@@ -45,7 +46,15 @@ export const AdminTabTeams = () => {
             <AddEditTeamModal
               data={{ logoId, name, owner: team?.ownerUsername, coach }}
               isEdit
-              onSetData={(team) => editTeam(competitionRef.id, shortId, team)}
+              onSetData={(team) => {
+                const newTeam: Partial<CompetitionsCollectionTeamsProps> = {
+                  ...team,
+                  players: team?.selectedPlayerIds?.map((sportmonksId) => ({
+                    sportmonksId,
+                  })),
+                };
+                editTeam(competitionRef.id, shortId, newTeam);
+              }}
             />
             <CustomButton
               label="Delete"
