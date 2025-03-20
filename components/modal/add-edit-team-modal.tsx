@@ -5,12 +5,10 @@ import { CustomInput, InputProps } from '../custom/custom-input';
 import { CustomModal } from '../custom/custom-modal';
 import { ColumnsProps, RowsProps } from '../custom/custom-table';
 import { Avatar } from '@mui/material';
-import { fetchSportmonksApiClient } from '@/sportmonks/fetch-api-client';
-import { PlayersGetAllQueryParamProps } from '@/pages/api/sportmonks/players/get-all';
 import { getPlayerRating } from '@/sportmonks/common-methods';
 import { SelectableTable } from '../table/selectable-table';
 import { TeamLogoPicker } from '../team-logo-picker';
-import { PlayersGetIdQueryParamProps } from '@/pages/api/sportmonks/players/get-by-id';
+import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -135,9 +133,7 @@ export const AddEditTeamModal = ({
 
   // When opening the edit modal, we fetch all the first x players
   const getPlayers = async () => {
-    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
-      'PLAYERS/GET-ALL',
-    );
+    const data = await fetchSportmonksApi('football/players');
     setPlayers(data.data);
   };
 
@@ -146,11 +142,10 @@ export const AddEditTeamModal = ({
     const newPageCounter = pageCounter + 1;
     setPageCounter(newPageCounter);
 
-    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
-      'PLAYERS/GET-ALL',
-      {
-        page: newPageCounter,
-      },
+    const data = await fetchSportmonksApi(
+      'football/players',
+      '',
+      newPageCounter,
     );
     if (players) setPlayers([...players, ...data.data]);
   };
@@ -162,11 +157,7 @@ export const AddEditTeamModal = ({
 
     // If there are any initial players, then display them to the table
     if (data?.selectedPlayerIds) {
-      const response =
-        await fetchSportmonksApiClient<PlayersGetIdQueryParamProps>(
-          'PLAYERS/GET-BY-ID',
-          { id: 14 },
-        );
+      const response = await fetchSportmonksApi('football/players', `${14}`);
       console.log({ response });
     }
   };
