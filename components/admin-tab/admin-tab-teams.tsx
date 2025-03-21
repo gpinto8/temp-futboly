@@ -50,7 +50,9 @@ export const AdminTabTeams = () => {
 
       const handleEditTeam = (team: AddEditTeamModalDataProps) => {
         const newTeam: Partial<CompetitionsCollectionTeamsProps> = {
-          ...team,
+          coach: team?.coach,
+          logoId: team?.logoId,
+          name: team?.name,
           players: team?.selectedPlayerIds?.map((sportmonksId) => ({
             sportmonksId,
           })),
