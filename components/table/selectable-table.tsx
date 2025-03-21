@@ -40,7 +40,23 @@ const SelectIcon = function <ColumnKeysProps>({
     (selectedRow) => (selectedRow as any).INDEX === id,
   );
   const icon = (selected ? 'CHECK_ICON' : 'PLUS_ICON') as ImageUrlsProps;
-  const handleSelect = () => setSelectedRows([...(selectedRows || []), row]);
+  const handleSelect = () => {
+    // If its already selected, remove it
+    const currentRowId: any = (row as any).ID;
+    const isAlreadyIncluded = selectedRows.some(
+      (row: any) => row.ID === currentRowId,
+    );
+    if (currentRowId && isAlreadyIncluded) {
+      const filteredRows = selectedRows.filter(
+        (row: any) => row.ID !== currentRowId,
+      );
+
+      setSelectedRows([...filteredRows]);
+      return;
+    }
+
+    setSelectedRows([...(selectedRows || []), row]);
+  };
 
   return (
     <div className="flex justify-center items-center cursor-pointer w-6 h-8">
