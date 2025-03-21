@@ -1,102 +1,149 @@
 import { CustomCard } from '@/components/custom/custom-card';
-import { CustomImage } from '@/components/custom/custom-image';
 import { CustomSeparator } from '@/components/custom/custom-separator';
-import { getMockupTeams } from '@/utils/mocks';
-import { useState } from 'react';
+import {
+  CompetitionsCollectionTeamsExtraProps,
+  useGetTeams,
+} from '@/data/teams/use-get-teams';
+import { useEffect, useState } from 'react';
+import { TeamCard } from './team-card';
+import { CustomButton } from '@/components/custom/custom-button';
+import {
+  ColumnsProps,
+  CustomTable,
+  RowsProps,
+} from '@/components/custom/custom-table';
+import { CustomImage } from '@/components/custom/custom-image';
+import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getPlayerRating } from '@/sportmonks/common-methods';
+import { Avatar } from '@mui/material';
 
-const allTeams = getMockupTeams();
+type AllTeamsKeyProps = 'INDEX' | 'PLAYER' | 'POSITION' | 'RATING';
 
 export const AllTeams = () => {
-  const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
+  const { getAllTeams, getPlayersSportmonksData, getTeam } = useGetTeams();
 
-  return (
-    <div className="w-full flex flex-col gap-6">
-      <h1 className="text-2xl md:text-4xl font-bold mB-4">All Teams</h1>
-      <div className="grid grid-cols-3 gap-4 auto-rows-fr">
-        {allTeams.map((team, index) => (
-          <CustomCard
-            id={'team-card-' + index}
-            key={index}
-            style="gray"
-            className={selectedTeam === index ? 'row-span-2' : ''}
-          >
-            <div
-              className="flex flex-col justify-center items-start gap-2"
-              onClick={() =>
-                selectedTeam === index
-                  ? setSelectedTeam(null)
-                  : setSelectedTeam(index)
-              }
-            >
-              <div className="flex justify-start items-center gap-2">
-                <p className="text-xl font-bold">{team.owner}</p>
-                <p className="text-xl">'s team:</p>
-              </div>
-              <div className="flex flex-row gap-8 justify-start items-center my-2">
-                <CustomImage forceSrc={team.teamLogo} className="h-16 w-16" />
-                <div className="flex flex-col gap-2 justify-start items-center">
-                  <div className="flex justify-center items-center gap-2">
-                    <p className="font-semibold text-gray-400">Name:</p>
-                    <p className="font-semibold text-gray-900">
-                      {team.teamName}
-                    </p>
-                  </div>
-                  <div className="flex justify-center items-center gap-2">
-                    <p className="font-semibold text-gray-400">Coach:</p>
-                    <p className="font-semibold text-gray-900">{team.owner}</p>
-                  </div>
-                  <div className="flex justify-center items-center gap-2">
-                    <p className="font-semibold text-gray-400">
-                      League Position:
-                    </p>
-                    <p className="font-semibold text-gray-900">
-                      {team.leaguePosition}
-                    </p>
-                  </div>
-                </div>
-              </div>
+  const [allTeams, setAllTeams] = useState<
+    CompetitionsCollectionTeamsExtraProps[]
+  >([]);
+  const [selectedTeam, setSelectedTeam] = useState<number | null>();
 
-              <button className="mt-4 px-4 py-2 bg-gray-200 rounded self-center shadow-md hover:scale-105 flex justify-center items-center gap-2">
-                {selectedTeam === index ? 'Hide players' : 'Show players'}
-                <CustomImage
-                  imageKey={selectedTeam === index ? 'EXPAND' : 'CLOSE_ICON'}
-                  className="h-4 w-4 ml-2"
-                />
-              </button>
-              {selectedTeam === index && (
-                <div className="w-full h-[268px]">
-                  <CustomSeparator withText={false} />
-                  <div className="flex justify-around items-center gap-4 text-gray-400 font-medium">
-                    <div>#</div>
-                    <div>Player</div>
-                    <div>Position</div>
-                    <div>Points</div>
-                  </div>
-                  <div className="text-gray-900 font-medium pb-6 h-full overflow-y-auto main-scrollbar">
-                    {team.players.map((player, index) => (
-                      <div
-                        key={index}
-                        className="flex justify-around items-center gap-4"
-                      >
-                        <div>{player.shirtNumber}</div>
-                        <div className="flex justify-around items-center gap-2">
-                          <CustomImage
-                            forceSrc={player.image}
-                            className="h-8 w-8 rounded-full border border-black"
-                          />
-                          <p>{player.name.split(' ')[1]}</p>
-                        </div>
-                        <div>{player.position}</div>
-                        <div>{player.points}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+  const [rows, setRows] = useState<RowsProps<AllTeamsKeyProps>>([]);
+  const columns: ColumnsProps<AllTeamsKeyProps> = [
+    { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: 'Player', id: 'PLAYER', minWidth: 150 },
+    { label: 'Position', id: 'POSITION', minWidth: 100 },
+    { label: 'Rating', id: 'RATING', minWidth: 50, align: 'center' },
+  ];
+
+  useEffect(() => {
+    (async () => {
+      const currentTeam = getTeam();
+      const teams = await getAllTeams(true);
+
+      if (currentTeam && teams?.length) {
+        const filteredTeams = teams.filter(
+          (team) => team.shortId !== currentTeam.shortId, // Exclude the current team since its already being shown in another component with more detail ..
+        );
+        setAllTeams(filteredTeams);
+      }
+    })();
+  }, []);
+
+  const handleCardSelection = async (
+    team: CompetitionsCollectionTeamsExtraProps,
+    index: number,
+    isSelected: boolean,
+  ) => {
+    if (isSelected) {
+      setSelectedTeam(null);
+    } else {
+      setSelectedTeam(index);
+
+      const playerIds = team.players.map((player) => player.sportmonksId);
+      const playersData = await getPlayersSportmonksData(playerIds);
+
+      const rows: RowsProps<AllTeamsKeyProps> = playersData.map(
+        (player, i) => ({
+          INDEX: i + 1,
+          PLAYER: (
+            <div className="flex gap-1">
+              <Avatar
+                src={player.image_path}
+                alt={player.display_name}
+                sx={{ width: 24, height: 24 }}
+              />
+              <span className="line-clamp-1">{player.display_name}</span>
             </div>
-          </CustomCard>
-        ))}
+          ),
+          POSITION: player.position.name,
+          RATING: getPlayerRating(player.statistics),
+        }),
+      );
+      setRows(rows);
+    }
+  };
+
+  return allTeams?.length ? (
+    <>
+      <CustomSeparator withText={false} className="my-12" />
+      <div className="w-full flex flex-col gap-6">
+        <h1 className="text-2xl md:text-4xl font-bold">All Teams</h1>
+        <div className="grid md:grid-cols-3 gap-4 auto-rows-fr">
+          {allTeams.map((team, index) => {
+            const isSelected = selectedTeam === index;
+            return (
+              <CustomCard
+                key={index}
+                style="gray"
+                className={isSelected ? 'row-span-2' : ''}
+              >
+                <div
+                  className="flex flex-col justify-center items-start gap-4"
+                  onClick={() => handleCardSelection(team, index, isSelected)}
+                >
+                  {/* TEAM OVERVIEW */}
+                  <div className="flex justify-start items-center gap-4 w-full">
+                    <CustomImage
+                      forceSrc={getRealTeamLogoById(team.logoId)?.src}
+                      className="h-16 w-16"
+                    />
+                    <p className="text-3xl">
+                      <strong>{team.ownerUsername}</strong>
+                      <span className="text-2xl">'s team:</span>
+                    </p>
+                  </div>
+                  <div className="flex flex-row gap-8 justify-start items-center">
+                    <TeamCard team={team} hideLogo />
+                  </div>
+
+                  {/* SHOW/HIDE BUTTON */}
+                  <CustomButton
+                    style="outlineBlack"
+                    label={isSelected ? 'Hide players' : 'Show players'}
+                    className="h-4 md:mx-auto px-8"
+                    widthFit
+                    suffixIconKey={isSelected ? 'COLLAPSE_ICON' : 'EXPAND_ICON'}
+                  />
+
+                  {/* PLAYERS TABLE */}
+                  {isSelected && (
+                    <div className="w-full h-[268px]">
+                      <CustomSeparator withText={false} />
+                      <CustomTable<AllTeamsKeyProps>
+                        rows={rows}
+                        columns={columns}
+                        maxWidth={1000}
+                        elevation={0}
+                        hideBackground
+                      />
+                    </div>
+                  )}
+                </div>
+              </CustomCard>
+            );
+          })}
+        </div>
       </div>
-    </div>
-  );
+    </>
+  ) : null;
 };

@@ -3,8 +3,9 @@ import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { useGetUsers } from '../users/use-get-users';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { useGetLeagues } from '../leagues/use-get-leagues';
+import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
-type CompetitionsCollectionTeamsExtraProps =
+export type CompetitionsCollectionTeamsExtraProps =
   CompetitionsCollectionTeamsProps & {
     ownerUsername?: string;
     competitionName?: string;
@@ -113,11 +114,28 @@ export const useGetTeams = () => {
     return mappedTeams;
   };
 
+  // GET PLAYERS SPORTMONKS DATA BASED ON AN ARRAY OF ITS IDS
+  const getPlayersSportmonksData = async (playerIds: number[]) => {
+    let playersData: any[] = [];
+
+    for await (const playerId of playerIds) {
+      const response = await fetchSportmonksApi(
+        'football/players',
+        `${playerId}`,
+      );
+      const data = response.data;
+      if (data) playersData.push(data);
+    }
+
+    return playersData;
+  };
+
   return {
     getTeam,
     getTeamByUid,
     getTeamByUidAndCompetitionId,
     getAllTeams,
     getAllTeamsFromAllCompetitions,
+    getPlayersSportmonksData,
   };
 };

@@ -73,8 +73,12 @@ export const IMG_URLS = {
     src: 'assets/league-trophy.svg',
     alt: 'League Trophy Icon',
   },
-  EXPAND: {
+  EXPAND_ICON: {
     src: 'assets/expand.svg',
     alt: 'Expand Icon',
+  },
+  COLLAPSE_ICON: {
+    src: 'assets/collapse.svg',
+    alt: 'Collapse Icon',
   },
 };

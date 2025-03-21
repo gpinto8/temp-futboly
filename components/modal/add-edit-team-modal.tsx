@@ -9,6 +9,7 @@ import { getPlayerRating } from '@/sportmonks/common-methods';
 import { SelectableTable } from '../table/selectable-table';
 import { TeamLogoPicker } from '../team-logo-picker';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
+import { useGetTeams } from '@/data/teams/use-get-teams';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -41,6 +42,8 @@ export const AddEditTeamModal = ({
   onSetData,
   onMount,
 }: AddEditTeamModalProps) => {
+  const { getPlayersSportmonksData } = useGetTeams();
+
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
@@ -152,22 +155,13 @@ export const AddEditTeamModal = ({
 
   // The modal mounts whenever the parent component mounts, but our meaning of "mount" is whenever the modal is visible, so whenever that happens, we can do our shit (e.g some fetchs, which is not recommended to do in the parent component mount phase since we could be having a list of bunch instances of this modal (e.g. in the "Teams" admin tab) and do lots of fetching unnecessary)
   const handleMount = async () => {
-    console.log('handleMount');
     onMount?.();
 
     // If there are any initial players, then display them to the table
     if (data?.selectedPlayerIds) {
-      let playersData: any = [];
-
-      for await (const playerId of data?.selectedPlayerIds) {
-        const response = await fetchSportmonksApi(
-          'football/players',
-          `${playerId}`,
-        );
-        const data = response.data;
-        if (data) playersData.push(data);
-      }
-
+      const playersData = await getPlayersSportmonksData(
+        data.selectedPlayerIds,
+      );
       const mappedPlayers = playersData.map(mapPlayerRow);
       setInitialSelectedPlayers(mappedPlayers);
     }

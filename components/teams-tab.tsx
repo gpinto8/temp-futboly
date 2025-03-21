@@ -74,7 +74,6 @@ export const TeamsTab = () => {
       ) : (
         <div className="flex flex-col gap-4 justify-center items-center">
           <YourTeam />
-          <CustomSeparator withText={false} className="my-12" />
           <AllTeams />
         </div>
       )}
