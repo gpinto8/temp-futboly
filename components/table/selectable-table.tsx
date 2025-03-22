@@ -12,6 +12,7 @@ import { CustomImage } from '../custom/custom-image';
 
 export type SelectableTableColumnKeysProps<ColumnKeysProps> =
   | 'INDEX'
+  | 'ID'
   | ColumnKeysProps
   | 'ACTIONS';
 
@@ -21,23 +22,21 @@ type SelectableTableProps<ColumnKeysProps> = {
   onEndReached?: CustomTableProps<
     SelectableTableColumnKeysProps<ColumnKeysProps>
   >['onEndReached'];
-  initialSelectedRows: RowsProps<ColumnKeysProps>;
+  initialSelectedRows?: RowsProps<ColumnKeysProps>;
   getSelectedRows?: (selectedRows: RowsProps<ColumnKeysProps>) => void;
 };
 
 const SelectIcon = function <ColumnKeysProps>({
-  id,
   row,
   selectedRows,
   setSelectedRows,
 }: {
-  id: number;
-  row: RowsProps<ColumnKeysProps>[0];
+  row: RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>[0];
   selectedRows: RowsProps<ColumnKeysProps>;
   setSelectedRows: Dispatch<SetStateAction<RowsProps<ColumnKeysProps>>>;
 }) {
   const selected = selectedRows.find(
-    (selectedRow) => (selectedRow as any).INDEX === id,
+    (selectedRow) => (selectedRow as any).ID === row.ID,
   );
   const icon = (selected ? 'CHECK_ICON' : 'PLUS_ICON') as ImageUrlsProps;
   const handleSelect = () => {
@@ -77,23 +76,25 @@ export function SelectableTable<ColumnKeysProps>({
   initialSelectedRows,
   getSelectedRows,
 }: SelectableTableProps<ColumnKeysProps>) {
-  const mapRows = (rows: RowsProps<ColumnKeysProps>) => {
-    return rows.map((row, index) => {
-      const id = (row as any)?.INDEX || ++index;
+  const mapRows = (rows: RowsProps<ColumnKeysProps>) =>
+    rows.map((row, i) => {
+      const index = (row as any)?.INDEX || ++i;
       return {
-        INDEX: id,
+        INDEX: index,
         ...row,
         ACTIONS: (
           <SelectIcon
-            id={id}
-            row={row}
+            row={
+              row as RowsProps<
+                SelectableTableColumnKeysProps<ColumnKeysProps>
+              >[0]
+            }
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
           />
         ),
       };
-    });
-  };
+    }) as RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>;
 
   const [selectedRows, setSelectedRows] = useState<
     RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>
@@ -103,6 +104,7 @@ export function SelectableTable<ColumnKeysProps>({
   const columns: ColumnsProps<SelectableTableColumnKeysProps<ColumnKeysProps>> =
     [
       { label: '#', id: 'INDEX', minWidth: 30 },
+      { label: 'ID', id: 'ID', minWidth: 50 },
       ..._columns,
       { label: '', id: 'ACTIONS', align: 'center', minWidth: 30 },
     ];
@@ -113,11 +115,13 @@ export function SelectableTable<ColumnKeysProps>({
     >['rows'],
   ) => {
     const selectedExcludedRows = rows.filter(
-      (row) =>
-        !selectedRows.some((selectedRow) => selectedRow.INDEX === row.INDEX),
+      (row) => !selectedRows.some((selectedRow) => selectedRow.ID === row.ID),
     );
-
-    const mergedRows = mapRows([...selectedRows, ...selectedExcludedRows]);
+    const newSelectedRows = selectedRows.map((selectedRow) => ({
+      ...selectedRow,
+      INDEX: '', // The selected rows dont need the index numeration (otherwise we could get double indexation (e.g 1,2,3 and then 1,2,3 below ..))
+    }));
+    const mergedRows = mapRows([...newSelectedRows, ...selectedExcludedRows]);
     return mergedRows;
   };
 
@@ -128,7 +132,7 @@ export function SelectableTable<ColumnKeysProps>({
       >['rows'],
     );
 
-    setRows(mergedRows.length ? mergedRows : mapRows(_rows));
+    setRows(mergedRows?.length ? mergedRows : mapRows(_rows));
   }, [_rows]); // Re-execute the rows in case the "_rows" prop changes (e.g. when the rows are being fetched)
 
   useEffect(() => {

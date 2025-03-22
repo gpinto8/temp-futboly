@@ -1,4 +1,3 @@
-import { CustomSeparator } from './custom/custom-separator';
 import {
   AddEditTeamModal,
   AddEditTeamModalDataProps,
@@ -24,6 +23,7 @@ export const TeamsTab = () => {
   const userRef = getCurrentUserRef();
   const leagueRef = getCurrentSelectedLeagueRef();
   const competitionRef = getCurrentActiveCompetitionRef();
+  const team = getTeam();
 
   const handleCreateTeam = (data: AddEditTeamModalDataProps) => {
     const shortId = getShortBase64Id();
@@ -48,6 +48,7 @@ export const TeamsTab = () => {
         name,
         coach,
         logoId,
+        players: [], // The players will be added by the admin (editing it), not by the user
       };
 
       if (data) addTeam?.(data);
@@ -60,7 +61,7 @@ export const TeamsTab = () => {
         <div className="flex flex-col gap-2 justify-center items-center my-10">
           Select a competition first.
         </div>
-      ) : !getTeam() ? (
+      ) : !team ? (
         <div className="flex flex-col gap-4 justify-center items-center my-10">
           <div>
             You haven't created your team yet for the "
@@ -73,7 +74,7 @@ export const TeamsTab = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-4 justify-center items-center">
-          <YourTeam />
+          <YourTeam team={team} />
           <AllTeams />
         </div>
       )}

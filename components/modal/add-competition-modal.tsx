@@ -12,7 +12,7 @@ import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { MappedLeaguesProps, UsersCollectionProps } from '@/firebase/db-types';
 
-type TeamsColumnsKeysProps = 'INDEX' | 'PLAYER';
+type TeamsColumnsKeysProps = 'PLAYER';
 
 const getRows = (league: MappedLeaguesProps | undefined) => {
   if (!league) return [];

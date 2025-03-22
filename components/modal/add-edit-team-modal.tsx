@@ -6,20 +6,17 @@ import { CustomModal } from '../custom/custom-modal';
 import { ColumnsProps, RowsProps } from '../custom/custom-table';
 import { Avatar } from '@mui/material';
 import { getPlayerRating } from '@/sportmonks/common-methods';
-import { SelectableTable } from '../table/selectable-table';
+import {
+  SelectableTable,
+  SelectableTableColumnKeysProps,
+} from '../table/selectable-table';
 import { TeamLogoPicker } from '../team-logo-picker';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
-type PlayersColumnKeysProps =
-  | 'INDEX'
-  | 'ID'
-  | 'PLAYER'
-  | 'POSITION'
-  | 'RATING'
-  | 'CLUB';
+type PlayersColumnKeysProps = 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
 export type AddEditTeamModalDataProps = {
   logoId: string;
@@ -67,7 +64,6 @@ export const AddEditTeamModal = ({
   >([]);
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
-    { label: 'ID', id: 'ID', minWidth: 50 },
     { label: 'Player', id: 'PLAYER', minWidth: 200 },
     { label: 'Position', id: 'POSITION', align: 'center', minWidth: 100 },
     { label: 'Rating', id: 'RATING', align: 'center', minWidth: 50 },
@@ -177,7 +173,9 @@ export const AddEditTeamModal = ({
   };
 
   const handleSelectedRows = (
-    selectedRows: RowsProps<PlayersColumnKeysProps>,
+    selectedRows: RowsProps<
+      SelectableTableColumnKeysProps<PlayersColumnKeysProps>
+    >,
   ) => {
     const playerIds = selectedRows.map((row) => row.ID);
     setSelectedPlayerIds(playerIds);
