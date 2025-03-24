@@ -55,14 +55,16 @@ export const AddCompetitionModal = () => {
     const leagueRef = getLeagueRefById(league.id);
 
     if (endDate && startDate && name && playersRefs.length && leagueRef) {
-      await addCompetition({
+        const checkDateValidity = startDate.seconds < endDate.seconds;
+        const maxWeek = Math.ceil((endDate.seconds - startDate.seconds) / 60*60*24*7);
+      checkDateValidity && await addCompetition({
         name,
         startDate,
         endDate,
         specificPosition: false,
         league: leagueRef,
         currentWeek: 0,
-        maxWeek: 10,
+        maxWeek: maxWeek,
         players: playersRefs ?? [],
         teams: [],
         standings: null,
