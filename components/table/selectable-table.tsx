@@ -24,16 +24,19 @@ type SelectableTableProps<ColumnKeysProps> = {
   >['onEndReached'];
   initialSelectedRows?: RowsProps<ColumnKeysProps>;
   getSelectedRows?: (selectedRows: RowsProps<ColumnKeysProps>) => void;
+  singleSelection?: boolean;
 };
 
 const SelectIcon = function <ColumnKeysProps>({
   row,
   selectedRows,
   setSelectedRows,
+  singleSelection,
 }: {
   row: RowsProps<SelectableTableColumnKeysProps<ColumnKeysProps>>[0];
   selectedRows: RowsProps<ColumnKeysProps>;
   setSelectedRows: Dispatch<SetStateAction<RowsProps<ColumnKeysProps>>>;
+  singleSelection: boolean;
 }) {
   const selected = selectedRows.find(
     (selectedRow) => (selectedRow as any).ID === row.ID,
@@ -41,17 +44,26 @@ const SelectIcon = function <ColumnKeysProps>({
   const icon = (selected ? 'CHECK_ICON' : 'PLUS_ICON') as ImageUrlsProps;
   const handleSelect = () => {
     // If its already selected, remove it
-    const currentRowId: any = (row as any).ID;
+    const currentRowId: any = row.ID;
     const isAlreadyIncluded = selectedRows.some(
       (row: any) => row.ID === currentRowId,
     );
-    if (currentRowId && isAlreadyIncluded) {
-      const filteredRows = selectedRows.filter(
-        (row: any) => row.ID !== currentRowId,
-      );
 
-      setSelectedRows([...filteredRows]);
+    // SINGLE SELECTION
+    if (singleSelection) {
+      setSelectedRows([row]);
       return;
+    }
+    // MULTISELECTION
+    else {
+      if (currentRowId && isAlreadyIncluded) {
+        const filteredRows = selectedRows.filter(
+          (row: any) => row.ID !== currentRowId,
+        );
+
+        setSelectedRows([...filteredRows]);
+        return;
+      }
     }
 
     setSelectedRows([...(selectedRows || []), row]);
@@ -75,6 +87,7 @@ export function SelectableTable<ColumnKeysProps>({
   onEndReached,
   initialSelectedRows,
   getSelectedRows,
+  singleSelection,
 }: SelectableTableProps<ColumnKeysProps>) {
   const mapRows = (rows: RowsProps<ColumnKeysProps>) =>
     rows.map((row, i) => {
@@ -91,6 +104,7 @@ export function SelectableTable<ColumnKeysProps>({
             }
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
+            singleSelection={!!singleSelection}
           />
         ),
       };

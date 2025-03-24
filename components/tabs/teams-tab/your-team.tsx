@@ -91,6 +91,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
               rows={rows}
               columns={columns}
               getSelectedRows={handleSelectedRows}
+              singleSelection
             />
           </div>
         </div>
