@@ -25,6 +25,7 @@ type SelectableTableProps<ColumnKeysProps> = {
   initialSelectedRows?: RowsProps<ColumnKeysProps>;
   getSelectedRows?: (selectedRows: RowsProps<ColumnKeysProps>) => void;
   singleSelection?: boolean;
+  avoidReorder?: boolean;
 };
 
 const SelectIcon = function <ColumnKeysProps>({
@@ -48,25 +49,16 @@ const SelectIcon = function <ColumnKeysProps>({
     const isAlreadyIncluded = selectedRows.some(
       (row: any) => row.ID === currentRowId,
     );
-
-    // SINGLE SELECTION
-    if (singleSelection) {
-      setSelectedRows([row]);
+    if (currentRowId && isAlreadyIncluded) {
+      const filteredRows = selectedRows.filter(
+        (row: any) => row.ID !== currentRowId,
+      );
+      setSelectedRows([...filteredRows]);
       return;
     }
-    // MULTISELECTION
-    else {
-      if (currentRowId && isAlreadyIncluded) {
-        const filteredRows = selectedRows.filter(
-          (row: any) => row.ID !== currentRowId,
-        );
 
-        setSelectedRows([...filteredRows]);
-        return;
-      }
-    }
-
-    setSelectedRows([...(selectedRows || []), row]);
+    if (singleSelection) setSelectedRows([row]); // Single-selection
+    else setSelectedRows([...(selectedRows || []), row]); // Multi-selection
   };
 
   return (
@@ -88,6 +80,7 @@ export function SelectableTable<ColumnKeysProps>({
   initialSelectedRows,
   getSelectedRows,
   singleSelection,
+  avoidReorder,
 }: SelectableTableProps<ColumnKeysProps>) {
   const mapRows = (rows: RowsProps<ColumnKeysProps>) =>
     rows.map((row, i) => {
@@ -128,6 +121,8 @@ export function SelectableTable<ColumnKeysProps>({
       SelectableTableColumnKeysProps<ColumnKeysProps>
     >['rows'],
   ) => {
+    if (avoidReorder) return mapRows([...rows]);
+
     const selectedExcludedRows = rows.filter(
       (row) => !selectedRows.some((selectedRow) => selectedRow.ID === row.ID),
     );

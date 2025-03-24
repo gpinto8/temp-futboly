@@ -92,6 +92,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
               columns={columns}
               getSelectedRows={handleSelectedRows}
               singleSelection
+              avoidReorder
             />
           </div>
         </div>
