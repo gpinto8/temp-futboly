@@ -26,6 +26,7 @@ type SelectableTableProps<ColumnKeysProps> = {
   getSelectedRows?: (selectedRows: RowsProps<ColumnKeysProps>) => void;
   singleSelection?: boolean;
   avoidReorder?: boolean;
+  resetTable?: number; // Reset it with "Math.random()" to trigger the useEffect hook
 };
 
 const SelectIcon = function <ColumnKeysProps>({
@@ -81,6 +82,7 @@ export function SelectableTable<ColumnKeysProps>({
   getSelectedRows,
   singleSelection,
   avoidReorder,
+  resetTable,
 }: SelectableTableProps<ColumnKeysProps>) {
   const mapRows = (rows: RowsProps<ColumnKeysProps>) =>
     rows.map((row, i) => {
@@ -156,6 +158,8 @@ export function SelectableTable<ColumnKeysProps>({
       setSelectedRows(mapRows(initialSelectedRows));
     }
   }, [initialSelectedRows]);
+
+  useEffect(() => setSelectedRows([]), [resetTable]);
 
   return (
     <CustomTable<ColumnKeysProps>

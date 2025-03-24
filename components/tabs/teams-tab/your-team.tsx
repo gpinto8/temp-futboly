@@ -5,7 +5,10 @@ import { useEffect, useState } from 'react';
 import { getPlayerRating } from '@/sportmonks/common-methods';
 import { Avatar } from '@mui/material';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
-import { SelectableTable } from '@/components/table/selectable-table';
+import {
+  SelectableTable,
+  SelectableTableColumnKeysProps,
+} from '@/components/table/selectable-table';
 
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
@@ -14,6 +17,10 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const { getPlayersSportmonksData } = useGetTeams();
 
   const [selectedPosition, setSelectedPosition] = useState(0);
+  const [fieldPlayersMap, setFieldPlayersMap] = useState<any>([]);
+  const [selectedRow, setSelectedRow] =
+    useState<RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>[0]>();
+  const [resetTable, setResetTable] = useState(0);
 
   const [rows, setRows] = useState<RowsProps<YourTeamKeyProps>>([]);
   const columns: ColumnsProps<YourTeamKeyProps> = [
@@ -49,15 +56,39 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     })();
   }, [team]);
 
-  const handleSelectedRows = (selectedRows: RowsProps<YourTeamKeyProps>) => {};
+  const updateFieldPlayers = async (
+    selectedRow?: RowsProps<
+      SelectableTableColumnKeysProps<YourTeamKeyProps>
+    >[0],
+    position?: number,
+  ) => {
+    if (selectedRow && position) {
+      setFieldPlayersMap([
+        ...fieldPlayersMap,
+        { id: selectedRow.ID, position },
+      ]);
 
-  const handleClick = (position: number) => {
-    if (position === selectedPosition) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
       setSelectedPosition(0);
-      return; // Reset the position if selected the already selected one
+      setResetTable(Math.random());
     }
+  };
 
-    setSelectedPosition(position);
+  const handleSelectedRows = async (
+    selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
+  ) => {
+    const selectedRow = selectedRows?.[0];
+    setSelectedRow(selectedRow);
+    await updateFieldPlayers(selectedRow, selectedPosition);
+  };
+
+  const handleClick = async (position: number) => {
+    if (position === selectedPosition) {
+      setSelectedPosition(0); // Reset the position if selected the already selected one
+    } else {
+      setSelectedPosition(position);
+      await updateFieldPlayers(selectedRow, position);
+    }
   };
 
   return (
@@ -75,8 +106,10 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             <div>FOOTBALL FIELD</div>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((position) => (
               <div
-                className={`cursor-pointer bg-gray-400 text-white h-10 ${
-                  selectedPosition === position ? '!bg-errorDark' : ''
+                className={`cursor-pointer text-white h-10 ${
+                  selectedPosition === position
+                    ? '!bg-errorDark'
+                    : '!bg-gray-400'
                 }`}
                 onClick={() => handleClick(position)}
               >
@@ -93,6 +126,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
               getSelectedRows={handleSelectedRows}
               singleSelection
               avoidReorder
+              resetTable={resetTable}
             />
           </div>
         </div>
