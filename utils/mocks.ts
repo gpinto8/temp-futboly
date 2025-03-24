@@ -184,7 +184,8 @@ export const getMockupMatchesHistory = () => {
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
             date: new Date(Date.parse("2024-09-01")),
-            score: {
+            status: "Ended",
+			score: {
                 home: 2,
                 away: 1
             }
@@ -198,7 +199,8 @@ export const getMockupMatchesHistory = () => {
                 teamName: "France",
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
-            date: new Date(Date.parse("2024-09-05"))
+            date: new Date(Date.parse("2024-09-05")),
+            status: "Upcoming",
         },{
             home: {
                 teamName: "Portugal",
@@ -209,7 +211,8 @@ export const getMockupMatchesHistory = () => {
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
             date: new Date(Date.parse("2024-09-10")),
-            score: {
+            status: "Ended",
+			score: {
                 home: 2,
                 away: 1
             }
@@ -223,7 +226,8 @@ export const getMockupMatchesHistory = () => {
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
             date: new Date(Date.parse("2024-10-01")),
-            score: {
+            status: "Ended",
+			score: {
                 home: 2,
                 away: 1
             }
@@ -237,7 +241,8 @@ export const getMockupMatchesHistory = () => {
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
             date: new Date(Date.parse("2024-10-05")),
-            score: {
+            status: "Ended",
+			score: {
                 home: 2,
                 away: 1
             }
@@ -250,7 +255,8 @@ export const getMockupMatchesHistory = () => {
                 teamName: "France",
                 teamLogo: "https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
             },
-            date: new Date(Date.now())
+            date: new Date(Date.now()),
+            status: "Upcoming",
         }
     ]) as MatchInfoType[];
 }
@@ -261,6 +267,7 @@ type MatchInfoType = {
     home: MinimalMatchTeamType;
     away: MinimalMatchTeamType;
     date: Date;
+    status: "Upcoming" | "Ended";
     score?: {
         home: number;
         away: number;
