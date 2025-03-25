@@ -81,4 +81,8 @@ export const IMG_URLS = {
     src: 'assets/collapse.svg',
     alt: 'Collapse Icon',
   },
+  FOOTBALL_FIELD: {
+    src: 'assets/football-field.svg',
+    alt: 'Football Field Icon',
+  },
 };

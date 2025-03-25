@@ -9,6 +9,7 @@ import {
   SelectableTable,
   SelectableTableColumnKeysProps,
 } from '@/components/table/selectable-table';
+import { CustomImage } from '@/components/custom/custom-image';
 
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
@@ -104,9 +105,22 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <div className="md:w-1/2 flex flex-col gap-4">
             <div className="text-xl font-bold pb-2">Starting 11</div>
             <div>FOOTBALL FIELD</div>
+            <div className="relative">
+              <div className="absolute w-full h-full">
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+              </div>
+              <CustomImage
+                imageKey="FOOTBALL_FIELD"
+                className="w-full h-auto"
+              />
+            </div>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((position) => (
               <div
-                className={`cursor-pointer text-white h-10 ${
+                className={`cursor-pointer text-black h-10 ${
                   selectedPosition === position
                     ? '!bg-errorDark'
                     : '!bg-gray-400'
