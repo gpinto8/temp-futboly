@@ -87,10 +87,10 @@ export const useSetTeams = () => {
       // First find the team to change from all the competitions and edit it
       const foundTeam = allTeams.find((team) => team.shortId === shortId);
       if (foundTeam) {
-        const mergedTeam: CompetitionsCollectionTeamsProps = merge(
-          foundTeam,
-          newTeam,
-        );
+        const mergedTeam: CompetitionsCollectionTeamsProps = {
+          ...foundTeam,
+          ...newTeam,
+        };
 
         if (mergedTeam) {
           // Then place it inside the other teams, removing the old one with this new edited one
