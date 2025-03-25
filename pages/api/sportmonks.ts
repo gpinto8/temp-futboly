@@ -7,7 +7,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 // DO NOT USE THIS API, USE THE "fetch-sportmonks-api.ts" util
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const apiToken = process.env.SPORTMONKS_API_KEY;
+  // const apiToken = process.env.SPORTMONKS_API_KEY; // TODO remove this
+  const apiToken =
+    'uhs6hWmYUc89r4693J3UMQnxUoO4oKVFBcY07lJrShh8ByzyQgCCvIK1FdAe';
   const path = req.query?.path as DataPath;
   const additionalPath = req.query?.additionalPath as string;
   const page = req.query?.page as string;
