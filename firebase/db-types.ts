@@ -33,24 +33,24 @@ export type CompetitionsCollectionProps = {
   endDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
   specificPosition: boolean;
   league: DocumentReference<LeaguesCollectionProps>;
-  currentWeek: Number;
-  maxWeek: Number;
+  currentWeek: number;
+  maxWeek: number;
   players: DocumentReference<UsersCollectionProps>[];
   teams: DocumentReference<TeamsCollectionProps>[];
   standings:
     | {
         teamId: DocumentReference<TeamsCollectionProps>;
-        points: Number;
+        points: number;
       }[]
     | null;
   matchSchedule:
     | {
-        week: Number;
+        week: number;
         home: DocumentReference<TeamsCollectionProps>;
         away: DocumentReference<TeamsCollectionProps>;
-        result: {
-          home: Number;
-          away: Number;
+        result?: {
+          home: number;
+          away: number;
         };
       }[]
     | null;
@@ -69,7 +69,7 @@ export type TeamsCollectionProps = {
     sportmonksID: string;
     actualPosition: {
       isBenched: Boolean;
-      slot: Number;
+      slot: number;
     };
   }[];
 };
