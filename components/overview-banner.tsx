@@ -5,21 +5,21 @@ import { CustomButton } from '@/components/custom/custom-button';
 import { CustomCard } from '@/components/custom/custom-card';
 import { useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
-import { ImageUrlsProps } from '@/utils/img-urls';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetTeams } from '@/data/teams/use-get-teams';
+import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
 
 type BannerCardProps = {
   title: string;
-  imageKey: ImageUrlsProps;
+  logoId?: RealTeamLogoIds;
   entries: {
     key: string;
     value?: string | number;
   }[];
 };
 
-const BannerCard = ({ title, imageKey, entries }: BannerCardProps) => {
+const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
   return (
     <CustomCard
       style="light"
@@ -33,7 +33,7 @@ const BannerCard = ({ title, imageKey, entries }: BannerCardProps) => {
 
         <CustomImage
           className="rounded-full border object-cover shadow-md w-7 h-7 lg:w-10 lg:h-10"
-          imageKey={imageKey}
+          forceSrc={getRealTeamLogoById(logoId)?.src}
         />
       </div>
 
@@ -118,7 +118,7 @@ export const OverviewBanner = () => {
   useEffect(() => {
     const data: BannerCardProps = {
       title: 'League',
-      imageKey: 'AT_ICON',
+      logoId: undefined,
       entries: [
         { key: 'Name', value: league?.name },
         { key: 'Owner', value: league?.ownerUsername },
@@ -133,7 +133,7 @@ export const OverviewBanner = () => {
   useEffect(() => {
     const data: BannerCardProps = {
       title: 'Competition',
-      imageKey: 'AT_ICON',
+      logoId: undefined,
       entries: [
         { key: 'Name', value: competition?.name },
         { key: 'Week', value: 'TODO' },
@@ -148,7 +148,7 @@ export const OverviewBanner = () => {
   useEffect(() => {
     const data: BannerCardProps = {
       title: 'Team',
-      imageKey: 'AT_ICON',
+      logoId: team?.logoId,
       entries: [
         { key: 'Name', value: team?.name || '' },
         { key: 'Coach', value: team?.coach || '' },

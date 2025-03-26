@@ -1,3 +1,4 @@
+import { RealTeamLogoIds } from '@/utils/real-team-logos';
 import { Timestamp } from 'firebase/firestore';
 import { DocumentReference } from 'firebase/firestore';
 
@@ -64,7 +65,7 @@ export type CompetitionsCollectionTeamsProps = {
   competitionRef: DocumentReference<CompetitionsCollectionProps>;
   name: string;
   coach: string;
-  logoId: string;
+  logoId: RealTeamLogoIds; // TODO: to change in the future
   // formation: string; // String with module
   players: {
     sportmonksId: number;

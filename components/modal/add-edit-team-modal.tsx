@@ -13,13 +13,14 @@ import {
 import { TeamLogoPicker } from '../team-logo-picker';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { useGetTeams } from '@/data/teams/use-get-teams';
+import { RealTeamLogoIds } from '@/utils/real-team-logos';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 type PlayersColumnKeysProps = 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
 export type AddEditTeamModalDataProps = {
-  logoId: string;
+  logoId: RealTeamLogoIds;
   name: string;
   owner?: string;
   coach: string;

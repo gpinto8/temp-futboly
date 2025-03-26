@@ -1,11 +1,4 @@
-export type RealTeamLogoProps = {
-  id: string;
-  name: string;
-  src: string;
-  alt: string;
-};
-
-export const realTeamLogos: RealTeamLogoProps[] = [
+export const realTeamLogos = [
   {
     id: 'athletic-madrid',
     name: 'Athletic Madrid',
@@ -48,7 +41,14 @@ export const realTeamLogos: RealTeamLogoProps[] = [
     src: 'assets/real-team-logos/real-madrid.svg',
     alt: 'Real Madrid Logo Icon',
   },
-];
+] as const;
 
-export const getRealTeamLogoById = (id: string) =>
-  realTeamLogos.find((logo) => logo.id === id);
+const realTeamLogoIds = realTeamLogos.map((logo) => logo.id);
+export type RealTeamLogoIds = (typeof realTeamLogoIds)[number];
+
+export const getRealTeamLogoById = (id?: RealTeamLogoIds) => {
+  if (id) {
+    const foundLogo = realTeamLogos.find((logo) => logo.id === id);
+    if (foundLogo) return foundLogo;
+  }
+};
