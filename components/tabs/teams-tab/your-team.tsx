@@ -9,7 +9,9 @@ import {
   SelectableTable,
   SelectableTableColumnKeysProps,
 } from '@/components/table/selectable-table';
-import { CustomImage } from '@/components/custom/custom-image';
+import { FootballField } from '@/components/football-field';
+import { FormationsDropdown } from '@/components/formations-dropdown';
+import { AllPosibleFormationsProps } from '@/utils/formations';
 
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
@@ -17,6 +19,7 @@ type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 export const YourTeam = ({ team }: YourTeamProps) => {
   const { getPlayersSportmonksData } = useGetTeams();
 
+  const [formation, setFormation] = useState<AllPosibleFormationsProps>();
   const [selectedPosition, setSelectedPosition] = useState(0);
   const [fieldPlayersMap, setFieldPlayersMap] = useState<any>([]);
   const [selectedRow, setSelectedRow] =
@@ -83,7 +86,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     await updateFieldPlayers(selectedRow, selectedPosition);
   };
 
-  const handleClick = async (position: number) => {
+  const handlePlayerSelected = async (position: number) => {
     if (position === selectedPosition) {
       setSelectedPosition(0); // Reset the position if selected the already selected one
     } else {
@@ -102,34 +105,16 @@ export const YourTeam = ({ team }: YourTeamProps) => {
         </div>
         <div className="flex flex-col md:flex-row gap-8 w-full">
           {/* FOOTBALL FIELD */}
-          <div className="md:w-1/2 flex flex-col gap-4">
-            <div className="text-xl font-bold pb-2">Starting 11</div>
-            <div>FOOTBALL FIELD</div>
-            <div className="relative">
-              <div className="absolute w-full h-full">
-                <div>1</div>
-                <div>2</div>
-                <div>3</div>
-                <div>4</div>
-                <div>5</div>
-              </div>
-              <CustomImage
-                imageKey="FOOTBALL_FIELD"
-                className="w-full h-auto"
-              />
+          <div className="md:w-1/3 flex flex-col gap-4">
+            <div className="flex gap-4 justify-between">
+              <div className="text-xl font-bold pb-2">Starting 11</div>
+              <FormationsDropdown getSelectedFormation={setFormation} />
             </div>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((position) => (
-              <div
-                className={`cursor-pointer text-black h-10 ${
-                  selectedPosition === position
-                    ? '!bg-errorDark'
-                    : '!bg-gray-400'
-                }`}
-                onClick={() => handleClick(position)}
-              >
-                POSITION {position} {selectedPosition}
-              </div>
-            ))}
+            <FootballField
+              formation={formation}
+              handlePlayerSelected={handlePlayerSelected}
+              emptyFormationMessage="Select a formation."
+            />
           </div>
           {/* TEAM PLAYERS */}
           <div className="md:w-1/2 h-[750px]">

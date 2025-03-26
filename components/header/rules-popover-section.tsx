@@ -1,10 +1,7 @@
 import { CustomCard } from '@/components/custom/custom-card';
-import {
-  getMatchBonus,
-  getFormations,
-  getGoalRanges,
-} from '@/utils/rules-info';
+import { getMatchBonus, getGoalRanges } from '@/utils/rules-info';
 import { CustomImage } from '../custom/custom-image';
+import { getFormations } from '@/utils/formations';
 
 type RulesPairProps = {
   title: string | undefined;
@@ -74,6 +71,7 @@ export const RulesPopoverSection = () => {
             ))}
           </CustomCard>
         </div>
+
         {/* GOAL RANGES */}
         <div className="flex flex-col sm:flex-row justify-around items-stretch my-4 gap-4 w-full">
           <div id="goalRanges">
@@ -111,7 +109,7 @@ export const RulesPopoverSection = () => {
                 >
                   <FormationsPair
                     title={formation?.title}
-                    desc={formation?.desc}
+                    desc={formation?.formations}
                   />
                 </div>
               ))}
@@ -119,7 +117,8 @@ export const RulesPopoverSection = () => {
           </div>
         </div>
       </div>
-      {/* FORMATIONS */}
+
+      {/* REAL LEAGUES */}
       <div id="rulesBasedOn" className="mt-0 md:mt-6 flex flex-col gap-4">
         <h3 className="text-main text-pretty text-xl">
           Based on these real leagues:
