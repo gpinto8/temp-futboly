@@ -13,9 +13,9 @@ export const AdminTab = () => {
     isCurrentId,
     currentComponentId,
   } = useSwitchComponents([
-    { label: 'Teams', Component: () => <AdminTabTeams /> },
-    { label: 'Competitions', Component: () => <AdminTabCompetitions /> },
     { label: 'Users', Component: () => <AdminTabUsers /> },
+    { label: 'Competitions', Component: () => <AdminTabCompetitions /> },
+    { label: 'Teams', Component: () => <AdminTabTeams /> },
   ]);
 
   return (
