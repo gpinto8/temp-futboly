@@ -25,6 +25,7 @@ const leagueSlice = createSlice({
       state.players = action.payload.players;
       state.ownerUsername = action.payload.ownerUsername;
       state.owner = action.payload.owner;
+      state.competitionsNo = action.payload.competitionsNo;
     },
   },
 });
