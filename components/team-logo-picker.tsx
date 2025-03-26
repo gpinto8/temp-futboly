@@ -28,7 +28,7 @@ export const TeamLogoPicker = ({
   const handleChange = (event: SelectChangeEvent) =>
     setSelectedLogo(event.target.value as string);
 
-  useEffect(() => getLogoId?.(selectedLogo), [getLogoId]);
+  useEffect(() => getLogoId?.(selectedLogo), [selectedLogo, getLogoId]);
 
   return (
     <FormControl className={className}>
