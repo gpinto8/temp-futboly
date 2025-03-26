@@ -116,52 +116,46 @@ export const OverviewBanner = () => {
   // LEAGUE
   const league = getLeague();
   useEffect(() => {
-    if (league) {
-      const data: BannerCardProps = {
-        title: 'League',
-        imageKey: 'AT_ICON',
-        entries: [
-          { key: 'Name', value: league.name },
-          { key: 'Owner', value: league.ownerUsername },
-          { key: 'Competition', value: league.competitionsNo },
-        ],
-      };
-      setOverviewLeague(data);
-    }
+    const data: BannerCardProps = {
+      title: 'League',
+      imageKey: 'AT_ICON',
+      entries: [
+        { key: 'Name', value: league?.name },
+        { key: 'Owner', value: league?.ownerUsername },
+        { key: 'Competition', value: league?.competitionsNo },
+      ],
+    };
+    setOverviewLeague(data);
   }, [league]);
 
   // COMPETITION
   const competition = getActiveCompetition();
   useEffect(() => {
-    if (competition) {
-      const data: BannerCardProps = {
-        title: 'Competition',
-        imageKey: 'AT_ICON',
-        entries: [
-          { key: 'Name', value: competition.name },
-          { key: 'Week', value: 'TODO' },
-          { key: 'Teams', value: competition.players.length },
-        ],
-      };
-      setOverviewCompetition(data);
-    }
+    const data: BannerCardProps = {
+      title: 'Competition',
+      imageKey: 'AT_ICON',
+      entries: [
+        { key: 'Name', value: competition?.name },
+        { key: 'Week', value: 'TODO' },
+        { key: 'Teams', value: competition?.players?.length },
+      ],
+    };
+    setOverviewCompetition(data);
   }, [competition]);
 
   // TEAM DATA
   const team = getTeam();
   useEffect(() => {
-    if (team) {
-      const data: BannerCardProps = {
-        title: 'Team',
-        imageKey: 'AT_ICON',
-        entries: [
-          { key: 'Name', value: team.name || '' },
-          { key: 'Coach', value: team.coach || '' },
-          { key: 'Position', value: 'TODO' },
-        ],
-      };
-      setOverviewTeam(data);
-    }
+    const data: BannerCardProps = {
+      title: 'Team',
+      imageKey: 'AT_ICON',
+      entries: [
+        { key: 'Name', value: team?.name || '' },
+        { key: 'Coach', value: team?.coach || '' },
+        { key: 'Position', value: 'TODO' },
+      ],
+    };
+    setOverviewTeam(data);
   }, [team]);
 
   return (
