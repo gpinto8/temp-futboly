@@ -1,8 +1,9 @@
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import {
-  CompetitionsCollectionProps,
-  UsersCollectionProps,
-  MappedCompetitionsProps,
+    CompetitionsCollectionProps,
+    UsersCollectionProps,
+    MappedCompetitionsProps,
+    TeamsCollectionProps,
 } from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { competitionActions } from '@/store/slices/competitions';
@@ -11,6 +12,7 @@ import { useGetCompetitions } from './use-get-competitions';
 
 export const useSetCompetitions = () => {
   const user = useAppSelector((state) => state.user);
+    const league = useAppSelector((state) => state.league);
   const dispatch = useAppDispatch();
   const {
     getCompetitions,
@@ -132,10 +134,97 @@ export const useSetCompetitions = () => {
     }
   };
 
+    const scheduleCompetitionMatches = async (
+        competitionRef: DocumentReference<CompetitionsCollectionProps>,
+    ) => {
+        // Check if the user is the owner of the league
+        if (!(league.owner === user.id)) return;
+        const competitionToBeScheduled = await getCompetitionById(competitionRef);
+        if (!competitionToBeScheduled) return;
+        const teams = competitionToBeScheduled.teams;
+        const maxWeek = competitionToBeScheduled.maxWeek;
+        const schedule = createRoundRobinSchedule(teams, maxWeek);
+        if (!schedule) return; 
+        const finalSchedule = randomizeWeeks(schedule, teams.length, maxWeek);
+        const result = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("matchSchedule", finalSchedule);
+        if (!result) console.error("Error while scheduling the matches for the competition");
+    };
+
   return {
     setCompetitions,
     setActiveCompetition,
     addCompetition,
     deleteCompetition,
+    scheduleCompetitionMatches,
   };
 };
+
+// It is necessary that the number of teams is even, otherwise 1 player would not play
+function createRoundRobinSchedule(teams: DocumentReference<TeamsCollectionProps>[], maxWeek: number) {
+    if (teams.length % 2 !== 0) return null;
+
+    let schedule: Array<{ week: number, match: DocumentReference<TeamsCollectionProps>[] }> = [];
+    let numTeams = teams.length;
+    
+    // Here I create a random inital order for the Teams
+    let rotatingTeams = [...shuffleArray(teams)];
+
+    for (let week = 1; week <= maxWeek; week++) {
+        let matches: DocumentReference<TeamsCollectionProps>[][] = [];
+
+        for (let i = 0; i < numTeams / 2; i++) {
+            let team1 = rotatingTeams[i];
+            let team2 = rotatingTeams[numTeams - 1 - i];
+            matches.push([team1, team2]);
+        }
+        schedule.push(...matches.map(match => ({ week, match })));
+
+        // Here I rotate the order of the teams except the first one
+        rotatingTeams.splice(1, 0, rotatingTeams.pop()!);
+    }
+    return schedule;
+}
+
+// I can do just n-1 combination of matches, so the nth match is duplicated
+// This way I randomize the order of the first n-1 and x(n-1) times
+function randomizeWeeks(schedule: Array<{ week: number, match: DocumentReference<TeamsCollectionProps>[] }>, teamsLength: number, maxWeek: number) {
+    let finalSchedule: Array<{ week: number, match: DocumentReference<TeamsCollectionProps>[] }> = [];
+    for(let i = 1; i <= Math.ceil(maxWeek/(teamsLength - 1)); i++) {
+        // Separating block to shuffle
+        let partial = schedule.filter((matchSchedule) => matchSchedule.week >= (1 + ((teamsLength - 1) * (i - 1))) && matchSchedule.week <= ((teamsLength - 1)* i));
+        // Group all matches of the same week
+        let grouped = partial.reduce((acc, curr) => {
+            acc[curr.week] = acc[curr.week] || [];
+            acc[curr.week].push(curr.match);
+            return acc;
+        }, {} as any); //Record<number, DocumentReference<TeamsCollectionProps>[][]>);
+        // Shuffle all the groups
+        let shuffled = shuffleArray(Object.values(grouped));
+        // Push them into final schedule with randomized order
+        for (let week = 1; week <= shuffled.length; week++) {
+            shuffled[week - 1].forEach((item) => finalSchedule.push({week: ((teamsLength - 1) * (i - 1) + week), match: item })); 
+        }
+    }
+    return finalSchedule;
+}
+
+// Fisher-Yates algorithm to shuffle elements
+function shuffleArray(array: Array<any>) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+/*  matchSchedule:
+    | {
+        week: Number;
+        home: DocumentReference<TeamsCollectionProps>;
+        away: DocumentReference<TeamsCollectionProps>;
+        result: {
+          home: Number;
+          away: Number;
+        };
+      }[]
+    | null;
+*/
