@@ -44,11 +44,24 @@ export type CompetitionsCollectionProps = {
         teamId: DocumentReference<CompetitionsCollectionTeamsProps>;
       }[]
     | null;
-  matchSchedule:
+  /*matchSchedule: Teams are not anymore just references but they are an array with all the informations
+   * I will leave it commented because in the future we will create and apposite collection for Teams
     | {
         week: number;
         home: DocumentReference<CompetitionsCollectionTeamsProps>;
         away: DocumentReference<CompetitionsCollectionTeamsProps>;
+        result?: {
+          home: number;
+          away: number;
+        };
+      }[]
+    | null;
+    */
+  matchSchedule:
+    | {
+        week: number;
+        home: CompetitionsCollectionTeamsProps;
+        away: CompetitionsCollectionTeamsProps;
         result?: {
           home: number;
           away: number;
