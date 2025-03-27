@@ -1,20 +1,49 @@
 import { Avatar } from '@mui/material';
 import { CustomImage } from './custom/custom-image';
 import { useEffect, useState } from 'react';
+import { mapFormationPosition } from '@/utils/formations';
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
 type CircleFieldProps = {
-  data: { src: string; name: string; position: string };
+  player?: CompetitionsCollectionTeamsProps['players'][0];
   handleClick?: () => void;
   currentPosition?: string;
   selectedPlayerPosition: string;
 };
+
 const CircleField = ({
-  data,
+  player,
   handleClick,
   currentPosition,
   selectedPlayerPosition,
 }: CircleFieldProps) => {
+  const [data, setData] = useState<{
+    src: string;
+    name: string;
+    position: string;
+  }>({ name: '', position: '', src: '' });
+
   const isSelected = currentPosition === selectedPlayerPosition;
+
+  useEffect(() => {
+    (async () => {
+      const playerId = player?.sportmonksId;
+      if (playerId) {
+        const response = await fetchSportmonksApi(
+          'football/players',
+          `${playerId}`,
+        );
+
+        const data = response.data;
+        setData({
+          src: data?.image_path,
+          name: data?.display_name,
+          position: data?.position?.name,
+        });
+      }
+    })();
+  }, [player]);
 
   return (
     <div
@@ -24,9 +53,13 @@ const CircleField = ({
       }`}
     >
       <div className="w-full flex flex-col items-center justify-center h-full overflow-hidden">
-        <Avatar src={data.src} alt={data.name} sx={{ width: 24, height: 24 }} />
-        <div className="text-xs w-max">{data.name}</div>
-        <div className="text-[10px] w-max text-gray-600">{data.position}</div>
+        <Avatar
+          src={data?.src}
+          alt={data?.name}
+          sx={{ width: 24, height: 24 }}
+        />
+        <div className="text-xs w-max">{data?.name}</div>
+        <div className="text-[10px] w-max text-gray-600">{data?.position}</div>
       </div>
     </div>
   );
@@ -34,6 +67,7 @@ const CircleField = ({
 
 export type FootballFieldProps = {
   formation?: string;
+  fieldPlayers?: CompetitionsCollectionTeamsProps['players'];
   getSelectedPlayerPosition?: (position: string) => void;
   emptyFormationMessage: string;
   resetField?: number; // Reset it with "Math.random()" to trigger the useEffect hook
@@ -41,17 +75,15 @@ export type FootballFieldProps = {
 
 export const FootballField = ({
   formation,
+  fieldPlayers: _fieldPlayers,
   getSelectedPlayerPosition,
   emptyFormationMessage,
   resetField,
 }: FootballFieldProps) => {
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
-
-  const calculateCurrentPosition = (
-    formationTotalPlayers: string, // e.g "4" ("432")
-    playerPosition: number, // e.g the first one of the "4" players, from left to right ("432")
-    fieldRow: number, // e.g the first row of the 3 to display, from top to bottom ("432")
-  ) => `${formationTotalPlayers}+${playerPosition + 1}+${fieldRow + 1}`;
+  const [fieldPlayers, setFieldPlayers] = useState<
+    CompetitionsCollectionTeamsProps['players']
+  >([{ sportmonksId: 14, position: '4+2+2' }]);
 
   const handleCircleField = (currentPosition: string) => {
     const selected =
@@ -77,24 +109,29 @@ export const FootballField = ({
               ?.reverse()
               ?.map((formationTotalPlayers, playerPosition) => {
                 return (
-                  <div className="h-full flex gap-4 justify-evenly items-center">
+                  <div
+                    key={playerPosition}
+                    className="h-full flex gap-4 justify-evenly items-center"
+                  >
                     {new Array(+formationTotalPlayers)
                       .fill(undefined)
                       .map((_, fieldRow) => {
-                        const currentPosition = calculateCurrentPosition(
+                        const currentPosition = mapFormationPosition(
                           formationTotalPlayers,
                           playerPosition,
                           fieldRow,
                         );
 
+                        const fieldPlayer:
+                          | CompetitionsCollectionTeamsProps['players'][0]
+                          | undefined = fieldPlayers?.find(
+                          (player) => player?.position === currentPosition,
+                        );
+
                         return (
                           <CircleField
                             key={fieldRow}
-                            data={{
-                              src: '',
-                              name: 'El nombre',
-                              position: 'La posicion',
-                            }}
+                            player={fieldPlayer}
                             handleClick={() =>
                               handleCircleField(currentPosition)
                             }
@@ -108,7 +145,7 @@ export const FootballField = ({
               })}
             <div className="flex justify-center">
               <CircleField
-                data={{ src: '', name: 'Goalkeeper', position: 'Goalkeeper' }}
+                // data={{ src: '', name: 'Goalkeeper', position: 'Goalkeeper' }}
                 selectedPlayerPosition={selectedPlayerPosition}
               />
             </div>

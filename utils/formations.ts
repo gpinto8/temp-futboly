@@ -42,3 +42,9 @@ export const getFormations = () => {
   const filteredFormationMap = filterValidFormations(formationMap); // We gotta make sure that the formation combination are of 10 players
   return filteredFormationMap;
 };
+
+export const mapFormationPosition = (
+  formationTotalPlayers: string, // e.g "4" ("432")
+  playerPosition: number, // e.g the first one of the "4" players, from left to right ("432")
+  fieldRow: number, // e.g the first row of the 3 to display, from top to bottom ("432")
+) => `${formationTotalPlayers}+${playerPosition + 1}+${fieldRow + 1}`; // "4+4+3"

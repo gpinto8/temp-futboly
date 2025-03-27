@@ -12,6 +12,7 @@ import {
 import { FootballField } from '@/components/football-field';
 import { FormationsDropdown } from '@/components/formations-dropdown';
 import { AllPosibleFormationsProps } from '@/utils/formations';
+import { CustomButton } from '@/components/custom/custom-button';
 
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
@@ -20,7 +21,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const { getPlayersSportmonksData } = useGetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
-  const [fieldPlayersMap, setFieldPlayersMap] = useState<any>([]);
+  const [fieldPlayers, setFieldPlayers] = useState<
+    CompetitionsCollectionTeamsProps['players']
+  >([]);
 
   const [fieldPosition, setFieldPosition] = useState('');
   const [tablePosition, setTablePosition] =
@@ -28,6 +31,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   const [resetField, setResetField] = useState(0);
   const [resetTable, setResetTable] = useState(0);
+  const [disabled, setDisabled] = useState(false);
 
   const [rows, setRows] = useState<RowsProps<YourTeamKeyProps>>([]);
   const columns: ColumnsProps<YourTeamKeyProps> = [
@@ -63,22 +67,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     })();
   }, [team]);
 
-  const handleSelectedRows = async (
-    selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
-  ) => {
-    setTablePosition(selectedRows?.[0]);
-  };
-
-  const handlePlayerSelected = async (position: string) => {
-    setFieldPosition(position);
-  };
-
   useEffect(() => {
     (async () => {
       if (tablePosition && fieldPosition) {
-        setFieldPlayersMap([
-          ...fieldPlayersMap,
-          { id: tablePosition.ID, fieldPosition },
+        const id = tablePosition.ID;
+        setFieldPlayers([
+          ...fieldPlayers?.filter((player) => player.sportmonksId !== id),
+          { sportmonksId: id, position: fieldPosition },
         ]);
 
         await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
@@ -91,8 +86,23 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   }, [tablePosition, fieldPosition]);
 
   useEffect(() => {
-    console.log({ fieldPlayersMap });
-  }, [fieldPlayersMap]);
+    const shouldDisabled = !(formation && fieldPlayers?.length);
+    setDisabled(shouldDisabled);
+  }, [formation, fieldPlayers]);
+
+  const handleSelectedRows = async (
+    selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
+  ) => {
+    setTablePosition(selectedRows?.[0]);
+  };
+
+  const handlePlayerSelected = async (position: string) => {
+    setFieldPosition(position);
+  };
+
+  const handleEditTeam = () => {
+    console.log({ formation, fieldPlayers });
+  };
 
   return (
     <div className="self-start w-full">
@@ -112,6 +122,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             </div>
             <FootballField
               formation={formation}
+              fieldPlayers={fieldPlayers}
               getSelectedPlayerPosition={handlePlayerSelected}
               emptyFormationMessage="Select a formation."
               resetField={resetField}
@@ -119,16 +130,27 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           </div>
 
           {/* TEAM PLAYERS */}
-          <div className="md:w-1/2 h-[750px]">
-            <div className="text-xl font-bold pb-2">Team Players</div>
-            <SelectableTable<YourTeamKeyProps>
-              rows={rows}
-              columns={columns}
-              getSelectedRows={handleSelectedRows}
-              singleSelection
-              avoidReorder
-              resetTable={resetTable}
-            />
+          <div className="md:w-1/2 flex flex-col justify-between">
+            <div className="h-[500px]">
+              <div className="text-xl font-bold pb-2">Team Players</div>
+              <SelectableTable<YourTeamKeyProps>
+                rows={rows}
+                columns={columns}
+                getSelectedRows={handleSelectedRows}
+                singleSelection
+                avoidReorder
+                resetTable={resetTable}
+              />
+            </div>
+            <div className="w-full flex justify-end">
+              <CustomButton
+                label="Edit team"
+                widthFit
+                className="px-10"
+                disabled={disabled}
+                handleClick={handleEditTeam}
+              />
+            </div>
           </div>
         </div>
       </div>
