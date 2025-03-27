@@ -247,7 +247,7 @@ export const AddEditTeamModal = ({
               />
             ) : (
               <div className="my-2 mx-auto ">
-                Ask your admin to add the players.
+                Once you create the team you have to ask your admin to add the players.
               </div>
             )}
           </div>
