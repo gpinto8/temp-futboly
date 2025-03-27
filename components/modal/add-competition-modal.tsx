@@ -19,6 +19,7 @@ const getRows = (league: MappedLeaguesProps | undefined) => {
   return league.players.map((player, index) => {
     return {
       INDEX: index + 1,
+      ID: index + 1,
       PLAYER: player.username,
     };
   });
