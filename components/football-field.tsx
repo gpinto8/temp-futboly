@@ -74,22 +74,17 @@ export type FootballFieldProps = {
 };
 
 export const FootballField = ({
-  formation,
+  formation: _formation,
   fieldPlayers: _fieldPlayers,
   getSelectedPlayerPosition,
   emptyFormationMessage,
   resetField,
 }: FootballFieldProps) => {
+  const [formation, setFormation] = useState(_formation);
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
   const [fieldPlayers, setFieldPlayers] = useState<
     CompetitionsCollectionTeamsProps['players']
   >([{ sportmonksId: 14, position: '4+2+2' }]);
-
-  const handleCircleField = (currentPosition: string) => {
-    const selected =
-      currentPosition !== selectedPlayerPosition ? currentPosition : '';
-    setSelectedPlayerPosition(selected);
-  };
 
   useEffect(() => {
     getSelectedPlayerPosition?.(selectedPlayerPosition);
@@ -97,7 +92,16 @@ export const FootballField = ({
 
   useEffect(() => {
     setSelectedPlayerPosition('');
+    setFormation('');
   }, [resetField]);
+
+  useEffect(() => setFormation(_formation), [_formation]);
+
+  const handleCircleField = (currentPosition: string) => {
+    const selected =
+      currentPosition !== selectedPlayerPosition ? currentPosition : '';
+    setSelectedPlayerPosition(selected);
+  };
 
   return (
     <div className="relative w-full max-w-[500px]">

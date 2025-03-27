@@ -10,10 +10,12 @@ import { useEffect, useState } from 'react';
 
 type FormationDropdownProps = {
   getSelectedFormation: (formation: AllPosibleFormationsProps) => void;
+  resetFormation?: number; // Reset it with "Math.random()" to trigger the useEffect hook
 };
 
 export const FormationsDropdown = ({
   getSelectedFormation,
+  resetFormation,
 }: FormationDropdownProps) => {
   const formations = getFormations();
   const allFormations = formations.map((item) => item.formations).flat();
@@ -27,6 +29,8 @@ export const FormationsDropdown = ({
   useEffect(() => {
     if (formation) getSelectedFormation?.(formation);
   }, [formation, getSelectedFormation]);
+
+  useEffect(() => setFormation(''), [resetFormation]);
 
   const handleChange = (event: SelectChangeEvent) =>
     setFormation(event.target.value as AllPosibleFormationsProps);

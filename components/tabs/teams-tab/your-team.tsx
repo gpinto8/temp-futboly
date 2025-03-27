@@ -13,12 +13,16 @@ import { FootballField } from '@/components/football-field';
 import { FormationsDropdown } from '@/components/formations-dropdown';
 import { AllPosibleFormationsProps } from '@/utils/formations';
 import { CustomButton } from '@/components/custom/custom-button';
+import { useSetTeams } from '@/data/teams/use-set-teams';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 
 export const YourTeam = ({ team }: YourTeamProps) => {
-  const { getPlayersSportmonksData } = useGetTeams();
+  const { getActiveCompetition } = useGetCompetitions();
+  const { getTeam, getPlayersSportmonksData } = useGetTeams();
+  const { editTeam } = useSetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
   const [fieldPlayers, setFieldPlayers] = useState<
@@ -39,6 +43,12 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     { label: 'Position', id: 'POSITION', minWidth: 100, align: 'center' },
     { label: 'Rating', id: 'RATING', minWidth: 50, align: 'center' },
   ];
+
+  const reset = () => {
+    setFieldPosition('');
+    setResetField(Math.random());
+    setResetTable(Math.random());
+  };
 
   useEffect(() => {
     (async () => {
@@ -78,15 +88,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
         await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
 
-        setFieldPosition('');
-        setResetField(Math.random());
-        setResetTable(Math.random());
+        reset();
       }
     })();
   }, [tablePosition, fieldPosition]);
 
   useEffect(() => {
-    const shouldDisabled = !(formation && fieldPlayers?.length);
+    const shouldDisabled = !(formation || fieldPlayers?.length);
     setDisabled(shouldDisabled);
   }, [formation, fieldPlayers]);
 
@@ -100,8 +108,16 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     setFieldPosition(position);
   };
 
-  const handleEditTeam = () => {
-    console.log({ formation, fieldPlayers });
+  const handleEditTeam = async () => {
+    const competitionId = getActiveCompetition()?.id;
+    const shortId = getTeam()?.shortId;
+
+    if (competitionId && shortId && formation) {
+      await editTeam(competitionId, shortId, { formation });
+
+      reset();
+      setDisabled(true);
+    }
   };
 
   return (
@@ -118,7 +134,10 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <div className="md:w-1/3 flex flex-col gap-4">
             <div className="flex gap-4 justify-between">
               <div className="text-xl font-bold pb-2">Starting 11</div>
-              <FormationsDropdown getSelectedFormation={setFormation} />
+              <FormationsDropdown
+                resetFormation={resetField}
+                getSelectedFormation={setFormation}
+              />
             </div>
             <FootballField
               formation={formation}
