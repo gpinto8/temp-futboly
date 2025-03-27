@@ -90,7 +90,8 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   }, [tablePosition, fieldPosition]);
 
   useEffect(() => {
-    const shouldDisabled = !(formation || fieldPlayers?.length);
+    const diffFormation = team.formation !== formation;
+    const shouldDisabled = !(diffFormation || fieldPlayers?.length);
     setDisabled(shouldDisabled);
   }, [formation, fieldPlayers]);
 
@@ -131,7 +132,6 @@ export const YourTeam = ({ team }: YourTeamProps) => {
               <div className="text-xl font-bold pb-2">Starting 11</div>
               <FormationsDropdown
                 formation={team?.formation}
-                resetFormation={resetField}
                 getSelectedFormation={setFormation}
               />
             </div>
