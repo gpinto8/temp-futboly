@@ -27,7 +27,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
   const [fieldPlayers, setFieldPlayers] = useState<
     CompetitionsCollectionTeamsProps['players']
-  >(team.players);
+  >([]);
 
   const [fieldPosition, setFieldPosition] = useState('');
   const [tablePosition, setTablePosition] =
@@ -51,21 +51,34 @@ export const YourTeam = ({ team }: YourTeamProps) => {
         const playerIds = team.players.map((player) => player.sportmonksId);
         const playersData = await getPlayersSportmonksData(playerIds);
 
-        const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => ({
-          ID: player.id,
-          PLAYER: (
-            <div className="flex gap-1">
-              <Avatar
-                src={player.image_path}
-                alt={player.display_name}
-                sx={{ width: 24, height: 24 }}
-              />
-              <span className="line-clamp-1">{player.display_name}</span>
-            </div>
-          ),
-          POSITION: player.position?.name,
-          RATING: getPlayerRating(player.statistics),
-        }));
+        const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => {
+          const id = player.id;
+          const isInitiallySelected = !!team.players.find(
+            (player) => player?.sportmonksId === id,
+          )?.position;
+
+          return {
+            ID: id,
+            PLAYER: (
+              <div className="flex gap-1">
+                <Avatar
+                  src={player.image_path}
+                  alt={player.display_name}
+                  sx={{ width: 24, height: 24 }}
+                />
+                <span
+                  className={`line-clamp-1 ${
+                    isInitiallySelected ? 'font-bold' : ''
+                  }`}
+                >
+                  {player.display_name}
+                </span>
+              </div>
+            ),
+            POSITION: player.position?.name,
+            RATING: getPlayerRating(player.statistics),
+          };
+        });
         setRows(rows);
       }
     })();
@@ -161,7 +174,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             </div>
             <FootballField
               formation={formation}
-              fieldPlayers={fieldPlayers}
+              fieldPlayers={[...team.players, ...fieldPlayers]}
               getSelectedPlayerPosition={handlePlayerSelected}
               emptyFormationMessage="Select a formation."
               resetField={resetField}
