@@ -131,6 +131,7 @@ export const useGetTeams = () => {
   };
 
   return {
+    mapTeamWithExtraProps,
     getTeam,
     getTeamByUid,
     getTeamByUidAndCompetitionId,
