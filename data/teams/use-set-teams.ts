@@ -4,7 +4,6 @@ import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { useGetTeams } from './use-get-teams';
-import merge from 'lodash/merge';
 
 export const useSetTeams = () => {
   const dispatch = useAppDispatch();
