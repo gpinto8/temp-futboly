@@ -1,21 +1,9 @@
 import { Avatar } from '@mui/material';
 import { CustomImage } from './custom/custom-image';
-import { useState } from 'react';
-
-export type FootballFieldProps = {
-  formation?: string;
-  handlePlayerSelected?: (position: number) => void;
-  emptyFormationMessage: string;
-};
-
-type FootballFieldPlayerData = {
-  src: string;
-  name: string;
-  position: string;
-};
+import { useEffect, useState } from 'react';
 
 type CircleFieldProps = {
-  data: FootballFieldPlayerData;
+  data: { src: string; name: string; position: string };
   handleClick?: () => void;
   currentPosition?: string;
   selectedPlayerPosition: string;
@@ -44,10 +32,18 @@ const CircleField = ({
   );
 };
 
+export type FootballFieldProps = {
+  formation?: string;
+  getSelectedPlayerPosition?: (position: string) => void;
+  emptyFormationMessage: string;
+  resetField?: number; // Reset it with "Math.random()" to trigger the useEffect hook
+};
+
 export const FootballField = ({
   formation,
-  handlePlayerSelected,
+  getSelectedPlayerPosition,
   emptyFormationMessage,
+  resetField,
 }: FootballFieldProps) => {
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
 
@@ -62,6 +58,14 @@ export const FootballField = ({
       currentPosition !== selectedPlayerPosition ? currentPosition : '';
     setSelectedPlayerPosition(selected);
   };
+
+  useEffect(() => {
+    getSelectedPlayerPosition?.(selectedPlayerPosition);
+  }, [selectedPlayerPosition, getSelectedPlayerPosition]);
+
+  useEffect(() => {
+    setSelectedPlayerPosition('');
+  }, [resetField]);
 
   return (
     <div className="relative w-full max-w-[500px]">
@@ -85,6 +89,7 @@ export const FootballField = ({
 
                         return (
                           <CircleField
+                            key={fieldRow}
                             data={{
                               src: '',
                               name: 'El nombre',

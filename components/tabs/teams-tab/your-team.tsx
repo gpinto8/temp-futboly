@@ -20,10 +20,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const { getPlayersSportmonksData } = useGetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
-  const [selectedPosition, setSelectedPosition] = useState(0);
   const [fieldPlayersMap, setFieldPlayersMap] = useState<any>([]);
-  const [selectedRow, setSelectedRow] =
+
+  const [fieldPosition, setFieldPosition] = useState('');
+  const [tablePosition, setTablePosition] =
     useState<RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>[0]>();
+
+  const [resetField, setResetField] = useState(0);
   const [resetTable, setResetTable] = useState(0);
 
   const [rows, setRows] = useState<RowsProps<YourTeamKeyProps>>([]);
@@ -60,40 +63,36 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     })();
   }, [team]);
 
-  const updateFieldPlayers = async (
-    selectedRow?: RowsProps<
-      SelectableTableColumnKeysProps<YourTeamKeyProps>
-    >[0],
-    position?: number,
-  ) => {
-    if (selectedRow && position) {
-      setFieldPlayersMap([
-        ...fieldPlayersMap,
-        { id: selectedRow.ID, position },
-      ]);
-
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      setSelectedPosition(0);
-      setResetTable(Math.random());
-    }
-  };
-
   const handleSelectedRows = async (
     selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
   ) => {
-    const selectedRow = selectedRows?.[0];
-    setSelectedRow(selectedRow);
-    await updateFieldPlayers(selectedRow, selectedPosition);
+    setTablePosition(selectedRows?.[0]);
   };
 
-  const handlePlayerSelected = async (position: number) => {
-    if (position === selectedPosition) {
-      setSelectedPosition(0); // Reset the position if selected the already selected one
-    } else {
-      setSelectedPosition(position);
-      await updateFieldPlayers(selectedRow, position);
-    }
+  const handlePlayerSelected = async (position: string) => {
+    setFieldPosition(position);
   };
+
+  useEffect(() => {
+    (async () => {
+      if (tablePosition && fieldPosition) {
+        setFieldPlayersMap([
+          ...fieldPlayersMap,
+          { id: tablePosition.ID, fieldPosition },
+        ]);
+
+        await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
+
+        setFieldPosition('');
+        setResetField(Math.random());
+        setResetTable(Math.random());
+      }
+    })();
+  }, [tablePosition, fieldPosition]);
+
+  useEffect(() => {
+    console.log({ fieldPlayersMap });
+  }, [fieldPlayersMap]);
 
   return (
     <div className="self-start w-full">
@@ -103,6 +102,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <h1 className="text-2xl md:text-4xl font-bold mb-6">Your Team</h1>
           <TeamCard team={team} />
         </div>
+
         <div className="flex flex-col md:flex-row gap-8 w-full">
           {/* FOOTBALL FIELD */}
           <div className="md:w-1/3 flex flex-col gap-4">
@@ -112,10 +112,12 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             </div>
             <FootballField
               formation={formation}
-              handlePlayerSelected={handlePlayerSelected}
+              getSelectedPlayerPosition={handlePlayerSelected}
               emptyFormationMessage="Select a formation."
+              resetField={resetField}
             />
           </div>
+
           {/* TEAM PLAYERS */}
           <div className="md:w-1/2 h-[750px]">
             <div className="text-xl font-bold pb-2">Team Players</div>
