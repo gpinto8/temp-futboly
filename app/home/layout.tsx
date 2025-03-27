@@ -9,6 +9,8 @@ import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useAppSelector } from '@/store/hooks';
 import { UsersCollectionProps } from '@/firebase/db-types';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import { useSetTeams } from '@/data/teams/use-set-teams';
 
 export default ({ children }: any) => {
   const auth = getAuth(app);
@@ -17,6 +19,8 @@ export default ({ children }: any) => {
   const { setLeague } = useSetLeague();
   const { setCompetitions } = useSetCompetitions();
   const { getActiveLeagueByUid } = useGetLeagues();
+  const { getActiveCompetition } = useGetCompetitions();
+  const { setTeamByIds } = useSetTeams();
 
   // FETCH USER DATA
   onAuthStateChanged(auth, async (userPar) => {
@@ -28,7 +32,6 @@ export default ({ children }: any) => {
   useEffect(() => {
     (async () => {
       const uid = user?.id;
-      console.log('UID presente: ' + uid);
       if (uid) {
         const league = await getActiveLeagueByUid(uid, user);
         if (league) {
@@ -38,6 +41,12 @@ export default ({ children }: any) => {
       }
     })();
   }, [user]);
+
+  // FETCH CURRENT TEAM DATA
+  const currentCompetition = getActiveCompetition();
+  useEffect(() => {
+    (async () => setTeamByIds(user?.id, currentCompetition?.id))();
+  }, [user, currentCompetition]);
 
   return <>{children}</>;
 };

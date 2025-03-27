@@ -73,12 +73,16 @@ export const IMG_URLS = {
     src: 'assets/league-trophy.svg',
     alt: 'League Trophy Icon',
   },
-  EXPAND: {
+  EXPAND_ICON: {
     src: 'assets/expand.svg',
     alt: 'Expand Icon',
   },
-  GRAY_FIELD: {
-    src: 'assets/gray-field.svg',
-    alt: 'Gray Field Background',
+  COLLAPSE_ICON: {
+    src: 'assets/collapse.svg',
+    alt: 'Collapse Icon',
+  },
+  FOOTBALL_FIELD: {
+    src: 'assets/football-field.svg',
+    alt: 'Football Field Icon',
   },
 };

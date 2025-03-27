@@ -4,6 +4,7 @@ import Image from 'next/image';
 type CustomImageProps = {
   imageKey?: ImageUrlsProps;
   forceSrc?: string;
+  forcedAlt?: string;
   width?: number;
   height?: number;
   className?: string;
@@ -17,13 +18,14 @@ export const CustomImage = ({
   className,
   onClick,
   forceSrc,
+  forcedAlt,
 }: CustomImageProps) => {
   const { src, alt } = IMG_URLS[imageKey || ''] || {};
 
   return (
     <Image
       src={forceSrc || src}
-      alt={forceSrc || alt}
+      alt={forcedAlt || forceSrc || alt}
       unoptimized={!!forceSrc} // This accepts the external url
       width={width}
       height={height}

@@ -24,7 +24,6 @@ import { app } from './app';
 import {
   CompetitionsCollectionProps,
   LeaguesCollectionProps,
-  TeamsCollectionProps,
   UsersCollectionProps,
 } from './db-types';
 
@@ -103,11 +102,10 @@ export const firestoreMethods = (
         return docs ? (docs as CompetitionsCollectionProps[]) : [];
       } else if (collectionName === 'leagues') {
         return docs ? (docs as LeaguesCollectionProps[]) : [];
-      } else if (collectionName === 'teams') {
-        return docs ? (docs as TeamsCollectionProps[]) : [];
       } else if (collectionName === 'users') {
         return docs ? (docs as UsersCollectionProps[]) : [];
       }
+
       return docs ? (docs as any) : [];
     } catch (error) {
       console.error('Error getting documents: ', error);
@@ -127,15 +125,15 @@ export const firestoreMethods = (
       const docs = querySnapshot.docs.map((doc) => {
         return { id: doc.id, ...doc.data() };
       });
+
       if (collectionName === 'competitions') {
         return docs ? (docs as CompetitionsCollectionProps[]) : [];
       } else if (collectionName === 'leagues') {
         return docs ? (docs as LeaguesCollectionProps[]) : [];
-      } else if (collectionName === 'teams') {
-        return docs ? (docs as TeamsCollectionProps[]) : [];
       } else if (collectionName === 'users') {
         return docs ? (docs as UsersCollectionProps[]) : [];
       }
+
       return docs ? (docs as any) : [];
     } catch (error) {
       console.error('Error getting documents: ', error);

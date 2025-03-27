@@ -1,62 +1,83 @@
-import { /*useEffect,*/ useState } from "react";
-import { CustomImage } from "@/components/custom/custom-image";
-import { getMockupPersonalTeam, getMockupTeams, getMockupFormation } from "@/utils/mocks";
-import { CustomSeparator } from "@/components/custom/custom-separator";
-import { TeamRecap } from "@/components/tabs/teams-tab/team-recap";
-import { TeamDetail } from "@/components/tabs/teams-tab/team-detail";
+import {
+  AddEditTeamModal,
+  AddEditTeamModalDataProps,
+} from './modal/add-edit-team-modal';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import { AllTeams } from './tabs/teams-tab/all-teams';
+import { YourTeam } from './tabs/teams-tab/your-team';
+import { useSetTeams } from '@/data/teams/use-set-teams';
+import { useGetTeams } from '@/data/teams/use-get-teams';
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { getShortBase64Id } from '@/utils/id';
+import { useGetLeagues } from '@/data/leagues/use-get-leagues';
+import { useGetUsers } from '@/data/users/use-get-users';
 
-const personalTeam = getMockupPersonalTeam();
-const allTeams = getMockupTeams();
-const personalFormation = getMockupFormation();
+export const TeamsTab = () => {
+  const { getCurrentUserRef, getUser } = useGetUsers();
+  const { getCurrentActiveCompetitionRef, getActiveCompetition } =
+    useGetCompetitions();
+  const { getCurrentSelectedLeagueRef } = useGetLeagues();
+  const { getTeam } = useGetTeams();
+  const { addTeam } = useSetTeams();
 
-export const Teams = () => {
-    const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
-    const [cardHeightClass, setCardHeightClass] = useState<string>("");
+  const userRef = getCurrentUserRef();
+  const leagueRef = getCurrentSelectedLeagueRef();
+  const competitionRef = getCurrentActiveCompetitionRef();
+  const team = getTeam();
 
-    // At the moment this doesn't work because if the card is not rendered, the height is unknown, so tailwind
-    // When compiles the classes doesn't know the height of the card
-    // useEffect(() => {
-    //     const teamCard = document.getElementById("team-card-0");
-    //     if (teamCard && !cardHeightClass) {
-    //         setCardHeightClass(`h-[${teamCard.clientHeight}px]`);
-    //     }
-    // }, []);
+  const handleCreateTeam = (data: AddEditTeamModalDataProps) => {
+    const shortId = getShortBase64Id();
+    const name = data.name;
+    const coach = data.coach;
+    const logoId = data.logoId;
 
+    if (
+      shortId &&
+      userRef &&
+      leagueRef &&
+      competitionRef &&
+      name &&
+      coach &&
+      logoId
+    ) {
+      const data: CompetitionsCollectionTeamsProps = {
+        shortId,
+        userRef,
+        leagueRef,
+        competitionRef,
+        name,
+        coach,
+        logoId,
+        players: [], // The players will be added by the admin (editing it), not by the user
+      };
 
-    return (
-        <div className="flex flex-col gap-4 justify-center items-center">
-            <div className="w-full self-start">
-                <h1 className="text-2xl md:text-4xl font-bold my-4">Your Team</h1>
-                <div className="flex flex-row gap-8 justify-start items-center my-2">
-                    <CustomImage forceSrc={personalTeam.teamLogo} className="h-24 w-24" />
-                    <div className="flex flex-col gap-2 justify-start items-center">
-                        <div className="flex justify-center items-center gap-2">
-                            <p className="font-semibold text-gray-400">Name:</p>
-                            <p className="font-semibold text-gray-900">{personalTeam.teamName}</p>
-                        </div>
-                        <div className="flex justify-center items-center gap-2">
-                            <p className="font-semibold text-gray-400">Coach:</p>
-                            <p className="font-semibold text-gray-900">{personalTeam.owner}</p>
-                        </div>
-                        <div className="flex justify-center items-center gap-2">
-                            <p className="font-semibold text-gray-400">League Position:</p>
-                            <p className="font-semibold text-gray-900">{personalTeam.leaguePosition}</p>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <TeamDetail team={personalFormation} />
-                </div>
-            </div>
-            <CustomSeparator withText={false} />
-            <div>
-                <h1 className="text-2xl md:text-4xl font-bold my-4">All Teams</h1>
-                <div className="grid grid-cols-3 gap-4 auto-rows-fr">
-                    {allTeams.map((team, index) => (
-                        <TeamRecap team={team} index={index} selectedTeamIndex={selectedTeam} setSelectedTeamIndex={setSelectedTeam} />
-                    ))}
-                </div>
-            </div>
+      if (data) addTeam?.(data);
+    }
+  };
+
+  return (
+    <>
+      {!getActiveCompetition() ? (
+        <div className="flex flex-col gap-2 justify-center items-center my-10">
+          Select a competition first.
         </div>
-    );
-}
+      ) : !team ? (
+        <div className="flex flex-col gap-4 justify-center items-center my-10">
+          <div>
+            You haven't created your team yet for the "
+            <strong>{getActiveCompetition()?.name}</strong>" competition.
+          </div>
+          <AddEditTeamModal
+            data={{ owner: getUser()?.username }}
+            onSetData={handleCreateTeam}
+          />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4 justify-center items-center">
+          <YourTeam team={team} />
+          <AllTeams />
+        </div>
+      )}
+    </>
+  );
+};

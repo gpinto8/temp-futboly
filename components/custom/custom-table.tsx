@@ -36,6 +36,7 @@ export type CustomTableProps<ColumnsKeysProps> = {
     text: string;
     className?: string;
   };
+  hideBackground?: boolean;
 };
 
 export function CustomTable<ColumnKeysProps>({
@@ -51,6 +52,7 @@ export function CustomTable<ColumnKeysProps>({
   onEndReached,
   elevation,
   isComplete,
+  hideBackground,
 }: CustomTableProps<ColumnKeysProps>) {
   const TableRow = ({
     row,
@@ -70,7 +72,8 @@ export function CustomTable<ColumnKeysProps>({
         {columns.map(({ id, label, align = 'left', minWidth }, index) => {
           let classes = `text-black line-clamp-1`;
           if (className) classes += ' ' + className;
-          if (align === 'center') classes += ' flex justify-center items-center';
+          if (align === 'center')
+            classes += ' flex justify-center items-center';
           if (align === 'left') classes += ' flex items-start justify-start';
           if (align === 'right') classes += ' flex items-end justify-end';
 
@@ -79,7 +82,9 @@ export function CustomTable<ColumnKeysProps>({
               key={index + Math.random()}
               className={classes}
               style={{
-                ...(minWidth ? { minWidth: toPixel(minWidth), width: 'fit-content' } : {}),
+                ...(minWidth
+                  ? { minWidth: toPixel(minWidth), width: 'fit-content' }
+                  : {}),
               }}
             >
               {(row ? row[id] : label) || '-'}
@@ -129,6 +134,7 @@ export function CustomTable<ColumnKeysProps>({
   const newMaxWidth = maxWidth ? `${maxWidth}px` : '100%';
   const newWidth = width ? `${width}px` : '100%';
   const newElevation = elevation ?? 1;
+  const newPaperBackground = hideBackground ? 'none' : undefined;
 
   return (
     <Paper
@@ -138,6 +144,7 @@ export function CustomTable<ColumnKeysProps>({
         width: newWidth,
         maxHeight: newMaxHeight,
         maxWidth: newMaxWidth,
+        background: newPaperBackground,
       }}
       elevation={newElevation}
     >

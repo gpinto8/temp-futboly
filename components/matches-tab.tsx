@@ -73,7 +73,7 @@ export const Matches = () => {
             <div className="border rounded-md shadow-lg">
                 { allMatches.map((weeklyMatches, index) => (
                     <Accordion key={index}>
-                        <AccordionSummary aria-controls={"panel"+index+"-content"} id={"panel"+index+"-header"} expandIcon={<CustomImage imageKey="EXPAND" className="h-5 w-5"/>} className="bg-lightGray">
+                        <AccordionSummary aria-controls={"panel"+index+"-content"} id={"panel"+index+"-header"} expandIcon={<CustomImage imageKey="EXPAND_ICON" className="h-5 w-5"/>} className="bg-lightGray">
                             <div className="w-full grid grid-cols-2">
                                 <p className="font-semibold">Week {weeklyMatches.week}</p>
                                 <p className="font-semibold">{weeklyMatches.matches[0].date.toLocaleString().split(",")[0]}</p>

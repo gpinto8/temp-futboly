@@ -7,7 +7,7 @@ import { StandingsTab } from './standings-tab';
 import { CompetitionsTab } from './competitions-tab';
 import { LiveMatch } from './live-match-tab';
 import { Matches } from './matches-tab';
-import { Teams } from './teams-tab';
+import { TeamsTab } from './teams-tab';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useEffect, useState } from 'react';
 
@@ -17,7 +17,7 @@ export const AppTabs = () => {
   const [tabComponents, setTabComponents] = useState([
     { label: 'Competitions', Component: () => <CompetitionsTab /> },
     { label: 'Standings', Component: () => <StandingsTab /> },
-    { label: 'Teams', Component: () => <Teams /> },
+    { label: 'Teams', Component: () => <TeamsTab /> },
     { label: 'Matches', Component: () => <Matches /> },
     { label: 'Live Match', Component: () => <LiveMatch /> },
   ]);

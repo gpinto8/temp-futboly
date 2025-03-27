@@ -12,13 +12,13 @@ import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { MappedLeaguesProps, UsersCollectionProps } from '@/firebase/db-types';
 
-type TeamsColumnsKeysProps = 'ID' | 'PLAYER';
+type TeamsColumnsKeysProps = 'PLAYER';
 
 const getRows = (league: MappedLeaguesProps | undefined) => {
   if (!league) return [];
   return league.players.map((player, index) => {
     return {
-      ID: index + 1,
+      INDEX: index + 1,
       PLAYER: player.username,
     };
   });

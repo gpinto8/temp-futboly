@@ -3,6 +3,7 @@ import { errorReducer } from './slices/error';
 import { userReducer } from './slices/user';
 import { leagueReducer } from './slices/league';
 import { competitionReducer } from './slices/competitions';
+import { teamReducer } from './slices/team';
 
 export const makeStore = () => {
   return configureStore({
@@ -10,7 +11,8 @@ export const makeStore = () => {
       error: errorReducer,
       user: userReducer,
       league: leagueReducer,
-      competition: competitionReducer
+      competition: competitionReducer,
+      team: teamReducer,
     }),
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false }),

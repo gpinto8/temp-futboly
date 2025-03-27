@@ -1,26 +1,25 @@
 'use client';
 
-import { useAppSelector } from '@/store/hooks';
 import Chip from '@mui/material/Chip';
 import { CustomButton } from '@/components/custom/custom-button';
 import { CustomCard } from '@/components/custom/custom-card';
 import { useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
-import { ImageUrlsProps } from '@/utils/img-urls';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
-import { LeaguesCollectionProps } from '@/firebase/db-types';
+import { useGetTeams } from '@/data/teams/use-get-teams';
+import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
 
 type BannerCardProps = {
   title: string;
-  imageKey: ImageUrlsProps;
+  logoId?: RealTeamLogoIds;
   entries: {
     key: string;
     value?: string | number;
   }[];
 };
 
-const BannerCard = ({ title, imageKey, entries }: BannerCardProps) => {
+const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
   return (
     <CustomCard
       style="light"
@@ -34,7 +33,7 @@ const BannerCard = ({ title, imageKey, entries }: BannerCardProps) => {
 
         <CustomImage
           className="rounded-full border object-cover shadow-md w-7 h-7 lg:w-10 lg:h-10"
-          imageKey={imageKey}
+          forceSrc={getRealTeamLogoById(logoId)?.src}
         />
       </div>
 
@@ -105,63 +104,59 @@ const GameSection = () => {
 };
 
 export const OverviewBanner = () => {
-  const user = useAppSelector((state) => state.user);
-  const competition = useAppSelector((state) => state.competition);
-  const league = useAppSelector((state) => state.league);
-
-  const [overviewData, setOverviewData] = useState<BannerCardProps[]>([]);
   const { getLeague } = useGetLeagues();
-  const { getActiveCompetition } = useGetCompetitions(); //TODO: substitute with hook that takes it from redux
+  const { getTeam } = useGetTeams();
+  const { getActiveCompetition } = useGetCompetitions();
 
+  const [overviewLeague, setOverviewLeague] = useState<BannerCardProps>();
+  const [overviewCompetition, setOverviewCompetition] =
+    useState<BannerCardProps>();
+  const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
+
+  // LEAGUE
+  const league = getLeague();
   useEffect(() => {
-    if (
-      user?.id &&
-      user.id?.trim() !== '' &&
-      league?.id &&
-      league.id?.trim() !== ''
-    ) {
-      if (!user || !league) return;
-      const activeCompetition = getActiveCompetition();
-      const currentLeague = getLeague();
+    const data: BannerCardProps = {
+      title: 'League',
+      logoId: undefined,
+      entries: [
+        { key: 'Name', value: league?.name },
+        { key: 'Owner', value: league?.ownerUsername },
+        { key: 'Competition', value: league?.competitionsNo },
+      ],
+    };
+    setOverviewLeague(data);
+  }, [league]);
 
-      const leagueData: BannerCardProps = {
-        title: 'League',
-        imageKey: 'AT_ICON',
-        entries: [
-          { key: 'Name', value: currentLeague?.name },
-          { key: 'Owner', value: currentLeague?.ownerUsername },
-          { key: 'Competition', value: currentLeague?.competitionsNo },
-        ],
-      };
+  // COMPETITION
+  const competition = getActiveCompetition();
+  useEffect(() => {
+    const data: BannerCardProps = {
+      title: 'Competition',
+      logoId: undefined,
+      entries: [
+        { key: 'Name', value: competition?.name },
+        { key: 'Week', value: 'TODO' },
+        { key: 'Teams', value: competition?.players?.length },
+      ],
+    };
+    setOverviewCompetition(data);
+  }, [competition]);
 
-      const competitionData: BannerCardProps = {
-        title: 'Competition',
-        imageKey: 'AT_ICON',
-        entries: [
-          { key: 'Name', value: activeCompetition?.name },
-          {
-            key: 'Week',
-            value: activeCompetition?.currentWeek
-              ? +activeCompetition.currentWeek
-              : undefined,
-          },
-          { key: 'Teams', value: activeCompetition?.players.length },
-        ],
-      };
-
-      const teamData: BannerCardProps = {
-        title: 'Team',
-        imageKey: 'AT_ICON',
-        entries: [
-          { key: 'Name', value: 'TODO' },
-          { key: 'Coach', value: 'TODO' },
-          { key: 'Position', value: 'TODO' },
-        ],
-      };
-
-      setOverviewData([leagueData, competitionData, teamData]);
-    }
-  }, [league, competition]);
+  // TEAM DATA
+  const team = getTeam();
+  useEffect(() => {
+    const data: BannerCardProps = {
+      title: 'Team',
+      logoId: team?.logoId,
+      entries: [
+        { key: 'Name', value: team?.name || '' },
+        { key: 'Coach', value: team?.coach || '' },
+        { key: 'Position', value: 'TODO' },
+      ],
+    };
+    setOverviewTeam(data);
+  }, [team]);
 
   return (
     <div className='flex flex-col gap-4 justify-between items-center border border-gray rounded-lg shadow-xl p-4 px-8 dark:bg-gray-100 dark:text-gray-900"'>
@@ -176,9 +171,11 @@ export const OverviewBanner = () => {
       <div className="w-full">
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
           <div className="w-full flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-2 md 2xl:gap-6">
-            {overviewData?.map((data, index) => (
-              <BannerCard key={index} {...data} />
-            ))}
+            {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
+              (data, index) => (
+                <BannerCard key={index} {...data} />
+              ),
+            )}
           </div>
           <GameSection />
         </div>
