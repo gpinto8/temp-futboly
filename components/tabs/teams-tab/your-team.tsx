@@ -21,7 +21,7 @@ type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 
 export const YourTeam = ({ team }: YourTeamProps) => {
   const { getActiveCompetition } = useGetCompetitions();
-  const { getTeam, getPlayersSportmonksData } = useGetTeams();
+  const { getPlayersSportmonksData } = useGetTeams();
   const { editTeam } = useSetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
@@ -110,7 +110,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   const handleEditTeam = async () => {
     const competitionId = getActiveCompetition()?.id;
-    const shortId = getTeam()?.shortId;
+    const shortId = team?.shortId;
 
     if (competitionId && shortId && formation) {
       await editTeam(competitionId, shortId, { formation });
@@ -135,6 +135,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             <div className="flex gap-4 justify-between">
               <div className="text-xl font-bold pb-2">Starting 11</div>
               <FormationsDropdown
+                formation={team?.formation}
                 resetFormation={resetField}
                 getSelectedFormation={setFormation}
               />
