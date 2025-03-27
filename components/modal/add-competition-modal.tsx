@@ -56,7 +56,7 @@ export const AddCompetitionModal = () => {
 
     if (endDate && startDate && name && playersRefs.length && leagueRef) {
         const checkDateValidity = startDate.seconds < endDate.seconds;
-        const maxWeek = Math.ceil((endDate.seconds - startDate.seconds) / 60*60*24*7);
+        const maxWeek = Math.ceil((endDate.seconds - startDate.seconds) / (60*60*24*7));
       checkDateValidity && await addCompetition({
         name,
         startDate,
