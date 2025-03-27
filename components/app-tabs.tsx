@@ -6,7 +6,7 @@ import { useSwitchComponents } from '@/utils/switch-components';
 import { StandingsTab } from './standings-tab';
 import { CompetitionsTab } from './competitions-tab';
 import { LiveMatch } from './live-match-tab';
-import { Matches } from './matches-tab';
+import { MatchesTab } from './matches-tab';
 import { TeamsTab } from './teams-tab';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useEffect, useState } from 'react';
@@ -18,7 +18,7 @@ export const AppTabs = () => {
     { label: 'Competitions', Component: () => <CompetitionsTab /> },
     { label: 'Standings', Component: () => <StandingsTab /> },
     { label: 'Teams', Component: () => <TeamsTab /> },
-    { label: 'Matches', Component: () => <Matches /> },
+    { label: 'Matches', Component: () => <MatchesTab /> },
     { label: 'Live Match', Component: () => <LiveMatch /> },
   ]);
 
