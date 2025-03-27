@@ -1,32 +1,57 @@
 import {
-  CompetitionsCollectionProps,
   MappedCompetitionsProps,
   UsersCollectionProps,
 } from '@/firebase/db-types';
-import { firestoreMethods } from '@/firebase/firestore-methods';
-// import { Timestamp, DocumentReference } from 'firebase/firestore';
 import { useAppSelector } from '@/store/hooks';
 
 export const useGetMatches = () => {
-    const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
-    const matches = activeCompetiton ? activeCompetition.matchSchedule : null;
+    const activeCompetition = useAppSelector((state) => state.competition.activeCompetition) as MappedCompetitionsProps;
+    const user = useAppSelector((state) => state.user) as UsersCollectionProps;
+    const matches = activeCompetition ? activeCompetition.matchSchedule : null;
 
+    // Return personal matches ordered by week
     const getPersonalMatches = () => {
-
+        if (!matches) return [];
+        return matches.filter((match) => (match.home.coach === user.username || match.away.coach === user.username)).sort((a, b) => a.week - b.week);
     };
 
     const getMatchStatistics = () => {
+        const personalMatches = getPersonalMatches();
+        let totalWins = 0, totalMatchPlayed = 0, totalScore = 0, scoredThisWeek = 0;
+        personalMatches.forEach((personalMatch) => {
+            const matchSide = personalMatch.home.coach === user.username ? "Home" : "Away";
+            if (personalMatch.result) {
+                totalMatchPlayed++; // If match has a result 
+                const winnerSide = personalMatch.result.home > personalMatch.result.away ? "Home" :  personalMatch.result.home !== personalMatch.result.away ? "Away" : "Draw"; 
+                if (winnerSide === matchSide) totalWins++;
+                totalScore += personalMatch.result[matchSide.toLowerCase()];
+                scoredThisWeek = personalMatch.result[matchSide.toLowerCase()];
+            }
+        });
+        return {
+            totalWins,
+            totalMatchPlayed,
+            overallScore: Math.round(totalScore/totalMatchPlayed),
+            scoredThisWeek
+        } as matchStatistics;
+    };
 
+    // Return all the matches but sorted by week
+    const getAllMatches = () => {
+        if (!matches) return [];
+        return matches.sort((a, b) => a.week - b.week);
+    };
+
+    return {
+        getPersonalMatches,
+        getMatchStatistics,
+        getAllMatches,
     };
 }
-/*  matchSchedule:
-    | {
-        week: Number;
-        home: DocumentReference<TeamsCollectionProps>;
-        away: DocumentReference<TeamsCollectionProps>;
-        result: {
-          home: Number;
-          away: Number;
-        };
-      }[]
-*/ 
+
+export type matchStatistics = {
+    totalWins: number;
+    totalMatchPlayed: number;
+    overallScore: number;
+    scoredThisWeek: number;
+};
