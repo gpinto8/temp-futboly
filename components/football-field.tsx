@@ -52,15 +52,17 @@ const CircleField = ({
     <div
       onClick={handleClick}
       className={`gap-2 !bg-white hover:bg-lightGray w-20 h-20  cursor-pointer text-center text-black rounded-full border-black border-2 ${
-        isSelected ? '!border-success-500 border-[6px]' : ''
+        isSelected ? '!border-success-400 border-[6px]' : ''
       }`}
     >
       <div className="w-full flex flex-col items-center justify-center h-full overflow-hidden">
-        <Avatar
-          src={data?.src}
-          alt={data?.name}
-          sx={{ width: 24, height: 24 }}
-        />
+        {data?.src ? (
+          <Avatar
+            src={data?.src}
+            alt={data?.name}
+            sx={{ width: 24, height: 24 }}
+          />
+        ) : null}
         <div className="text-xs w-max">{data?.name}</div>
         <div className="text-[10px] w-max text-gray-600">{data?.position}</div>
       </div>
