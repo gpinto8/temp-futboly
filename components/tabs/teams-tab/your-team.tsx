@@ -44,12 +44,6 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     { label: 'Rating', id: 'RATING', minWidth: 50, align: 'center' },
   ];
 
-  const reset = () => {
-    setFieldPosition('');
-    setResetField(Math.random());
-    setResetTable(Math.random());
-  };
-
   useEffect(() => {
     (async () => {
       const players = team?.players;
@@ -88,7 +82,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
         await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
 
-        reset();
+        setFieldPosition('');
+        setResetField(Math.random());
+        setResetTable(Math.random());
       }
     })();
   }, [tablePosition, fieldPosition]);
@@ -115,7 +111,6 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     if (competitionId && shortId && formation) {
       await editTeam(competitionId, shortId, { formation });
 
-      reset();
       setDisabled(true);
     }
   };
