@@ -27,7 +27,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
   const [fieldPlayers, setFieldPlayers] = useState<
     CompetitionsCollectionTeamsProps['players']
-  >([]);
+  >(team.players);
 
   const [fieldPosition, setFieldPosition] = useState('');
   const [tablePosition, setTablePosition] =
@@ -109,8 +109,32 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     const competitionId = getActiveCompetition()?.id;
     const shortId = team?.shortId;
 
-    if (competitionId && shortId && formation) {
-      await editTeam(competitionId, shortId, { formation });
+    const updatePlayers = (
+      originalArray: CompetitionsCollectionTeamsProps['players'],
+      updatedArray: CompetitionsCollectionTeamsProps['players'],
+    ) => {
+      return originalArray.map((obj) => {
+        const updatedObj = updatedArray.find(
+          (item) => item.sportmonksId === obj.sportmonksId,
+        );
+
+        const data = {
+          ...obj,
+          ...(updatedObj?.position ? { position: updatedObj.position } : {}),
+        };
+
+        return updatedObj ? data : obj;
+      });
+    };
+
+    const currentPlayers = team?.players;
+    const mergedPlayers = updatePlayers(currentPlayers, fieldPlayers);
+
+    if (competitionId && shortId) {
+      await editTeam(competitionId, shortId, {
+        ...(formation ? { formation } : {}),
+        ...(mergedPlayers?.length ? { players: mergedPlayers } : {}),
+      });
 
       setDisabled(true);
     }

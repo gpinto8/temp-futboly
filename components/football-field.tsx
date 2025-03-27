@@ -88,7 +88,7 @@ export const FootballField = ({
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
   const [fieldPlayers, setFieldPlayers] = useState<
     CompetitionsCollectionTeamsProps['players']
-  >([]);
+  >(_fieldPlayers || []);
 
   useEffect(() => {
     getSelectedPlayerPosition?.(selectedPlayerPosition);
@@ -97,6 +97,10 @@ export const FootballField = ({
   useEffect(() => {
     setSelectedPlayerPosition('');
   }, [resetField]);
+
+  useEffect(() => {
+    if (_fieldPlayers) setFieldPlayers(_fieldPlayers);
+  }, [_fieldPlayers]);
 
   const handleCircleField = (currentPosition: string) => {
     const selected =
