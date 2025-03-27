@@ -1,7 +1,10 @@
 import { Avatar } from '@mui/material';
 import { CustomImage } from './custom/custom-image';
 import { useEffect, useState } from 'react';
-import { mapFormationPosition } from '@/utils/formations';
+import {
+  AllPosibleFormationsProps,
+  mapFormationPosition,
+} from '@/utils/formations';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
@@ -66,7 +69,7 @@ const CircleField = ({
 };
 
 export type FootballFieldProps = {
-  formation?: string;
+  formation?: AllPosibleFormationsProps;
   fieldPlayers?: CompetitionsCollectionTeamsProps['players'];
   getSelectedPlayerPosition?: (position: string) => void;
   emptyFormationMessage: string;
@@ -74,17 +77,16 @@ export type FootballFieldProps = {
 };
 
 export const FootballField = ({
-  formation: _formation,
+  formation,
   fieldPlayers: _fieldPlayers,
   getSelectedPlayerPosition,
   emptyFormationMessage,
   resetField,
 }: FootballFieldProps) => {
-  const [formation, setFormation] = useState(_formation);
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
   const [fieldPlayers, setFieldPlayers] = useState<
     CompetitionsCollectionTeamsProps['players']
-  >([{ sportmonksId: 14, position: '4+2+2' }]);
+  >([]);
 
   useEffect(() => {
     getSelectedPlayerPosition?.(selectedPlayerPosition);
@@ -92,10 +94,7 @@ export const FootballField = ({
 
   useEffect(() => {
     setSelectedPlayerPosition('');
-    setFormation('');
   }, [resetField]);
-
-  useEffect(() => setFormation(_formation), [_formation]);
 
   const handleCircleField = (currentPosition: string) => {
     const selected =
