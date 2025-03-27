@@ -60,8 +60,8 @@ export type CompetitionsCollectionProps = {
   matchSchedule:
     | {
         week: number;
-        home: CompetitionsCollectionTeamsProps;
-        away: CompetitionsCollectionTeamsProps;
+        home: ShortTeamProps;
+        away: ShortTeamProps;
         result?: {
           home: number;
           away: number;
@@ -87,6 +87,13 @@ export type CompetitionsCollectionTeamsProps = {
     //   slot: number;
     // };
   }[];
+};
+
+export type ShortTeamProps = {
+    name: string;
+    ownerUsername: string;
+    shortId: string;
+    logoId: RealTeamLogoIds; 
 };
 
 export type MappedPlayerProps = {
