@@ -8,6 +8,7 @@ type MatchInfoType = {
     home: MinimalMatchTeamType;
     away: MinimalMatchTeamType;
     date: Date;
+    status: "Upcoming" | "Ended";
     score?: {
         home: number;
         away: number;
@@ -32,21 +33,23 @@ export const WeeklyMatches = ({matches}: {matches: MatchInfoType[]}) => {
                                 <p className="font-semibold text-gray-900">{match.home.teamName}</p>
                                 <CustomImage forceSrc={match.home.teamLogo} className="h-8 w-8" />
                             </div>
-                            <p>vs</p>
+                            {match.score ? (
+                                <div className="flex justify-center items-center gap-2">
+                                    <p className="font-semibold text-gray-700">{match.score.home}</p>
+                                    <p className="font-semibold text-gray-700">-</p>
+                                    <p className="font-semibold text-gray-700">{match.score.away}</p>
+                                </div>
+                            ) : (
+                                <p className="font-semibold text-gray-900">vs</p>
+                            )} 
                             <div className="flex justify-center items-center gap-2">
                                 <p className="font-semibold text-gray-900">{match.away.teamName}</p>
                                 <CustomImage forceSrc={match.away.teamLogo} className="h-8 w-8" />
                             </div>
                         </div>
-                        <div>{match.score ? (
-                                <div className="flex justify-center items-center gap-2">
-                                    <p className="font-semibold text-gray-900">{match.score.home}</p>
-                                    <p className="font-semibold text-gray-900">-</p>
-                                    <p className="font-semibold text-gray-900">{match.score.away}</p>
-                                </div>
-                            ) : (
-                                <p className="font-semibold text-gray-700">Upcoming</p>
-                            )}</div>
+                        <div>
+                            <p className="font-semibold text-gray-700">{match.status}</p>
+                        </div>
                     </div>
                 ))}
             </div>

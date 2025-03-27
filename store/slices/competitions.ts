@@ -1,8 +1,8 @@
-import { CompetitionsCollectionProps } from '@/firebase/db-types';
+import { CompetitionsCollectionProps, MappedCompetitionsProps } from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type InitialStateProps = {
-  competitions: CompetitionsCollectionProps[];
+  competitions: CompetitionsCollectionProps[] | MappedCompetitionsProps[];
   activeCompetition?: CompetitionsCollectionProps;
 };
 

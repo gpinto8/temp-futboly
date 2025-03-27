@@ -37,10 +37,10 @@ export const Matches = () => {
         <div>
             <h1 className="text-2xl md:text-4xl font-bold my-4">Your Matches</h1>
             <div>
-                <div id="personalMatches" className="my-4 grid grid-cols-2">
+                <div id="personalMatches" className="my-4 flex flex-col lg:grid lg:grid-cols-2">
                     <div id="personaleUpcomingMatches">
                         <h2 className="text-lg md:text-xl font-bold">Upcoming Matches</h2>
-                        <div className="px-14 md:px-24">
+                        <div className="px-14 xl:px-24">
                             { matchesHistory.sort((a, b) => a.date.getTime() - b.date.getTime()).slice(0,3).map((match, index) => {return(
                                 <PersonalMatch key={index} type="upcoming" matchInfo={match} className="my-2"/>
                             )})}
@@ -48,7 +48,7 @@ export const Matches = () => {
                     </div>
                     <div id="personalHistoryMatches">
                         <h2 className="text-lg md:text-xl font-bold">All Matches</h2>
-                        <div className="px-14 md:px-24 overflow-y-auto main-scrollbar">
+                        <div className="px-14 xl:px-24 overflow-y-auto main-scrollbar">
                             { matchesHistory.sort((a, b) => a.date.getTime() - b.date.getTime()).map((match, index) => {return(
                                 <PersonalMatch key={index} type="upcoming" matchInfo={match} className="my-2"/>
                             )})}
@@ -57,7 +57,7 @@ export const Matches = () => {
                 </div>
                 <div id="personalStatistics">
                     <h2 className="text-lg md:text-xl font-bold">Match Statistics</h2>
-                    <div className="flex flex-column sm:flex-row gap-4 justify-center items-center">
+                    <div className="flex flex-wrap sm:flex-nowrap gap-4 justify-center items-center">
                         { statistics.map(({title: cardTitle, value}, index) => {
                             return (
                             <CustomCard key={index} style="gray">
