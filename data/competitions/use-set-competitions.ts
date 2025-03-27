@@ -148,6 +148,9 @@ export const useSetCompetitions = () => {
         const finalSchedule = randomizeWeeks(schedule, teams.length, maxWeek);
         const result = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("matchSchedule", finalSchedule);
         if (!result) console.error("Error while scheduling the matches for the competition");
+        const updatedCompetition = await getCompetitionById(competitionRef);
+        if (!updatedCompetition) return;
+        dispatch(competitionActions.setCompetition(updatedCompetition));
     };
 
   return {
