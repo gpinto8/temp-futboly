@@ -23,3 +23,5 @@ export const clientConfig = {
   databaseURL: 'test-dfffc.firebaseio.com',
   messagingSenderId: '166592074899',
 };
+
+export const DAY_OF_WEEK_MATCH = 5;
