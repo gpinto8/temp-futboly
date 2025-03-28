@@ -44,6 +44,8 @@ const CircleField = ({
           name: data?.display_name,
           position: data?.position?.name,
         });
+      } else {
+        setData({ src: '', name: '', position: '' });
       }
     })();
   }, [player]);
@@ -80,15 +82,12 @@ export type FootballFieldProps = {
 
 export const FootballField = ({
   formation,
-  fieldPlayers: _fieldPlayers,
+  fieldPlayers,
   getSelectedPlayerPosition,
   emptyFormationMessage,
   resetField,
 }: FootballFieldProps) => {
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
-  const [fieldPlayers, setFieldPlayers] = useState<
-    CompetitionsCollectionTeamsProps['players']
-  >(_fieldPlayers || []);
 
   useEffect(() => {
     getSelectedPlayerPosition?.(selectedPlayerPosition);
@@ -97,10 +96,6 @@ export const FootballField = ({
   useEffect(() => {
     setSelectedPlayerPosition('');
   }, [resetField]);
-
-  useEffect(() => {
-    if (_fieldPlayers) setFieldPlayers(_fieldPlayers);
-  }, [_fieldPlayers]);
 
   const handleCircleField = (currentPosition: string) => {
     const selected =

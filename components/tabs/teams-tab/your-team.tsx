@@ -25,9 +25,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const { editTeam } = useSetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
-  const [fieldPlayers, setFieldPlayers] = useState<
+  const [playerPositonMap, setPlayerPositionMap] = useState<
     CompetitionsCollectionTeamsProps['players']
-  >([]);
+  >(team.players);
 
   const [fieldPosition, setFieldPosition] = useState('');
   const [tablePosition, setTablePosition] =
@@ -86,11 +86,15 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     (async () => {
-      if (tablePosition && fieldPosition) {
-        const id = tablePosition.ID;
-        setFieldPlayers([
-          ...fieldPlayers?.filter((player) => player.sportmonksId !== id),
-          { sportmonksId: id, position: fieldPosition },
+      const playerId = tablePosition?.ID;
+      if (playerId && fieldPosition) {
+        const filteredPlayerPositionMap = playerPositonMap
+          .filter((item) => item.position !== fieldPosition)
+          .filter((item) => item.sportmonksId !== playerId);
+
+        setPlayerPositionMap([
+          ...filteredPlayerPositionMap,
+          { sportmonksId: playerId, position: fieldPosition },
         ]);
 
         await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
@@ -104,9 +108,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     const diffFormation = team.formation !== formation;
-    const shouldDisabled = !(diffFormation || fieldPlayers?.length);
+    const shouldDisabled = !(diffFormation || playerPositonMap?.length);
     setDisabled(shouldDisabled);
-  }, [formation, fieldPlayers]);
+  }, [formation, playerPositonMap]);
 
   const handleSelectedRows = async (
     selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
@@ -122,28 +126,15 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     const competitionId = getActiveCompetition()?.id;
     const shortId = team?.shortId;
 
-    const updatePlayers = (
-      originalArray: CompetitionsCollectionTeamsProps['players'],
-      updatedArray: CompetitionsCollectionTeamsProps['players'],
-    ) => {
-      return originalArray.map((obj) => {
-        const updatedObj = updatedArray.find(
-          (item) => item.sportmonksId === obj.sportmonksId,
-        );
-
-        const data = {
-          ...obj,
-          ...(updatedObj?.position ? { position: updatedObj.position } : {}),
-        };
-
-        return updatedObj ? data : obj;
-      });
-    };
-
-    const currentPlayers = team?.players;
-    const mergedPlayers = updatePlayers(currentPlayers, fieldPlayers);
-
     if (competitionId && shortId) {
+      const currentPlayers = team?.players;
+      const playerIds = playerPositonMap.map((item) => item.sportmonksId);
+      const mergedPlayers = currentPlayers.map((item) =>
+        playerIds.includes(item.sportmonksId)
+          ? item
+          : { sportmonksId: item.sportmonksId },
+      );
+
       await editTeam(competitionId, shortId, {
         ...(formation ? { formation } : {}),
         ...(mergedPlayers?.length ? { players: mergedPlayers } : {}),
@@ -174,7 +165,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             </div>
             <FootballField
               formation={formation}
-              fieldPlayers={[...team.players, ...fieldPlayers]}
+              fieldPlayers={playerPositonMap}
               getSelectedPlayerPosition={handlePlayerSelected}
               emptyFormationMessage="Select a formation."
               resetField={resetField}
@@ -185,6 +176,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <div className="md:w-1/2 flex flex-col justify-between">
             <div className="h-[500px]">
               <div className="text-xl font-bold pb-2">Team Players</div>
+              <div className="text-xs pb-4">
+                * The <strong>bolded</strong> names are already saved.
+              </div>
               <SelectableTable<YourTeamKeyProps>
                 rows={rows}
                 columns={columns}
