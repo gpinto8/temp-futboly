@@ -39,7 +39,18 @@ export const useGetMatches = () => {
     // Return all the matches but sorted by week
     const getAllMatches = () => {
         if (!matches) return [];
-        return [...matches].sort((a, b) => a.week - b.week);
+        const matchesClone = [...matches];
+        let grouped = matchesClone.reduce((acc, curr) => {
+            acc[curr.week] = acc[curr.week] || [];
+            acc[curr.week].push(curr);
+            return acc;
+        }, {} as any);
+        const keys = Object.keys(grouped);
+        const groupedMatches = keys.map((key) => { return {
+            week: key,
+            matches: grouped[key]
+        }});
+        return groupedMatches;
     };
 
     return {
