@@ -57,8 +57,10 @@ export type CompetitionsCollectionProps = {
       }[]
     | null;
     */
-  matchSchedule:
-    | {
+  matchSchedule: MatchScheduleProps;
+};
+
+export type MatchScheduleProps = {
         week: number;
         home: ShortTeamProps;
         away: ShortTeamProps;
@@ -66,9 +68,7 @@ export type CompetitionsCollectionProps = {
           home: number;
           away: number;
         };
-      }[]
-    | null;
-};
+      }[] | null;
 
 // TEAMS
 export type CompetitionsCollectionTeamsProps = {
