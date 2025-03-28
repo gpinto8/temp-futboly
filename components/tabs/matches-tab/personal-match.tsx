@@ -1,14 +1,14 @@
 import { CustomCard } from "@/components/custom/custom-card";
-import { MatchTeamType } from "@/components/tabs/live-match-tab/live-match-section";
 import { CustomImage } from "@/components/custom/custom-image";
-
-type MinimalMatchTeamType = Pick<MatchTeamType, "teamName" | "teamLogo">;
+import { ShortTeamProps } from "@/firebase/db-types";
+import { useAppSelector } from "@/store/hooks";
+import { getRealTeamLogoById } from '@/utils/real-team-logos';
 
 type MatchInfoType = {
-    home: MinimalMatchTeamType;
-    away: MinimalMatchTeamType;
+    home: ShortTeamProps;
+    away: ShortTeamProps;
     date: Date;
-    score?: {
+    result?: {
         home: number;
         away: number;
     };
@@ -21,20 +21,21 @@ type PersonalMatchProps = {
 };
 
 export const PersonalMatch = ({type, matchInfo, className}: PersonalMatchProps) => {
+    const user = useAppSelector((state) => state.user);
     return (
         <CustomCard style="gray" className={className}>
             <div className="flex flex-row gap-2 justify-around items-center">
                 <div className="flex flex-row justify-center items-center gap-2 text-lg font-medium">
-                    <p className="text-main">{matchInfo.home.teamName}</p>
-                    <CustomImage forceSrc={matchInfo.home.teamLogo} className="h-8 w-8" />
+                    <CustomImage forceSrc={getRealTeamLogoById(matchInfo.home.logoId)?.src} className="h-8 w-8" />
+                    <p className={user.username === matchInfo.home.ownerUsername? "text-main": ""}>{matchInfo.home.name}</p>
                 </div>
                 <div className="flex flex-col justify-center items-center text-sm">
-                    { type === "past" && <div><p>{matchInfo.score?.home}</p> vs <p>{matchInfo.score?.away}</p></div>}
-                    <p className={type==="past" ? "text-gray-400" : "text-black"}>{matchInfo.date.toLocaleString().split(",")[0]}</p>
+                    { type === "past" && <div><p>{matchInfo.result?.home}</p> vs <p>{matchInfo.result?.away}</p></div>}
+                    <p className={type==="past" ? "text-gray-400" : "text-black"}>{(new Date(matchInfo.date)).toLocaleString().split(",")[0]}</p>
                 </div>
                 <div className="flex flex-row justify-center items-center gap-2 text-lg font-medium">
-                    <p>{matchInfo.away.teamName}</p>
-                    <CustomImage forceSrc={matchInfo.away.teamLogo} className="h-8 w-8" />
+                    <p className={user.username === matchInfo.away.ownerUsername ? "text-main" : ""}>{matchInfo.away.name}</p>
+                    <CustomImage forceSrc={getRealTeamLogoById(matchInfo.away.logoId)?.src} className="h-8 w-8" />
                 </div>
             </div>
         </CustomCard>

@@ -1,21 +1,13 @@
-import { MatchTeamType } from "@/components/tabs/live-match-tab/live-match-section";
 import { CustomSeparator } from "@/components/custom/custom-separator";
 import { CustomImage } from "@/components/custom/custom-image";
+import { MatchScheduleProps } from "@/firebase/db-types";
+import { getRealTeamLogoById } from '@/utils/real-team-logos';
 
-type MinimalMatchTeamType = Pick<MatchTeamType, "teamName" | "teamLogo">;
-
-type MatchInfoType = {
-    home: MinimalMatchTeamType;
-    away: MinimalMatchTeamType;
+type MappedMatchScheduleProps = MatchScheduleProps & {
     date: Date;
-    status: "Upcoming" | "Ended";
-    score?: {
-        home: number;
-        away: number;
-    };
 };
 
-export const WeeklyMatches = ({matches}: {matches: MatchInfoType[]}) => {
+export const WeeklyMatches = ({matches}: {matches: MappedMatchScheduleProps[]}) => {
     return (
         <div>
             <div className="flex justify-between items-center">
@@ -25,33 +17,34 @@ export const WeeklyMatches = ({matches}: {matches: MatchInfoType[]}) => {
             </div>
             <CustomSeparator withText={false} />
             <div className="flex flex-col justify-between items-center gap-2">
-                {matches.map((match, index) => (
+                {matches.map((match: MappedMatchScheduleProps, index: number) => {
+                    if (match) return (
                     <div key={index} className="w-full flex justify-between items-center">
-                        <p className="font-semibold text-gray-900">{match.date.toLocaleString().split(",")[0]}</p>
+                        <p className="font-semibold text-gray-900">{(new Date(match.date)).toLocaleString().split(",")[0]}</p>
                         <div className="flex justify-center items-center gap-4">
                             <div className="flex justify-center items-center gap-2">
-                                <p className="font-semibold text-gray-900">{match.home.teamName}</p>
-                                <CustomImage forceSrc={match.home.teamLogo} className="h-8 w-8" />
+                                <CustomImage forceSrc={getRealTeamLogoById(match.home.logoId)?.src} className="h-8 w-8" />
+                                <p className="font-semibold text-gray-900">{match.home.name}</p>
                             </div>
-                            {match.score ? (
+                            {match.result ? (
                                 <div className="flex justify-center items-center gap-2">
-                                    <p className="font-semibold text-gray-700">{match.score.home}</p>
+                                    <p className="font-semibold text-gray-700">{match.result.home}</p>
                                     <p className="font-semibold text-gray-700">-</p>
-                                    <p className="font-semibold text-gray-700">{match.score.away}</p>
+                                    <p className="font-semibold text-gray-700">{match.result.away}</p>
                                 </div>
                             ) : (
                                 <p className="font-semibold text-gray-900">vs</p>
                             )} 
                             <div className="flex justify-center items-center gap-2">
-                                <p className="font-semibold text-gray-900">{match.away.teamName}</p>
-                                <CustomImage forceSrc={match.away.teamLogo} className="h-8 w-8" />
+                                <p className="font-semibold text-gray-900">{match.away.name}</p>
+                                <CustomImage forceSrc={getRealTeamLogoById(match.away.logoId)?.src} className="h-8 w-8" />
                             </div>
                         </div>
                         <div>
                             <p className="font-semibold text-gray-700">{match.status}</p>
                         </div>
                     </div>
-                ))}
+                )})}
             </div>
         </div>
     );
