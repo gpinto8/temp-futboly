@@ -3,17 +3,20 @@ import {
     CompetitionsCollectionProps,
     UsersCollectionProps,
     MappedCompetitionsProps,
-    TeamsCollectionProps,
+    ShortTeamProps,
 } from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { competitionActions } from '@/store/slices/competitions';
 import { DocumentReference } from 'firebase/firestore';
 import { useGetCompetitions } from './use-get-competitions';
+import { useGetTeams } from "@/data/teams/use-get-teams";
+import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
 
 export const useSetCompetitions = () => {
   const user = useAppSelector((state) => state.user);
     const league = useAppSelector((state) => state.league);
   const dispatch = useAppDispatch();
+    const { mapTeamWithExtraProps } = useGetTeams();
   const {
     getCompetitions,
     getActiveCompetition,
@@ -134,23 +137,50 @@ export const useSetCompetitions = () => {
     }
   };
 
-    const scheduleCompetitionMatches = async (
-        competitionRef: DocumentReference<CompetitionsCollectionProps>,
-    ) => {
+    const scheduleCompetitionMatches = async (competitionId: string ) => {
         // Check if the user is the owner of the league
         if (!(league.owner === user.id)) return;
-        const competitionToBeScheduled = await getCompetitionById(competitionRef);
+        const competitionToBeScheduled = await getCompetitionById(competitionId);
         if (!competitionToBeScheduled) return;
         const teams = competitionToBeScheduled.teams;
+        const mappedTeams = await Promise.all(teams.map(async (team) => await mapTeamWithExtraProps(team)));
+        const shortMapTeams = mappedTeams.map((mappedTeam) => { return {
+            name: mappedTeam.name,
+            ownerUsername: mappedTeam.ownerUsername,
+            shortId: mappedTeam.shortId,
+            logoId: mappedTeam.logoId
+        }}) as ShortTeamProps[];
         const maxWeek = competitionToBeScheduled.maxWeek;
-        const schedule = createRoundRobinSchedule(teams, maxWeek);
+        const schedule = createRoundRobinSchedule(shortMapTeams, maxWeek);
         if (!schedule) return; 
-        const finalSchedule = randomizeWeeks(schedule, teams.length, maxWeek);
-        const result = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("matchSchedule", finalSchedule);
+        const finalSchedule = mapHomeAway(randomizeWeeks(schedule, teams.length, maxWeek));
+        const competitionStart = new Date(competitionToBeScheduled.startDate.toDate());
+        const finalScheduleWithDate = finalSchedule.map((schedule) => {
+            const dayOfWeekStart = competitionStart.getDay();
+            const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
+            const startCopy = competitionStart;
+            const totalDaysToAdd = startCopy.getDate() + daysToAdd + ((schedule.week - 1) * 7);
+            console.log(totalDaysToAdd);
+            /*
+             *
+             * TODO: FIX THE DAYS TO ADD 
+             *
+             *
+             */
+            startCopy.setDate(totalDaysToAdd);
+            return {
+                ...schedule,
+                date: startCopy.getTime()
+            };
+        });
+        const result = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("matchSchedule", finalScheduleWithDate);
         if (!result) console.error("Error while scheduling the matches for the competition");
+        console.log("Qui");
+        /*
         const updatedCompetition = await getCompetitionById(competitionRef);
         if (!updatedCompetition) return;
         dispatch(competitionActions.setCompetition(updatedCompetition));
+        */
     };
 
   return {
@@ -163,17 +193,17 @@ export const useSetCompetitions = () => {
 };
 
 // It is necessary that the number of teams is even, otherwise 1 player would not play
-function createRoundRobinSchedule(teams: DocumentReference<TeamsCollectionProps>[], maxWeek: number) {
+function createRoundRobinSchedule(teams: ShortTeamProps[], maxWeek: number) {
     if (teams.length % 2 !== 0) return null;
 
-    let schedule: Array<{ week: number, match: DocumentReference<TeamsCollectionProps>[] }> = [];
+    let schedule: Array<{ week: number, match: ShortTeamProps[] }> = [];
     let numTeams = teams.length;
     
     // Here I create a random inital order for the Teams
     let rotatingTeams = [...shuffleArray(teams)];
 
     for (let week = 1; week <= maxWeek; week++) {
-        let matches: DocumentReference<TeamsCollectionProps>[][] = [];
+        let matches: ShortTeamProps[][] = [];
 
         for (let i = 0; i < numTeams / 2; i++) {
             let team1 = rotatingTeams[i];
@@ -190,8 +220,8 @@ function createRoundRobinSchedule(teams: DocumentReference<TeamsCollectionProps>
 
 // I can do just n-1 combination of matches, so the nth match is duplicated
 // This way I randomize the order of the first n-1 and x(n-1) times
-function randomizeWeeks(schedule: Array<{ week: number, match: DocumentReference<TeamsCollectionProps>[] }>, teamsLength: number, maxWeek: number) {
-    let finalSchedule: Array<{ week: number, match: DocumentReference<TeamsCollectionProps>[] }> = [];
+function randomizeWeeks(schedule: Array<{ week: number, match: ShortTeamProps[] }>, teamsLength: number, maxWeek: number) {
+    let finalSchedule: Array<{ week: number, match: ShortTeamProps[] }> = [];
     for(let i = 1; i <= Math.ceil(maxWeek/(teamsLength - 1)); i++) {
         // Separating block to shuffle
         let partial = schedule.filter((matchSchedule) => matchSchedule.week >= (1 + ((teamsLength - 1) * (i - 1))) && matchSchedule.week <= ((teamsLength - 1)* i));
@@ -200,7 +230,7 @@ function randomizeWeeks(schedule: Array<{ week: number, match: DocumentReference
             acc[curr.week] = acc[curr.week] || [];
             acc[curr.week].push(curr.match);
             return acc;
-        }, {} as any); //Record<number, DocumentReference<TeamsCollectionProps>[][]>);
+        }, {} as any); //Record<number, ShortTeamProps[][]>);
         // Shuffle all the groups
         let shuffled = shuffleArray(Object.values(grouped));
         // Push them into final schedule with randomized order
@@ -211,6 +241,10 @@ function randomizeWeeks(schedule: Array<{ week: number, match: DocumentReference
     return finalSchedule;
 }
 
+function mapHomeAway(schedule: Array<{ week: number, match: ShortTeamProps[] }>) {
+    return schedule.map((el) => { return { week: el.week, home: el.match[0], away: el.match[1] }});
+}
+
 // Fisher-Yates algorithm to shuffle elements
 function shuffleArray(array: Array<any>) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -219,15 +253,3 @@ function shuffleArray(array: Array<any>) {
     }
     return array;
 }
-/*  matchSchedule:
-    | {
-        week: Number;
-        home: DocumentReference<TeamsCollectionProps>;
-        away: DocumentReference<TeamsCollectionProps>;
-        result: {
-          home: Number;
-          away: Number;
-        };
-      }[]
-    | null;
-*/
