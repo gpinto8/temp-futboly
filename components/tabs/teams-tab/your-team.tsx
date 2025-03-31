@@ -130,8 +130,12 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     if (formation && team.formation) {
-      if (formation !== team.formation) setPlayerPositionMap([]);
-      else setPlayerPositionMap(team.players);
+      if (formation !== team.formation) {
+        const playersResettedPosition = team.players.map((player) => ({
+          sportmonksId: player.sportmonksId,
+        }));
+        setPlayerPositionMap(playersResettedPosition);
+      }
     }
   }, [formation]);
 
