@@ -8,7 +8,7 @@ export const LiveMatchSection = ({ home, away, score } : CurrentLiveMatchType) =
             <h2 className="text-l font-medium my-2">Home Team LineUp</h2>
             <CustomSeparator withText={false} />
             <div id="homeTeamLineUp">
-                {home.players.map((player, index) => (
+                {home.players.map((player, index: number) => (
                     <div key={index} className="flex flex-row items-center gap-2">
                         <p className="font-bold text-error">{player.position}</p>
                         <p className="font-semibold">{player.name}</p>
@@ -16,12 +16,12 @@ export const LiveMatchSection = ({ home, away, score } : CurrentLiveMatchType) =
                     </div>
                 ))}
                 <CustomSeparator withText={false} />
-                {home.bench.map((player) => (
-                    <div className="flex flex-row items-center gap-2">
-                    <p className="font-bold text-gray-600">{player.position}</p>
-                    <p className="font-semibold text-gray-600">{player.name}</p>
-                    {/* <CustomImage forceSrc={player.image} className="h-12 w-12" /> */}
-                </div>
+                {home.bench.map((player, index: number) => (
+                    <div key={index} className="flex flex-row items-center gap-2">
+                        <p className="font-bold text-gray-600">{player.position}</p>
+                        <p className="font-semibold text-gray-600">{player.name}</p>
+                        {/* <CustomImage forceSrc={player.image} className="h-12 w-12" /> */}
+                    </div>
                 ))}
             </div>
         </div>
@@ -54,7 +54,7 @@ export const LiveMatchSection = ({ home, away, score } : CurrentLiveMatchType) =
             <h2 className="text-l font-medium my-2">Away Team LineUp</h2>
             <CustomSeparator withText={false} />
             <div id="awayTeamLineUp">
-                {away.players.map((player, index) => (
+                {away.players.map((player, index: number) => (
                     <div key={index} className="flex flex-row items-center gap-2">
                         <p className="font-bold text-error">{player.position}</p>
                         <p className="font-semibold">{player.name}</p>
@@ -62,12 +62,12 @@ export const LiveMatchSection = ({ home, away, score } : CurrentLiveMatchType) =
                     </div>
                 ))}
                 <CustomSeparator withText={false} />
-                {away.bench.map((player) => (
-                    <div className="flex flex-row items-center gap-2">
-                    <p className="font-bold text-gray-600">{player.position}</p>
-                    <p className="font-semibold text-gray-600">{player.name}</p>
-                    {/* <CustomImage forceSrc={player.image} className="h-12 w-12" /> */}
-                </div>
+                {away.bench.map((player, index: number) => (
+                    <div key={index} className="flex flex-row items-center gap-2">
+                        <p className="font-bold text-gray-600">{player.position}</p>
+                        <p className="font-semibold text-gray-600">{player.name}</p>
+                        {/* <CustomImage forceSrc={player.image} className="h-12 w-12" /> */}
+                    </div>
                 ))}
             </div>
         </div>
