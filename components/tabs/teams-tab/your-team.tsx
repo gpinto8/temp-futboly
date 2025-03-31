@@ -15,6 +15,8 @@ import { AllPosibleFormationsProps } from '@/utils/formations';
 import { CustomButton } from '@/components/custom/custom-button';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import sortBy from 'lodash/sortBy';
+import isEqual from 'lodash/isEqual';
 
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
@@ -88,14 +90,23 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     (async () => {
       const playerId = tablePosition?.ID;
       if (playerId && fieldPosition) {
-        const filteredPlayerPositionMap = playerPositonMap
-          .filter((item) => item.position !== fieldPosition)
-          .filter((item) => item.sportmonksId !== playerId);
+        const filteredPlayerPositionMap: CompetitionsCollectionTeamsProps['players'] =
+          playerPositonMap
+            .map((player) => {
+              if (player.position === fieldPosition) {
+                return { sportmonksId: player.sportmonksId };
+              } else return player;
+            })
+            .map((player) => {
+              if (player.sportmonksId === playerId) {
+                return {
+                  sportmonksId: player.sportmonksId,
+                  position: fieldPosition,
+                };
+              } else return player;
+            });
 
-        setPlayerPositionMap([
-          ...filteredPlayerPositionMap,
-          { sportmonksId: playerId, position: fieldPosition },
-        ]);
+        setPlayerPositionMap(filteredPlayerPositionMap);
 
         await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
 
@@ -108,7 +119,12 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     const diffFormation = team.formation !== formation;
-    const shouldDisabled = !(diffFormation || playerPositonMap?.length);
+
+    const areArraysIdentical = (arr1: any, arr2: any) =>
+      isEqual(sortBy(arr1, 'sportmonksId'), sortBy(arr2, 'sportmonksId'));
+    const diffPlayers = !areArraysIdentical(team.players, playerPositonMap);
+
+    const shouldDisabled = !(diffFormation || diffPlayers);
     setDisabled(shouldDisabled);
   }, [formation, playerPositonMap]);
 
@@ -127,17 +143,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     const shortId = team?.shortId;
 
     if (competitionId && shortId) {
-      const currentPlayers = team?.players;
-      const playerIds = playerPositonMap.map((item) => item.sportmonksId);
-      const mergedPlayers = currentPlayers.map((item) =>
-        playerIds.includes(item.sportmonksId)
-          ? item
-          : { sportmonksId: item.sportmonksId },
-      );
-
       await editTeam(competitionId, shortId, {
         ...(formation ? { formation } : {}),
-        ...(mergedPlayers?.length ? { players: mergedPlayers } : {}),
+        ...(playerPositonMap ? { players: playerPositonMap } : {}),
       });
 
       setDisabled(true);
