@@ -124,7 +124,7 @@ export const OverviewBanner = () => {
       entries: [
         { key: 'Name', value: league?.name },
         { key: 'Owner', value: league?.ownerUsername },
-        { key: 'Competition', value: league?.competitionsNo },
+        { key: 'Competitions', value: league?.competitionsNo },
       ],
     };
     setOverviewLeague(data);
