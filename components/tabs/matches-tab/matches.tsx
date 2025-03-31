@@ -24,6 +24,21 @@ export const Matches = ({personalMatchHistory, allMatchHistory, matchStatistics}
         resizeAllMatches();
     }, []);
 
+    function formatCardTitle(cardTitle) {
+        switch (cardTitle) {
+            case "totalWins":
+                return "Total Wins";
+            case "totalMatchPlayed":
+                return "Total Match Played";
+            case "overallScore":
+                return "Overall Score";
+            case "scoredThisWeek":
+                return "Scored This Week";
+            default:
+                return cardTitle; // Return cardTitle if no option is met 
+        }
+    }
+
     return (
         <div>
             <h1 className="text-2xl md:text-4xl font-bold my-4">Your Matches</h1>
@@ -52,8 +67,8 @@ export const Matches = ({personalMatchHistory, allMatchHistory, matchStatistics}
                         { keys.map(({title: cardTitle, value}, index) => {
                             return (
                             <CustomCard key={index} style="gray">
-                                <h3 className="text-sm md:text-md font-medium text-gray-500">{cardTitle}</h3>
-                                <p className="text-md md:text-2xl font-medium text-center">{value}</p>
+                                <h3 className="text-sm md:text-md font-medium text-gray-500">{formatCardTitle(cardTitle)}</h3>
+                                <p className="text-md md:text-2xl font-medium text-center">{isNaN(value) ? 0 : value}</p>
                             </CustomCard>)
                         })}
                     </div>
