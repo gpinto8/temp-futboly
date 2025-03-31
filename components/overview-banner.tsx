@@ -20,6 +20,8 @@ type BannerCardProps = {
 };
 
 const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
+  const realTeamLogosData = getRealTeamLogoById(logoId);
+
   return (
     <CustomCard
       style="light"
@@ -33,7 +35,7 @@ const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
 
         <CustomImage
           className="rounded-full border object-cover shadow-md w-7 h-7 lg:w-10 lg:h-10"
-          forceSrc={getRealTeamLogoById(logoId)?.src}
+          { ... (realTeamLogosData ? { forceSrc: realTeamLogosData.src, forcedAlt: realTeamLogosData.alt } : {imageKey: "AT_ICON"}) }
         />
       </div>
 
