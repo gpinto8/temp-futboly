@@ -194,6 +194,45 @@ export const AddEditTeamModal = ({
     }
   };
 
+  const handlePlayerSearch = async (inputData: any) => {
+    // const data =
+    //   await fetchSportmonksApiClient<PlayersGetBySearchQueryParamProps>(
+    //     'PLAYERS/GET-BY-SEARCH',
+    //     { name: `${inputData.value}` },
+    //   );
+    // console.log(data);
+    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
+      'PLAYERS/GET-ALL',
+    );
+
+    if (inputData.value) {
+      setPlayers([players[0]]);
+      setRows(players);
+    } else {
+      setPlayers(data.data);
+      setRows(players);
+    }
+
+    // setRows([
+    //   {
+    //     ID: data.index + 1,
+    //     PLAYER: (
+    //       <div className="flex gap-1">
+    //         <Avatar
+    //           src={data.image_path}
+    //           alt={display_name}
+    //           sx={{ width: 24, height: 24 }}
+    //         />
+    //         <span className="line-clamp-1">{display_name}</span>
+    //       </div>
+    //     ),
+    //     POSITION: detailedPosition?.name || position?.name,
+    //     RATING: rating,
+    //     CLUB: club,
+    //   },
+    // ]);
+  };
+
   return (
     <CustomModal
       title={isEdit ? `${name.value}` : 'Create your team'}
@@ -236,7 +275,12 @@ export const AddEditTeamModal = ({
           </div>
           {/* PLAYERS */}
           <div className="flex flex-col gap-2 h-full">
-            <div className="font-bold">Choose players:</div>
+            <div className="flex items-center justify-between">
+              <div className="font-bold">Choose players:</div>
+              <div className="w-90">
+                <CustomInput label="Search" handleChange={handlePlayerSearch} />
+              </div>
+            </div>
             {isEdit ? (
               <SelectableTable<PlayersColumnKeysProps>
                 columns={columns}
