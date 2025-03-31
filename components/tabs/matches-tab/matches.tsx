@@ -8,7 +8,6 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { CustomImage } from "@/components/custom/custom-image";
 import { WeeklyMatches } from "@/components/tabs/matches-tab/weekly-matches";
 
-
 export const Matches = ({personalMatchHistory, allMatchHistory, matchStatistics}) => {
     const keys = Object.keys(matchStatistics).map((key) => {return {title: key, value: matchStatistics[key]}});
     personalMatchHistory = personalMatchHistory.map((match) => { return {...match, date: (new Date(match.date))}});
