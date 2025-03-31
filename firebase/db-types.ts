@@ -1,3 +1,4 @@
+import { AllPosibleFormationsProps } from '@/utils/formations';
 import { RealTeamLogoIds } from '@/utils/real-team-logos';
 import { Timestamp } from 'firebase/firestore';
 import { DocumentReference } from 'firebase/firestore';
@@ -78,14 +79,15 @@ export type CompetitionsCollectionTeamsProps = {
   competitionRef: DocumentReference<CompetitionsCollectionProps>;
   name: string;
   coach: string;
-  logoId: RealTeamLogoIds; // TODO: to change in the future
-  // formation: string; // String with module
+  logoId: RealTeamLogoIds; // TODO: To change in the future
+  formation?: AllPosibleFormationsProps;
   players: {
     sportmonksId: number;
     // actualPosition: {
     //   isBenched: Boolean;
     //   slot: number;
     // };
+    position?: string; // Look at the "mapFormationPosition" function for the mapping format
   }[];
 };
 
