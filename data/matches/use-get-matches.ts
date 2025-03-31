@@ -53,10 +53,22 @@ export const useGetMatches = () => {
         return groupedMatches;
     };
 
+    const getUpcomingMatches = (matchesNumber: number) => {
+        if (!matches) return [];
+        const personalMatches = getPersonalMatches();
+        const upcomingPersonalMatches = personalMatches.filter((match) => !match.result);
+        if (upcomingPersonalMatches.length > matchesNumber) {
+            return upcomingPersonalMatches.slice(0, matchesNumber);
+        } else {
+            return upcomingPersonalMatches;
+        }
+    };
+
     return {
         getPersonalMatches,
         getMatchStatistics,
         getAllMatches,
+        getUpcomingMatches,
     };
 }
 

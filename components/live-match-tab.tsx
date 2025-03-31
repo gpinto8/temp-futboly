@@ -3,8 +3,12 @@ import { CustomSeparator } from "@/components/custom/custom-separator";
 import { UpcomingMatch } from "@/components/tabs/live-match-tab/upcoming-match";
 import { LiveMatchSection } from "@/components/tabs/live-match-tab/live-match-section";
 import { getMockupFormation } from "@/utils/mocks";
+import { useGetMatches } from "@/data/matches/use-get-matches";
 
 export const LiveMatch = () => {
+    const { getUpcomingMatches } = useGetMatches();
+    const upcomingMatches = getUpcomingMatches(5);
+
     return (
         <div>
             <div id="currentLiveMatch">
@@ -18,9 +22,13 @@ export const LiveMatch = () => {
             <div id="upcomingMatches">
                 <h1 className="font-bold text-4xl text-main mb-4">Upcoming Matches</h1>
                 <div className="flex flex-row justify-center items-center gap-4">
-                    <UpcomingMatch />
-                    <UpcomingMatch />
-                    <UpcomingMatch />
+                    { upcomingMatches.length > 0 ? (
+                        upcomingMatches.map((upcomingMatch, index) => (
+                            <UpcomingMatch key={index} matchInfo={upcomingMatch}/>
+                        ))
+                    ) : (
+                        <p>There are no matches left for this competitions</p>
+                    )}
                 </div>
             </div>
         </div>
