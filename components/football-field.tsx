@@ -111,15 +111,15 @@ export const FootballField = ({
             {formation
               .split('')
               ?.reverse()
-              ?.map((formationTotalPlayers, playerPosition) => {
+              ?.map((formationTotalPlayers, fieldRow) => {
                 return (
                   <div
-                    key={playerPosition}
+                    key={fieldRow}
                     className="h-full flex gap-4 justify-evenly items-center"
                   >
                     {new Array(+formationTotalPlayers)
                       .fill(undefined)
-                      .map((_, fieldRow) => {
+                      .map((_, playerPosition) => {
                         const currentPosition = mapFormationPosition(
                           formationTotalPlayers,
                           playerPosition,
@@ -134,7 +134,7 @@ export const FootballField = ({
 
                         return (
                           <CircleField
-                            key={fieldRow}
+                            key={playerPosition}
                             player={fieldPlayer}
                             handleClick={() =>
                               handleCircleField(currentPosition)
