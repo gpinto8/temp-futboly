@@ -85,8 +85,18 @@ export const useSetTeams = () => {
       const allTeams = competitionData?.teams;
 
       // First find the team to change from all the competitions and edit it
-      const foundTeam = allTeams.find((team) => team.shortId === shortId);
+      let foundTeam = allTeams.find((team) => team.shortId === shortId);
       if (foundTeam) {
+        // If there is a new formation, then reset the players, so they dont keep the old reference
+        if (newTeam.formation !== foundTeam.formation) {
+          foundTeam = {
+            ...foundTeam,
+            players: foundTeam.players.map((player) => ({
+              sportmonksId: player.sportmonksId,
+            })),
+          };
+        }
+
         const mergedTeam: CompetitionsCollectionTeamsProps = {
           ...foundTeam,
           ...newTeam,

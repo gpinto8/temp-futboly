@@ -128,6 +128,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     setDisabled(shouldDisabled);
   }, [formation, playerPositonMap]);
 
+  useEffect(() => {
+    if (formation && team.formation) {
+      if (formation !== team.formation) setPlayerPositionMap([]);
+      else setPlayerPositionMap(team.players);
+    }
+  }, [formation]);
+
   const handleSelectedRows = async (
     selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
   ) => {
@@ -145,7 +152,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     if (competitionId && shortId) {
       await editTeam(competitionId, shortId, {
         ...(formation ? { formation } : {}),
-        ...(playerPositonMap ? { players: playerPositonMap } : {}),
+        ...(playerPositonMap?.length ? { players: playerPositonMap } : {}),
       });
 
       setDisabled(true);
