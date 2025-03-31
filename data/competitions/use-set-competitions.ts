@@ -142,6 +142,10 @@ export const useSetCompetitions = () => {
         if (!(league.owner === user.id)) return;
         const competitionToBeScheduled = await getCompetitionById(competitionId);
         if (!competitionToBeScheduled) return;
+        if (competitionToBeScheduled.matchSchedule) {
+            console.error("Can't schedule a competition that is already scheduled");
+            return;
+        }
         const teams = competitionToBeScheduled.teams;
         const mappedTeams = await Promise.all(teams.map(async (team) => await mapTeamWithExtraProps(team)));
         const shortMapTeams = mappedTeams.map((mappedTeam) => { return {
@@ -155,32 +159,23 @@ export const useSetCompetitions = () => {
         if (!schedule) return; 
         const finalSchedule = mapHomeAway(randomizeWeeks(schedule, teams.length, maxWeek));
         const competitionStart = new Date(competitionToBeScheduled.startDate.toDate());
+        const dayOfWeekStart = competitionStart.getDay();
         const finalScheduleWithDate = finalSchedule.map((schedule) => {
-            const dayOfWeekStart = competitionStart.getDay();
             const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
-            const startCopy = competitionStart;
-            const totalDaysToAdd = startCopy.getDate() + daysToAdd + ((schedule.week - 1) * 7);
-            console.log(totalDaysToAdd);
-            /*
-             *
-             * TODO: FIX THE DAYS TO ADD 
-             *
-             *
-             */
+            const startCopy = new Date(competitionToBeScheduled.startDate.toDate());
+            const totalDaysToAdd = daysToAdd + ((schedule.week - 1) * 7);
             startCopy.setDate(totalDaysToAdd);
             return {
                 ...schedule,
                 date: startCopy.getTime()
             };
         });
-        const result = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("matchSchedule", finalScheduleWithDate);
+        const result = await firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("matchSchedule", finalScheduleWithDate);
         if (!result) console.error("Error while scheduling the matches for the competition");
-        console.log("Qui");
-        /*
-        const updatedCompetition = await getCompetitionById(competitionRef);
+        const updatedCompetition = await getCompetitionById(competitionId);
         if (!updatedCompetition) return;
+        console.log("dispatching");
         dispatch(competitionActions.setCompetition(updatedCompetition));
-        */
     };
 
   return {
