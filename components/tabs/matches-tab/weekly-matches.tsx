@@ -4,7 +4,7 @@ import { MatchScheduleProps } from "@/firebase/db-types";
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 
 type MappedMatchScheduleProps = MatchScheduleProps & {
-    date: Date;
+    status: "Upcoming" | "Past";
 };
 
 export const WeeklyMatches = ({matches}: {matches: MappedMatchScheduleProps[]}) => {

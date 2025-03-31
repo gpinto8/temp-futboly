@@ -1,22 +1,12 @@
 import { CustomCard } from "@/components/custom/custom-card";
 import { CustomImage } from "@/components/custom/custom-image";
-import { ShortTeamProps } from "@/firebase/db-types";
+import { MatchScheduleProps } from "@/firebase/db-types";
 import { useAppSelector } from "@/store/hooks";
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 
-type MatchInfoType = {
-    home: ShortTeamProps;
-    away: ShortTeamProps;
-    date: Date;
-    result?: {
-        home: number;
-        away: number;
-    };
-};  //Copied from mocks.ts, to put in a shared file
-
 type PersonalMatchProps = {
     type: "past" | "upcoming";
-    matchInfo: MatchInfoType;
+    matchInfo: MatchScheduleProps;
     className?: string;
 };
 
