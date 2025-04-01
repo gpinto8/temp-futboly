@@ -9,6 +9,7 @@ import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
+import { useGetMatches } from "@/data/matches/use-get-matches";
 
 type BannerCardProps = {
   title: string;
@@ -109,11 +110,25 @@ export const OverviewBanner = () => {
   const { getLeague } = useGetLeagues();
   const { getTeam } = useGetTeams();
   const { getActiveCompetition } = useGetCompetitions();
+  const { getTimeToNextMatch } = useGetMatches();
 
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(getTimeToNextMatch());
   const [overviewLeague, setOverviewLeague] = useState<BannerCardProps>();
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
   const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
+
+  // Timer
+  useEffect(() => {
+    let timerId;
+    if (timeLeftToNextMatch > 0) {
+      timerId = setInterval(() => {
+        setTimeLeftToNextMatch((prev) => prev - 1000);
+      }, 1000);
+    }
+
+    return () => clearInterval(timerId);
+  }, []);
 
   // LEAGUE
   const league = getLeague();
@@ -185,20 +200,50 @@ export const OverviewBanner = () => {
 
       {/* GAME */}
       <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
+      { timeLeftToNextMatch > 0 ? (
         <div className="flex flex-wrap justify-center">
           <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
-            1h 52m 15s
+            {formatDateDiffToDate(timeLeftToNextMatch)}
           </h3>
           <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-gray-900 sm:text-xl">
             to the next game!
           </h3>
         </div>
-        <CustomButton
-          label="Insert Lineups"
-          style="outlineMain"
-          className="font-semibold rounded-full !w-3/4 sm:!w-fit"
+       ) : (
+        <div className="flex flex-wrap justify-center">
+          <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
+           Game is in progress!
+          </h3>
+        </div>
+       )}
+        { timeLeftToNextMatch > 0 && (
+            <CustomButton
+            label="Insert Lineups"
+            style="outlineMain"
+            className="font-semibold rounded-full !w-3/4 sm:!w-fit"
         />
+        )}
       </div>
     </div>
   );
 };
+
+function formatDateDiffToDate(millisecDiff: number) {
+    if (millisecDiff <= 0) return "Game is in progress!";
+
+    const totalSeconds = Math.floor(millisecDiff / 1000);
+
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+
+    const parts = [
+        days > 0 ? `${days}d` : "",
+        hours > 0 ? `${hours}h` : "",
+        minutes > 0 ? `${minutes}m` : "",
+        seconds > 0 ? `${seconds}s` : ""
+    ].filter(Boolean); // Remove empty ones 
+
+    return parts.join(" ").trim(); // Union with white spaces 
+}
