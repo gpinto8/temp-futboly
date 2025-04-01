@@ -3,6 +3,7 @@ import {
   UsersCollectionProps,
 } from '@/firebase/db-types';
 import { useAppSelector } from '@/store/hooks';
+import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
 
 export const useGetMatches = () => {
     const activeCompetition = useAppSelector((state) => state.competition.activeCompetition) as MappedCompetitionsProps;
@@ -64,11 +65,28 @@ export const useGetMatches = () => {
         }
     };
 
+    const getTimeToNextMatch = () => {
+        const HOURS = 16;
+        const today = new Date(Date.now());
+        const todayDay = today.getUTCDay();
+        const todayHours = today.getUTCHours();
+        if (todayDay === 6 || todayDay === 0) return -1;
+        if (todayDay === DAY_OF_WEEK_MATCH && todayHours >= HOURS) return -1;
+        let daysLeft = DAY_OF_WEEK_MATCH - todayDay;
+        const start = today.getTime();
+        today.setUTCDate(today.getDate() + daysLeft);
+        today.setUTCHours(HOURS);
+        today.setUTCMinutes(0);
+        today.setUTCSeconds(0);
+        return today.getTime() - start;
+    };
+
     return {
         getPersonalMatches,
         getMatchStatistics,
         getAllMatches,
         getUpcomingMatches,
+        getTimeToNextMatch,
     };
 }
 
