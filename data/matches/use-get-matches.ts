@@ -3,9 +3,12 @@ import {
   UsersCollectionProps,
 } from '@/firebase/db-types';
 import { useAppSelector } from '@/store/hooks';
+import { useGetTeams } from '../teams/use-get-teams';
 import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
+import { CompetitionsCollectionTeamsExtraProps } from '../teams/use-get-teams'; 
 
 export const useGetMatches = () => {
+    const { getTeamByUid } = useGetTeams();
     const activeCompetition = useAppSelector((state) => state.competition.activeCompetition) as MappedCompetitionsProps;
     const user = useAppSelector((state) => state.user) as UsersCollectionProps;
     const matches = activeCompetition ? activeCompetition.matchSchedule : null;
@@ -81,12 +84,28 @@ export const useGetMatches = () => {
         return today.getTime() - start;
     };
 
+    const getNextMatch = () => {
+        const nextPersonalMatch = getUpcomingMatches(1)[0];
+        const homeUserId = nextPersonalMatch.home.userId;
+        const awayUserId = nextPersonalMatch.away.userId;
+        if (!homeUserId || !awayUserId) return;
+        const homeTeam = getTeamByUid(homeUserId);
+        const awayTeam = getTeamByUid(awayUserId);
+        if (!homeTeam || !awayTeam) return;
+        return {
+            ...nextPersonalMatch,
+            home: homeTeam,
+            away: awayTeam,
+        };
+    };
+
     return {
         getPersonalMatches,
         getMatchStatistics,
         getAllMatches,
         getUpcomingMatches,
         getTimeToNextMatch,
+        getNextMatch,
     };
 }
 
@@ -95,4 +114,15 @@ export type matchStatistics = {
     totalMatchPlayed: number;
     overallScore: number;
     scoredThisWeek: number;
+};
+
+export type LiveMatchProps = {
+    home: CompetitionsCollectionTeamsExtraProps;
+    away: CompetitionsCollectionTeamsExtraProps;
+    date: Date;
+    week: number;
+    result?: {
+        home: number;
+        away: number;
+    };
 };
