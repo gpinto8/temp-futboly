@@ -7,6 +7,7 @@ import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
 export type CompetitionsCollectionTeamsExtraProps =
   CompetitionsCollectionTeamsProps & {
+    userId?: string;
     ownerUsername?: string;
     competitionName?: string;
   };
@@ -34,6 +35,7 @@ export const useGetTeams = () => {
 
     const newTeam: CompetitionsCollectionTeamsExtraProps = {
       ...team,
+      userId,
       ownerUsername,
       competitionName,
     };

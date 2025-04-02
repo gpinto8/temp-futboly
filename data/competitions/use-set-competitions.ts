@@ -152,7 +152,8 @@ export const useSetCompetitions = () => {
             name: mappedTeam.name,
             ownerUsername: mappedTeam.ownerUsername,
             shortId: mappedTeam.shortId,
-            logoId: mappedTeam.logoId
+            logoId: mappedTeam.logoId,
+            userId: mappedTeam.userId,
         }}) as ShortTeamProps[];
         const maxWeek = competitionToBeScheduled.maxWeek;
         const schedule = createRoundRobinSchedule(shortMapTeams, maxWeek);

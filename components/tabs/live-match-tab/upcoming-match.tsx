@@ -6,8 +6,8 @@ import { useAppSelector } from "@/store/hooks";
 
 export const UpcomingMatch = ({matchInfo}: {matchInfo: MatchScheduleProps}) => {
     const user = useAppSelector((state) => state.user);
-    const homeClass = matchInfo.home.ownerUsername === user.username ? "text-main" : "";
-    const awayClass = matchInfo.away.ownerUsername === user.username ? "text-main" : "";
+    const homeClass = matchInfo.home.userId === user.id ? "text-main" : "";
+    const awayClass = matchInfo.away.userId === user.id ? "text-main" : "";
 
     return (
         <CustomCard style="gray">
