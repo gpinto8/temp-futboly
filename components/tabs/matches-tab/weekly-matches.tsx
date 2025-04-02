@@ -2,12 +2,15 @@ import { CustomSeparator } from "@/components/custom/custom-separator";
 import { CustomImage } from "@/components/custom/custom-image";
 import { MatchScheduleProps } from "@/firebase/db-types";
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { useAppSelector } from "@/store/hooks";
 
 type MappedMatchScheduleProps = MatchScheduleProps & {
     status: "Upcoming" | "Past";
 };
 
 export const WeeklyMatches = ({matches}: {matches: MappedMatchScheduleProps[]}) => {
+    const user = useAppSelector((state) => state.user);
+
     return (
         <div>
             <div className="flex justify-between items-center">
@@ -24,7 +27,7 @@ export const WeeklyMatches = ({matches}: {matches: MappedMatchScheduleProps[]}) 
                         <div className="flex justify-center items-center gap-4">
                             <div className="flex justify-center items-center gap-2">
                                 <CustomImage forceSrc={getRealTeamLogoById(match.home.logoId)?.src} className="h-8 w-8" />
-                                <p className="font-semibold text-gray-900">{match.home.name}</p>
+                                <p className={(match.home.userId === user.id ? "text-main" : "") + " font-semibold text-gray-900"}>{match.home.name}</p>
                             </div>
                             {match.result ? (
                                 <div className="flex justify-center items-center gap-2">
@@ -36,7 +39,7 @@ export const WeeklyMatches = ({matches}: {matches: MappedMatchScheduleProps[]}) 
                                 <p className="font-semibold text-gray-900">vs</p>
                             )} 
                             <div className="flex justify-center items-center gap-2">
-                                <p className="font-semibold text-gray-900">{match.away.name}</p>
+                                <p className={(match.away.userId === user.id ? "text-main" : "") + " font-semibold text-gray-900"}>{match.away.name}</p>
                                 <CustomImage forceSrc={getRealTeamLogoById(match.away.logoId)?.src} className="h-8 w-8" />
                             </div>
                         </div>
