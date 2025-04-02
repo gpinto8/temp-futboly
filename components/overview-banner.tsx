@@ -176,7 +176,7 @@ export const OverviewBanner = () => {
   }, [team]);
 
   return (
-    <div className='flex flex-col gap-4 justify-between items-center border border-gray rounded-lg shadow-xl p-4 px-8 dark:bg-gray-100 dark:text-gray-900"'>
+    <div className='flex flex-col gap-4 justify-between items-center border border-gray rounded-lg shadow-xl p-4 px-8'>
       {/* TITLE */}
       <div className="w-full">
         <h1 className="text-3xl font-semibold leading-tight text-center text-main mb-2">

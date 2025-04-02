@@ -18,7 +18,7 @@ export const CustomSeparator = ({
       {withText ? (
         <>
           <Divider />
-          <span className="px-4 text-gray-600 dark:font-bold">{text}</span>
+          <span className="px-4 text-gray-600">{text}</span>
           <Divider />
         </>
       ) : (

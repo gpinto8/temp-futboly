@@ -22,13 +22,13 @@ export const NoMatches = () => {
 
     return (
         <div>
-            <section className="bg-white dark:bg-gray-900">
+            <section className="bg-white">
                 <div className="container flex flex-col items-center px-4 py-12 mx-auto text-center">
-                    <h2 className="max-w-2xl mx-auto text-2xl font-semibold tracking-tight text-gray-800 xl:text-3xl dark:text-white">
+                    <h2 className="max-w-2xl mx-auto text-2xl font-semibold tracking-tight text-gray-800 xl:text-3xl">
                         Looks like there are no matches yet...
                     </h2>
 
-                    <p className="max-w-4xl mt-6 text-center text-gray-500 dark:text-gray-300">
+                    <p className="max-w-4xl mt-6 text-center text-gray-500">
                         { textForNoMatches }<br/>
                         <strong>Attention:</strong> Once you start a competition you cannot add any more Teams or Players.
                     </p>
