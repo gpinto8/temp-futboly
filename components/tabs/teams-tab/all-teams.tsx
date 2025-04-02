@@ -85,9 +85,9 @@ export const AllTeams = () => {
 
   return allTeams?.length ? (
     <>
-      <CustomSeparator withText={false} className="my-12" />
+      <CustomSeparator withText={false} className="!my-12 md:my-20" />
       <div className="w-full flex flex-col gap-6">
-        <h1 className="text-2xl md:text-4xl font-bold">All Teams</h1>
+        <h1 className="text-3xl md:text-4xl font-bold">All Teams</h1>
         <div className="grid md:grid-cols-3 gap-4 auto-rows-fr">
           {allTeams.map((team, index) => {
             const isSelected = selectedTeam === index;
@@ -107,9 +107,9 @@ export const AllTeams = () => {
                       forceSrc={getRealTeamLogoById(team.logoId)?.src}
                       className="h-16 w-16"
                     />
-                    <p className="text-3xl">
+                    <p className="text-2xl md:text-3xl">
                       <strong>{team.ownerUsername}</strong>
-                      <span className="text-2xl">'s team:</span>
+                      <span className="text-xl md:text-2xl">'s team:</span>
                     </p>
                   </div>
                   <div className="flex flex-row gap-8 justify-start items-center">
@@ -121,7 +121,6 @@ export const AllTeams = () => {
                     style="outlineBlack"
                     label={isSelected ? 'Hide players' : 'Show players'}
                     className="h-4 md:mx-auto px-8"
-                    widthFit
                     suffixIconKey={isSelected ? 'COLLAPSE_ICON' : 'EXPAND_ICON'}
                   />
 

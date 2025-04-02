@@ -53,7 +53,7 @@ const CircleField = ({
   return (
     <div
       onClick={handleClick}
-      className={`gap-2 !bg-white hover:bg-lightGray w-20 h-20  cursor-pointer text-center text-black rounded-full border-black border-2 ${
+      className={`gap-2 !bg-white hover:bg-lightGray w-12 h-12 sm:w-20 sm:h-20 md:w-20 md:h-20  cursor-pointer text-center text-black rounded-full border-black border-2 ${
         isSelected ? '!border-success-400 border-[6px]' : ''
       }`}
     >
@@ -62,7 +62,7 @@ const CircleField = ({
           <Avatar
             src={data?.src}
             alt={data?.name}
-            sx={{ width: 24, height: 24 }}
+            className="h-4 w-4 sm:h-6 sm:w-6 md:h-6 md:w-6"
           />
         ) : null}
         <div className="text-xs w-max">{data?.name}</div>
@@ -104,7 +104,7 @@ export const FootballField = ({
   };
 
   return (
-    <div className="relative w-full max-w-[500px]">
+    <div className="relative w-full">
       <div className="absolute w-full h-full flex flex-col justify-between gap-4 p-4 py-2">
         {formation ? (
           <>
