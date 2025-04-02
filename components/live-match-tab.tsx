@@ -2,21 +2,21 @@ import { CustomButton } from "@/components/custom/custom-button";
 import { CustomSeparator } from "@/components/custom/custom-separator";
 import { UpcomingMatch } from "@/components/tabs/live-match-tab/upcoming-match";
 import { LiveMatchSection } from "@/components/tabs/live-match-tab/live-match-section";
-import { getMockupFormation } from "@/utils/mocks";
 import { useGetMatches } from "@/data/matches/use-get-matches";
 
 export const LiveMatch = () => {
-    const { getUpcomingMatches } = useGetMatches();
+    const { getUpcomingMatches, getNextMatch } = useGetMatches();
     const upcomingMatches = getUpcomingMatches(5);
+    const nextMatch = getNextMatch();
 
-    return (
+    return nextMatch ? (
         <div>
             <div id="currentLiveMatch">
                 <div className="flex flex-row justify-between items-center mb-4">
                     <h1 className="font-bold text-4xl text-main text-nowrap">Current Live Match</h1>
                     <CustomButton label="Refresh match" className="rounded-full py-1 px-2 max-w-36"/>
                 </div>
-                <LiveMatchSection home={generateHome()} away={generateAway()} score={generateScore()} />
+                <LiveMatchSection nextMatch={nextMatch} />
             </div>
             <CustomSeparator withText={false} />
             <div id="upcomingMatches">
@@ -32,20 +32,9 @@ export const LiveMatch = () => {
                 </div>
             </div>
         </div>
+    ) : (
+        <div>
+            Match non trovato
+        </div>
     );
-}
-
-function generateScore() {
-    return {
-        home: 140,
-        away: 180
-    };
-}
-
-function generateHome() {
-    return getMockupFormation();
-}
-
-function generateAway() {
-    return getMockupFormation();
 }
