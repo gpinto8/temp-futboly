@@ -1,35 +1,17 @@
-import { useState, useEffect } from "react";
 import { CustomImage } from "@/components/custom/custom-image";
 import { Avatar } from '@mui/material';
 import { CustomSeparator } from "@/components/custom/custom-separator";
 import { LiveMatchProps } from "@/data/matches/use-get-matches"; 
 import { getRealTeamLogoById } from "@/utils/real-team-logos";
 import { useAppSelector } from "@/store/hooks";
-import { useGetTeams } from "@/data/teams/use-get-teams";
 
 export const LiveMatchSection = ({ nextMatch }: { nextMatch: LiveMatchProps }) => {
     const user = useAppSelector((state) => state.user);
-    const { getPlayersSportmonksData } = useGetTeams();
     const { home, away, week, result } = nextMatch;
     const homeTeamLogo = getRealTeamLogoById(home.logoId);
     const awayTeamLogo = getRealTeamLogoById(away.logoId);
     const homeClass = nextMatch.home.userRef.id === user.id ? "text-main" : "";
     const awayClass = nextMatch.away.userRef.id === user.id ? "text-main" : "";
-
-    const [homePlayersData, setHomePlayersData] = useState<any[]>([]);
-    const [awayPlayersData, setAwayPlayersData] = useState<any[]>([]);
-
-    useEffect(() => {
-        (async () => {
-            const homePlayerIds = home.players.map((player) => player.sportmonksId);
-            const awayPlayerIds = away.players.map((player) => player.sportmonksId);
-            const homeReturnAPIData = await getPlayersSportmonksData(homePlayerIds);
-            const awayReturnAPIData = await getPlayersSportmonksData(awayPlayerIds);
-            if (!homeReturnAPIData && !awayReturnAPIData) return; 
-            setHomePlayersData(homeReturnAPIData);
-            setAwayPlayersData(awayReturnAPIData);
-        })();
-    }, [home, away]);
 
     return (
       <div className="flex flex-row items-center justify-between gap-8 mt-8">
@@ -37,7 +19,7 @@ export const LiveMatchSection = ({ nextMatch }: { nextMatch: LiveMatchProps }) =
             <h2 className="text-l font-medium my-2">{nextMatch.home.name} LineUp</h2>
             <CustomSeparator withText={false} />
             <div id="homeTeamLineUp">
-                {homePlayersData.length > 0 ? homePlayersData.map((player, index: number) => (
+                {home.players.length > 0 ? home.players.map((player, index: number) => (
                     <div key={index} className="flex flex-row items-center gap-2">
                         <p className="font-bold text-error">{(player.position?.developer_name) ? (player.position?.developer_name)?.slice(0,3) : "UNK" }</p>
                         <p className="font-semibold">{player.common_name}</p>
@@ -86,7 +68,7 @@ export const LiveMatchSection = ({ nextMatch }: { nextMatch: LiveMatchProps }) =
             <h2 className="text-l font-medium my-2">{nextMatch.away.name} LineUp</h2>
             <CustomSeparator withText={false} />
             <div id="awayTeamLineUp">
-                {awayPlayersData.length > 0 ? awayPlayersData.map((player, index: number) => (
+                {away.players.length > 0 ? away.players.map((player, index: number) => (
                     <div key={index} className="flex flex-row items-center gap-2">
                         <p className="font-bold text-error">{(player.position?.developer_name) ? (player.position?.developer_name)?.slice(0,3) : "UNK" }</p>
                         <p className="font-semibold">{player.common_name}</p>
