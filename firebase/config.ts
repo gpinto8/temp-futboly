@@ -25,3 +25,4 @@ export const clientConfig = {
 };
 
 export const DAY_OF_WEEK_MATCH = 5;
+export const DEFAULT_SCORE = 5;

@@ -9,6 +9,8 @@ import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
+import { useGetMatches } from "@/data/matches/use-get-matches";
+import { useAppSelector } from '@/store/hooks';
 
 type BannerCardProps = {
   title: string;
@@ -60,11 +62,73 @@ const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
 };
 
 const GameSection = () => {
+  const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } = useGetMatches();
+  const { getPlayersSportmonksData } = useGetTeams();
+  
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(getTimeToNextMatch());
+  const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
+
+  const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
+  const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
+
+  useEffect(() => {
+      (async () => {
+          const nextMatch = getNextMatch();
+          if (!nextMatch || nextMatch === -1) return;
+          setNextMatchFound(true);
+          const homePlayerIds = nextMatch.home.players.map((player: any) => player.sportmonksId);
+          const awayPlayerIds = nextMatch.away.players.map((player: any) => player.sportmonksId);
+          const homeReturnAPIData = await getPlayersSportmonksData(homePlayerIds);
+          const awayReturnAPIData = await getPlayersSportmonksData(awayPlayerIds);
+          if (!homeReturnAPIData && !awayReturnAPIData) return;
+          const tempNextMatch = {
+              ...nextMatch,
+              home: {
+                  ...nextMatch.home,
+                  players: homeReturnAPIData
+              },
+              away: {
+                  ...nextMatch.away,
+                  players: awayReturnAPIData
+              }
+          };
+          setNextMatchMapped(tempNextMatch);
+          if (timeLeftToNextMatch < 1) { //Match started
+              const nextMatchWithRatingRes = await getNextMatchRatings(homeReturnAPIData, awayReturnAPIData);
+              setNextMatchWithRating(nextMatchWithRatingRes);
+          }
+      })();
+  }, []);
+  
+  useEffect(() => {
+      let timerId: any;
+      if (timeLeftToNextMatch > 0) {
+          timerId = setInterval(() => {
+              setTimeLeftToNextMatch((prev) => prev - 1000);
+          }, 1000);
+      }
+
+      return () => clearInterval(timerId);
+  }, []);
+
+  return nextMatchFound && nextMatchWithRating ? (
+    <GameSectionCard isLive={true} nextMatch={nextMatchWithRating}/>
+  ) : nextMatchMapped && (
+    <GameSectionCard isLive={false} nextMatch={nextMatchMapped}/>
+  );
+};
+
+const GameSectionCard = ({nextMatch, isLive}: {nextMatch: any, isLive: Boolean}) => {
+  const user = useAppSelector((state) => state.user);
+  const homeTeamLogo = getRealTeamLogoById(nextMatch.home.logoId);
+  const awayTeamLogo = getRealTeamLogoById(nextMatch.away.logoId);
+  const homeClass = nextMatch.home.userRef.id === user.id ? "text-main" : "";
+  const awayClass = nextMatch.away.userRef.id === user.id ? "text-main" : "";
   return (
     <div className="w-full sm:w-0 rounded-xl p-4 shadow-xl sm:min-w-[400px] md:w-[40%] xl:min-w-[400px]">
       <div id="gameInfo" className="flex flex-row justify-between my-6">
-        <Chip className="animate-pulse" label="LIVE" color="error" />
-        <span className="text-pretty text-gray font-medium">Week 31</span>
+        {isLive && (<Chip className="animate-pulse" label="LIVE" color="error" />)}
+        <span className="text-pretty text-gray font-medium ml-auto">Week {nextMatch.week}</span>
       </div>
       <div
         id="gameLiveResults"
@@ -72,27 +136,34 @@ const GameSection = () => {
       >
         <div className="flex flex-col items-center justify-center gap-2">
           <CustomImage
-            forceSrc="https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            forceSrc={homeTeamLogo?.src}
+            forcedAlt={homeTeamLogo?.alt}
             className="h-12 lg:h-16 w-12 lg:w-16"
             width={32}
             height={32}
           />
-          <span className="text-center">Team name</span>
+          <span className={homeClass + " text-center"}>{nextMatch.home.name}</span>
         </div>
-        <div className="text-center mx-4">
-          <div className="text-l md:text-xl font-semibold text-nowrap">
-            122 - 30
+          <div className="text-center mx-4">
+            { isLive ? (
+              <div className="text-l md:text-xl font-semibold text-nowrap">
+                {nextMatch.result.home} - {nextMatch.result.away}
+              </div>
+            ) : (
+              <div className="text-xl md:text-2xl font-bold text-nowrap">
+                VS
+              </div>
+            )}
           </div>
-          <div className="animate-pulse text-success text-opacity-70">85'</div>
-        </div>
         <div className="flex flex-col items-center justify-center gap-2">
           <CustomImage
-            forceSrc="https://cdn.sportmonks.com/images/soccer/teams/30/62.png"
+            forceSrc={awayTeamLogo?.src}
+            forcedAlt={awayTeamLogo?.alt}
             className="h-12 lg:h-16 w-12 lg:w-16"
             width={32}
             height={32}
           />
-          <span className="text-center">Team name</span>
+          <span className={awayClass + " text-center"}>{nextMatch.away.name}</span>
         </div>
       </div>
       <CustomButton
@@ -103,17 +174,31 @@ const GameSection = () => {
       />
     </div>
   );
-};
+}
 
 export const OverviewBanner = () => {
   const { getLeague } = useGetLeagues();
   const { getTeam } = useGetTeams();
   const { getActiveCompetition } = useGetCompetitions();
+  const { getTimeToNextMatch } = useGetMatches();
 
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(getTimeToNextMatch());
   const [overviewLeague, setOverviewLeague] = useState<BannerCardProps>();
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
   const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
+
+  // Timer
+  useEffect(() => {
+    let timerId;
+    if (timeLeftToNextMatch > 0) {
+      timerId = setInterval(() => {
+        setTimeLeftToNextMatch((prev) => prev - 1000);
+      }, 1000);
+    }
+
+    return () => clearInterval(timerId);
+  }, []);
 
   // LEAGUE
   const league = getLeague();
@@ -161,7 +246,7 @@ export const OverviewBanner = () => {
   }, [team]);
 
   return (
-    <div className='flex flex-col gap-4 justify-between items-center border border-gray rounded-lg shadow-xl p-4 px-8 dark:bg-gray-100 dark:text-gray-900"'>
+    <div className='flex flex-col gap-4 justify-between items-center border border-gray rounded-lg shadow-xl p-4 px-8'>
       {/* TITLE */}
       <div className="w-full">
         <h1 className="text-3xl font-semibold leading-tight text-center text-main mb-2">
@@ -185,20 +270,50 @@ export const OverviewBanner = () => {
 
       {/* GAME */}
       <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
+      { timeLeftToNextMatch > 0 ? (
         <div className="flex flex-wrap justify-center">
           <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
-            1h 52m 15s
+            {formatDateDiffToDate(timeLeftToNextMatch)}
           </h3>
           <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-gray-900 sm:text-xl">
             to the next game!
           </h3>
         </div>
-        <CustomButton
-          label="Insert Lineups"
-          style="outlineMain"
-          className="font-semibold rounded-full !w-3/4 sm:!w-fit"
+       ) : (
+        <div className="flex flex-wrap justify-center">
+          <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
+           Game is in progress!
+          </h3>
+        </div>
+       )}
+        { timeLeftToNextMatch > 0 && (
+            <CustomButton
+            label="Insert Lineups"
+            style="outlineMain"
+            className="font-semibold rounded-full !w-3/4 sm:!w-fit"
         />
+        )}
       </div>
     </div>
   );
 };
+
+function formatDateDiffToDate(millisecDiff: number) {
+    if (millisecDiff <= 0) return "Game is in progress!";
+
+    const totalSeconds = Math.floor(millisecDiff / 1000);
+
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+
+    const parts = [
+        days > 0 ? `${days}d` : "",
+        hours > 0 ? `${hours}h` : "",
+        minutes > 0 ? `${minutes}m` : "",
+        seconds > 0 ? `${seconds}s` : ""
+    ].filter(Boolean); // Remove empty ones 
+
+    return parts.join(" ").trim(); // Union with white spaces 
+}

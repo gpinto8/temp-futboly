@@ -58,18 +58,19 @@ export type CompetitionsCollectionProps = {
       }[]
     | null;
     */
-  matchSchedule: MatchScheduleProps;
+  matchSchedule: MatchScheduleProps[] | null;
 };
 
 export type MatchScheduleProps = {
-        week: number;
-        home: ShortTeamProps;
-        away: ShortTeamProps;
-        result?: {
-          home: number;
-          away: number;
-        };
-      }[] | null;
+  week: number;
+  home: ShortTeamProps;
+  away: ShortTeamProps;
+  date: Date;
+  result?: {
+    home: number;
+    away: number;
+  };
+};
 
 // TEAMS
 export type CompetitionsCollectionTeamsProps = {
@@ -93,6 +94,7 @@ export type CompetitionsCollectionTeamsProps = {
 
 export type ShortTeamProps = {
     name: string;
+    userId: string;
     ownerUsername: string;
     shortId: string;
     logoId: RealTeamLogoIds; 

@@ -152,7 +152,8 @@ export const useSetCompetitions = () => {
             name: mappedTeam.name,
             ownerUsername: mappedTeam.ownerUsername,
             shortId: mappedTeam.shortId,
-            logoId: mappedTeam.logoId
+            logoId: mappedTeam.logoId,
+            userId: mappedTeam.userId,
         }}) as ShortTeamProps[];
         const maxWeek = competitionToBeScheduled.maxWeek;
         const schedule = createRoundRobinSchedule(shortMapTeams, maxWeek);
@@ -174,7 +175,6 @@ export const useSetCompetitions = () => {
         if (!result) console.error("Error while scheduling the matches for the competition");
         const updatedCompetition = await getCompetitionById(competitionId);
         if (!updatedCompetition) return;
-        console.log("dispatching");
         dispatch(competitionActions.setCompetition(updatedCompetition));
     };
 

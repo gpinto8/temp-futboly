@@ -27,7 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     includes: includeQueryParams,
   });
 
-  const url = `${DATA.URL}/${newPath}${queryParameters}`;
+  const url = `${DATA.URL}/${newPath}${queryParameters}${req.query?.filters ? '&filters=' + req.query.filters : ''}`;
   const data = await fetch(url).then((response) => response.json());
   res.status(200).json(data);
 };
