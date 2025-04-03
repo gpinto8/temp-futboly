@@ -12,7 +12,11 @@ type CustomInputDateTimeProps = {
   className?: string;
 };
 
-export const CustomInputDateTime = ({ label, getValue, className }: CustomInputDateTimeProps) => {
+export const CustomInputDateTime = ({
+  label,
+  getValue,
+  className,
+}: CustomInputDateTimeProps) => {
   const breakpoint = useBreakpoint();
   const [value, setValue] = useState<Dayjs | null>(null);
 

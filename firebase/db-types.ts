@@ -93,11 +93,11 @@ export type CompetitionsCollectionTeamsProps = {
 };
 
 export type ShortTeamProps = {
-    name: string;
-    userId: string;
-    ownerUsername: string;
-    shortId: string;
-    logoId: RealTeamLogoIds; 
+  name: string;
+  userId: string;
+  ownerUsername: string;
+  shortId: string;
+  logoId: RealTeamLogoIds;
 };
 
 export type MappedPlayerProps = {

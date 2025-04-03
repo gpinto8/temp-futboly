@@ -187,7 +187,7 @@ export const getMockupMatchesHistory = () => {
         teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
       },
       date: new Date(Date.parse('2024-09-01')),
-      status: "Ended",
+      status: 'Ended',
       score: {
         home: 2,
         away: 1,
@@ -203,7 +203,7 @@ export const getMockupMatchesHistory = () => {
         teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
       },
       date: new Date(Date.parse('2024-09-05')),
-      status: "Upcoming",
+      status: 'Upcoming',
     },
     {
       home: {
@@ -215,7 +215,7 @@ export const getMockupMatchesHistory = () => {
         teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
       },
       date: new Date(Date.parse('2024-09-10')),
-      status: "Ended",
+      status: 'Ended',
       score: {
         home: 2,
         away: 1,
@@ -231,7 +231,7 @@ export const getMockupMatchesHistory = () => {
         teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
       },
       date: new Date(Date.parse('2024-10-01')),
-      status: "Ended",
+      status: 'Ended',
       score: {
         home: 2,
         away: 1,
@@ -247,7 +247,7 @@ export const getMockupMatchesHistory = () => {
         teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
       },
       date: new Date(Date.parse('2024-10-05')),
-      status: "Ended",
+      status: 'Ended',
       score: {
         home: 2,
         away: 1,
@@ -263,7 +263,7 @@ export const getMockupMatchesHistory = () => {
         teamLogo: 'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
       },
       date: new Date(Date.now()),
-      status: "Upcoming",
+      status: 'Upcoming',
     },
   ] as MatchInfoType[];
 };
@@ -271,14 +271,14 @@ export const getMockupMatchesHistory = () => {
 type MinimalMatchTeamType = Pick<MatchTeamType, 'teamName' | 'teamLogo'>;
 
 type MatchInfoType = {
-    home: MinimalMatchTeamType;
-    away: MinimalMatchTeamType;
-    date: Date;
-    status: "Upcoming" | "Ended";
-    score?: {
-        home: number;
-        away: number;
-    };
+  home: MinimalMatchTeamType;
+  away: MinimalMatchTeamType;
+  date: Date;
+  status: 'Upcoming' | 'Ended';
+  score?: {
+    home: number;
+    away: number;
+  };
 };
 
 export const getMockupAllMatchesHistory = () => {

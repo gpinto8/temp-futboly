@@ -9,7 +9,7 @@ export const DATA = {
     'statistics',
     'statistics.details',
     'lineups',
-    'lineups.details'
+    'lineups.details',
   ],
 } as const;
 
@@ -30,7 +30,7 @@ const DEFAULT_INCLUDES: { [key in DataPath]: DataIncludes } = {
     'teams.team',
     'statistics.details',
   ],
-  'football/fixtures/between' : ['lineups.details'],
+  'football/fixtures/between': ['lineups.details'],
 };
 
 export const mapQueryParameters = (queryParametersMap: {
@@ -65,7 +65,7 @@ export const fetchSportmonksApi = async (
     includes: allIncludes,
   });
 
-  const url = `${baseUrl}${queryParameters}${filters ? '&'+filters : ''}`;
+  const url = `${baseUrl}${queryParameters}${filters ? '&' + filters : ''}`;
   const data = await fetch(url).then((response) => response.json());
   return data as SportmonksResponseData;
 };

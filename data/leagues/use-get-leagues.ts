@@ -166,7 +166,7 @@ export const useGetLeagues = () => {
     return !!(currentUserId === currentLeagueOwnerUserId);
   };
 
-  // GET CURRENT SELECTED LEAGUE REF FIREBASE DATA 
+  // GET CURRENT SELECTED LEAGUE REF FIREBASE DATA
   const getCurrentSelectedLeagueRef = () => {
     const currentLeagueId = getLeague().id;
     if (currentLeagueId) return getLeagueRefById(currentLeagueId);

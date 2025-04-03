@@ -99,9 +99,8 @@ export const useGetTeams = () => {
   // GET ALL THE TEAMS FROM ALL THE COMPETITIONS BASED ON CURRENT LEAGUE
   const getAllTeamsFromAllCompetitions = async () => {
     const currentLeagueId = getLeague()?.id;
-    const currentLeagueCompetitions = await getCompetitionsByLeagueId(
-      currentLeagueId,
-    );
+    const currentLeagueCompetitions =
+      await getCompetitionsByLeagueId(currentLeagueId);
 
     const allTeams = currentLeagueCompetitions
       .map((competition) => competition.teams)

@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -22,15 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@/utils": [
-        "./utils/*"
-      ],
-      "@/firebase": [
-        "./firebase/*"
-      ]
+      "@/*": ["./*"],
+      "@/utils": ["./utils/*"],
+      "@/firebase": ["./firebase/*"]
     },
     "strictNullChecks": true
   },
@@ -38,9 +28,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "jest.config.js"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    ".next/types/**/*.ts",
+    "jest.config.js"
+  ],
+  "exclude": ["node_modules"]
 }

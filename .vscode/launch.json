@@ -1,22 +1,25 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "type": "node",
-        "request": "launch",
-        "name": "Debug TypeScript",
-        "program": "${workspaceFolder}/data/competitions/test-matchups.ts",
-        //"runtimeExecutable": "node",
-        "args": [],
-        "runtimeArgs": ["-r", "ts-node/register"],
-        //"runtimeArgs": ["--loader=ts-node/esm"],
-        //"runtimeArgs": ["--loader", "/usr/local/lib/node_modules/ts-node/esm"],
-        //"runtimeArgs": ["-r", "tsconfig-paths/register"],
-        "outputCapture": "std",
-        "skipFiles": ["<node_internals>/**"],
-        "console": "integratedTerminal",
-        "sourceMaps": true,
-        "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-      }
-    ]
-  }
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug TypeScript",
+      "program": "${workspaceFolder}/data/competitions/test-matchups.ts",
+      //"runtimeExecutable": "node",
+      "args": [],
+      "runtimeArgs": ["-r", "ts-node/register"],
+      //"runtimeArgs": ["--loader=ts-node/esm"],
+      //"runtimeArgs": ["--loader", "/usr/local/lib/node_modules/ts-node/esm"],
+      //"runtimeArgs": ["-r", "tsconfig-paths/register"],
+      "outputCapture": "std",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
+    }
+  ]
+}

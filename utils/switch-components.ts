@@ -15,16 +15,20 @@ type ResultProps = {
 
 export const useSwitchComponents = (
   components: ComponentProps[],
-  defaultComponentIndex?: number
+  defaultComponentIndex?: number,
 ): ResultProps => {
-  const newComponents = components.map(component => ({
+  const newComponents = components.map((component) => ({
     ...component,
     id: component.label.toUpperCase(),
   }));
 
-  const [value, setValue] = useState(newComponents?.at(defaultComponentIndex || 0)?.id);
+  const [value, setValue] = useState(
+    newComponents?.at(defaultComponentIndex || 0)?.id,
+  );
 
-  const componentToRender = newComponents?.find(component => component?.id === value)?.Component;
+  const componentToRender = newComponents?.find(
+    (component) => component?.id === value,
+  )?.Component;
   const isCurrentId = (id: string) => value === id;
 
   return {

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authMiddleware, redirectToHome, redirectToLogin } from 'next-firebase-auth-edge';
+import {
+  authMiddleware,
+  redirectToHome,
+  redirectToLogin,
+} from 'next-firebase-auth-edge';
 import { clientConfig, serverConfig } from '@/firebase/config';
 import { APP_ROUTES } from './utils/routes';
 
@@ -26,13 +30,13 @@ export async function middleware(request: NextRequest) {
         request: { headers },
       });
     },
-    handleInvalidToken: async reason => {
+    handleInvalidToken: async (reason) => {
       return redirectToLogin(request, {
         path: APP_ROUTES.SIGNIN,
         publicPaths: PUBLIC_PATHS,
       });
     },
-    handleError: async error => {
+    handleError: async (error) => {
       return redirectToLogin(request, {
         path: APP_ROUTES.SIGNIN,
         publicPaths: PUBLIC_PATHS,

@@ -1,4 +1,7 @@
-import { CompetitionsCollectionProps, MappedCompetitionsProps } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionProps,
+  MappedCompetitionsProps,
+} from '@/firebase/db-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type InitialStateProps = {
@@ -25,8 +28,8 @@ const competitionSlice = createSlice({
       ];
       state.competitions = [...filteredCompetitions, competition];
       if (state.activeCompetition?.id === competition.id) {
-            state.activeCompetition = competition;
-        }
+        state.activeCompetition = competition;
+      }
     },
 
     // Replaces all the (current league?) competitions array with the payload you pass (e.g useful on mounting)

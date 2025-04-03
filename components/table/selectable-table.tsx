@@ -58,7 +58,8 @@ const SelectIcon = function <ColumnKeysProps>({
       return;
     }
 
-    if (singleSelection) setSelectedRows([row]); // Single-selection
+    if (singleSelection)
+      setSelectedRows([row]); // Single-selection
     else setSelectedRows([...(selectedRows || []), row]); // Multi-selection
   };
 
