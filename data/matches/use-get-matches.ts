@@ -4,7 +4,8 @@ import {
 } from '@/firebase/db-types';
 import { useAppSelector } from '@/store/hooks';
 import { useGetTeams } from '../teams/use-get-teams';
-import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
+import { DAY_OF_WEEK_MATCH, DEFAULT_SCORE } from '@/firebase/config';
+import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { CompetitionsCollectionTeamsExtraProps } from '../teams/use-get-teams'; 
 
 export const useGetMatches = () => {
@@ -99,6 +100,35 @@ export const useGetMatches = () => {
         };
     };
 
+    const getNextMatchRatings = async (home: any[], away: any[]) => {
+        const nextPersonalMatch = getUpcomingMatches(1)[0];
+        //if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players
+            const homeTeamPlayersMap = home.reduce((acc: any, player: any) => {
+                if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
+                acc[player.teams[0]?.team_id].push(player.id);
+                return acc;
+            }, {});
+            const awayTeamPlayersMap = away.reduce((acc: any, player: any) => {
+                if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
+                acc[player.teams[0]?.team_id].push(player.id);
+                return acc;
+            }, {});
+            home = await assignTeamRating(homeTeamPlayersMap, home);
+            away = await assignTeamRating(awayTeamPlayersMap, away);
+        //}
+        const homeScore = home.reduce((prev, curr) => prev += curr.score);
+        const awayScore = away.reduce((prev, curr) => prev += curr.score);
+        return {
+            ...nextPersonalMatch,
+            home,
+            away,
+            result: {
+                home: homeScore,
+                away: awayScore
+            }
+        };
+    };
+
     return {
         getPersonalMatches,
         getMatchStatistics,
@@ -106,8 +136,71 @@ export const useGetMatches = () => {
         getUpcomingMatches,
         getTimeToNextMatch,
         getNextMatch,
+        getNextMatchRatings,
     };
 }
+
+async function assignTeamRating(teamPlayersMap: any, originalTeam: any) {
+    Object.keys(teamPlayersMap).forEach(async (team) => {
+        if (team === "undefined") { // For each player that doesn't have a team I will assign the default
+            teamPlayersMap[team].forEach((playerId) => {
+                originalTeam.forEach((originalPlayer) => {
+                    if (originalPlayer.id === playerId) {
+                        originalPlayer.score = DEFAULT_SCORE;
+                    }
+                });
+            });
+        } else {
+            const teamLastResult = await getTeamLatestFixture("2025-03-15", "2025-04-03", Number.parseInt(team));
+            if (teamLastResult !== -1) {    // Means Fixture Found
+                teamPlayersMap[team].forEach((playerId) => {
+                    originalTeam.forEach((originalPlayer) => {
+                        if (originalPlayer.id === playerId) {
+                            const playerLineup = teamLastResult.lineups?.filter((lineupPlayer) => lineupPlayer.player_id === playerId);
+                            const playerScoreDetails = playerLineup[0]?.details?.filter((detail) => detail.type_id === 118);
+                            if (playerScoreDetails) {
+                                const playerScore = playerScoreDetails[0].data?.value;
+                                originalPlayer.score = playerScore ?? DEFAULT_SCORE;
+                            } else {
+                                originalPlayer.score = DEFAULT_SCORE;
+                            }
+                        }
+                    });
+                });
+            } else {    // If match is not found that I assign the default
+                teamPlayersMap[team].forEach((playerId) => {
+                    originalTeam.forEach((originalPlayer) => {
+                        if (originalPlayer.id === playerId) {
+                            originalPlayer.score = DEFAULT_SCORE;
+                        }
+                    });
+                });
+            }
+        }
+    })
+    return originalTeam;
+}
+
+async function getTeamLatestFixture(date1: DateString, date2: DateString, team: number) {
+    if (date1 && !isValidDateString(date1)) {
+        console.error(`date1 non è una data valida: ${date1}`);
+    }
+    if (date2 && !isValidDateString(date2)) {
+        console.error(`date2 non è una data valida: ${date2}`);
+    }
+    const result = await fetchSportmonksApi("football/fixtures/between", `${date1}/${date2}/${team}`, undefined, undefined, "filters=lineupDetailTypes:118");
+    if (result.data && result.data?.length > 0) { // If I have a match I will sort them by date and pick the most recent otherwise return -1
+        return Array.from(result.data).sort((a: any, b: any) => b.starting_at_timestamp - a.starting_at_timestamp)[0] as any;
+    } else {
+        return -1;
+    }
+}
+
+type DateString = `${number}-${number}-${number}`;
+
+const isValidDateString = (date: string): date is DateString => {
+    return /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/.test(date);
+};
 
 export type matchStatistics = {
     totalWins: number;
