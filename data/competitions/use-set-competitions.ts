@@ -175,7 +175,6 @@ export const useSetCompetitions = () => {
         if (!result) console.error("Error while scheduling the matches for the competition");
         const updatedCompetition = await getCompetitionById(competitionId);
         if (!updatedCompetition) return;
-        console.log("dispatching");
         dispatch(competitionActions.setCompetition(updatedCompetition));
     };
 
