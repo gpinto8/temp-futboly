@@ -1,5 +1,6 @@
 import {
   MappedCompetitionsProps,
+  MatchScheduleProps,
   UsersCollectionProps,
 } from '@/firebase/db-types';
 import { useAppSelector } from '@/store/hooks';
@@ -62,6 +63,7 @@ export const useGetMatches = () => {
         if (!matches) return [];
         const personalMatches = getPersonalMatches();
         const upcomingPersonalMatches = personalMatches.filter((match) => !match.result);
+        if (upcomingPersonalMatches.length === 0) return -1;
         if (upcomingPersonalMatches.length > matchesNumber) {
             return upcomingPersonalMatches.slice(0, matchesNumber);
         } else {
@@ -86,7 +88,8 @@ export const useGetMatches = () => {
     };
 
     const getNextMatch = () => {
-        const nextPersonalMatch = getUpcomingMatches(1)[0];
+        const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
+        if (nextPersonalMatch === -1) return -1;
         const homeUserId = nextPersonalMatch.home.userId;
         const awayUserId = nextPersonalMatch.away.userId;
         if (!homeUserId || !awayUserId) return;
@@ -101,7 +104,8 @@ export const useGetMatches = () => {
     };
 
     const getNextMatchRatings = async (home: any[], away: any[]) => {
-        const nextPersonalMatch = getUpcomingMatches(1)[0];
+        const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
+        if (nextPersonalMatch === -1) return -1;
         //if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players
             const homeTeamPlayersMap = home.reduce((acc: any, player: any) => {
                 if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
