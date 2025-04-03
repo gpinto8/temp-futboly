@@ -1,6 +1,6 @@
 export const DATA = {
   URL: 'https://api.sportmonks.com/v3',
-  PATHS: ['football/players'],
+  PATHS: ['football/players', 'football/fixtures/between'],
   INCLUDES: [
     'teams',
     'teams.team',
@@ -8,6 +8,8 @@ export const DATA = {
     'detailedPosition',
     'statistics',
     'statistics.details',
+    'lineups',
+    'lineups.details'
   ],
 } as const;
 
@@ -28,6 +30,7 @@ const DEFAULT_INCLUDES: { [key in DataPath]: DataIncludes } = {
     'teams.team',
     'statistics.details',
   ],
+  'football/fixtures/between' : ['lineups.details'],
 };
 
 export const mapQueryParameters = (queryParametersMap: {
@@ -48,10 +51,11 @@ export const fetchSportmonksApi = async (
   additionalPath?: string,
   page?: number,
   includes?: DataIncludes,
+  filters?: string,
 ) => {
   const baseUrl = '/api/sportmonks';
   const newPage = page || 1;
-  const allIncludes = DEFAULT_INCLUDES['football/players'] || [];
+  const allIncludes = DEFAULT_INCLUDES[path] || [];
   if (includes) allIncludes.concat(includes);
 
   const queryParameters = mapQueryParameters({
@@ -61,7 +65,7 @@ export const fetchSportmonksApi = async (
     includes: allIncludes,
   });
 
-  const url = `${baseUrl}${queryParameters}`;
+  const url = `${baseUrl}${queryParameters}${filters ? '&'+filters : ''}`;
   const data = await fetch(url).then((response) => response.json());
   return data as SportmonksResponseData;
 };
