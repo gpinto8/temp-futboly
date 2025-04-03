@@ -214,8 +214,8 @@ export type matchStatistics = {
 };
 
 export type LiveMatchProps = {
-    home: CompetitionsCollectionTeamsExtraProps;
-    away: CompetitionsCollectionTeamsExtraProps;
+    home: Omit<CompetitionsCollectionTeamsExtraProps, 'players'> & { players: any };
+    away: Omit<CompetitionsCollectionTeamsExtraProps, 'players'> & { players: any };
     date: Date;
     week: number;
     result?: {
