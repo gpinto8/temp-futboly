@@ -106,7 +106,7 @@ export const useGetMatches = () => {
     const getNextMatchRatings = async (home: any[], away: any[]) => {
         const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
         if (nextPersonalMatch === -1) return -1;
-        //if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players
+        // if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players --> Commented because I am checking in the component
             const homeTeamPlayersMap = home.reduce((acc: any, player: any) => {
                 if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
                 acc[player.teams[0]?.team_id].push(player.id);
