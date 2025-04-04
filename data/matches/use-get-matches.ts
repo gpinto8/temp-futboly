@@ -138,7 +138,8 @@ export const useGetMatches = () => {
       acc[player.teams[0]?.team_id].push(player.id);
       return acc;
     }, {});
-    const { previousFriday: startDate, nextFriday: endDate } = getFridaysFromDate(nextPersonalMatch.date);
+    const { previousFriday: startDate, nextFriday: endDate } =
+      getFridaysFromDate(nextPersonalMatch.date);
     home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate);
     away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate);
     //}
@@ -166,9 +167,12 @@ export const useGetMatches = () => {
   };
 };
 
-function getFridaysFromDate(inputDate: Date | string): { previousFriday: DateString, nextFriday: DateString } {
+function getFridaysFromDate(inputDate: Date | string): {
+  previousFriday: DateString;
+  nextFriday: DateString;
+} {
   const date = new Date(inputDate);
-  
+
   // Find previous Friday
   const previousFriday = new Date(date);
   previousFriday.setDate(date.getDate() - ((date.getDay() + 2) % 7));
@@ -178,7 +182,7 @@ function getFridaysFromDate(inputDate: Date | string): { previousFriday: DateStr
   nextFriday.setDate(previousFriday.getDate() + 7);
 
   const formatDate = (d: Date): DateString => {
-    return d.toISOString().split("T")[0] as DateString;
+    return d.toISOString().split('T')[0] as DateString;
   };
 
   return {
@@ -187,7 +191,12 @@ function getFridaysFromDate(inputDate: Date | string): { previousFriday: DateStr
   };
 }
 
-async function assignTeamRating(teamPlayersMap: any, originalTeam: any, startDate: DateString, endDate: DateString) {
+async function assignTeamRating(
+  teamPlayersMap: any,
+  originalTeam: any,
+  startDate: DateString,
+  endDate: DateString,
+) {
   Object.keys(teamPlayersMap).forEach(async (team) => {
     if (team === 'undefined') {
       // For each player that doesn't have a team I will assign the default

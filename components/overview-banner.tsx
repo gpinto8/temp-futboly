@@ -130,14 +130,13 @@ const GameSection = () => {
 
   return nextMatchFound && nextMatchWithRating ? (
     <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
-  ) : (
-    nextMatchMapped ? (
-      <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
+  ) : nextMatchMapped ? (
+    <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
   ) : (
     <CustomCard>
-        <Loader/>
+      <Loader />
     </CustomCard>
-                ))
+  );
 };
 
 const GameSectionCard = ({
