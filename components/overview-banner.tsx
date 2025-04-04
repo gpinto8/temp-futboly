@@ -71,7 +71,7 @@ const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
   const { getPlayersSportmonksData } = useGetTeams();
-  const activeCompetition = useAppSelector((state) => state.activeCompetition);
+  const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
 
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
     useState<number>(getTimeToNextMatch());
