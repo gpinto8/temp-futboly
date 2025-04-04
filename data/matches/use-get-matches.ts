@@ -138,8 +138,9 @@ export const useGetMatches = () => {
       acc[player.teams[0]?.team_id].push(player.id);
       return acc;
     }, {});
-    home = await assignTeamRating(homeTeamPlayersMap, home);
-    away = await assignTeamRating(awayTeamPlayersMap, away);
+    const { previousFriday: startDate, nextFriday: endDate } = getFridaysFromDate(nextPersonalMatch.date);
+    home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate);
+    away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate);
     //}
     const homeScore = home.reduce((prev, curr) => (prev += curr.score));
     const awayScore = away.reduce((prev, curr) => (prev += curr.score));
@@ -165,7 +166,28 @@ export const useGetMatches = () => {
   };
 };
 
-async function assignTeamRating(teamPlayersMap: any, originalTeam: any) {
+function getFridaysFromDate(inputDate: Date | string): { previousFriday: DateString, nextFriday: DateString } {
+  const date = new Date(inputDate);
+  
+  // Find previous Friday
+  const previousFriday = new Date(date);
+  previousFriday.setDate(date.getDate() - ((date.getDay() + 2) % 7));
+
+  // Find next Friday
+  const nextFriday = new Date(previousFriday);
+  nextFriday.setDate(previousFriday.getDate() + 7);
+
+  const formatDate = (d: Date): DateString => {
+    return d.toISOString().split("T")[0] as DateString;
+  };
+
+  return {
+    previousFriday: formatDate(previousFriday),
+    nextFriday: formatDate(nextFriday),
+  };
+}
+
+async function assignTeamRating(teamPlayersMap: any, originalTeam: any, startDate: DateString, endDate: DateString) {
   Object.keys(teamPlayersMap).forEach(async (team) => {
     if (team === 'undefined') {
       // For each player that doesn't have a team I will assign the default
@@ -178,8 +200,8 @@ async function assignTeamRating(teamPlayersMap: any, originalTeam: any) {
       });
     } else {
       const teamLastResult = await getTeamLatestFixture(
-        '2025-03-15',
-        '2025-04-03',
+        startDate,
+        endDate,
         Number.parseInt(team),
       );
       if (teamLastResult !== -1) {
