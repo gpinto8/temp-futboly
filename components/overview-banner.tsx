@@ -11,6 +11,7 @@ import { useGetTeams } from '@/data/teams/use-get-teams';
 import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useAppSelector } from '@/store/hooks';
+import { Loader } from './loader';
 
 type BannerCardProps = {
   title: string;
@@ -70,6 +71,7 @@ const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
   const { getPlayersSportmonksData } = useGetTeams();
+  const competition = useAppSelector((state) => state.competition);
 
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
     useState<number>(getTimeToNextMatch());
@@ -113,7 +115,7 @@ const GameSection = () => {
         setNextMatchWithRating(nextMatchWithRatingRes);
       }
     })();
-  }, []);
+  }, [competition]);
 
   useEffect(() => {
     let timerId: any;
@@ -124,15 +126,18 @@ const GameSection = () => {
     }
 
     return () => clearInterval(timerId);
-  }, []);
+  }, [competition]);
 
   return nextMatchFound && nextMatchWithRating ? (
     <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
   ) : (
-    nextMatchMapped && (
+    nextMatchMapped ? (
       <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
-    )
-  );
+  ) : (
+    <CustomCard>
+        <Loader/>
+    </CustomCard>
+                ))
 };
 
 const GameSectionCard = ({
