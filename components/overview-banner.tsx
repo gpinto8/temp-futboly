@@ -71,7 +71,7 @@ const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
   const { getPlayersSportmonksData } = useGetTeams();
-  const competition = useAppSelector((state) => state.competition);
+  const activeCompetition = useAppSelector((state) => state.activeCompetition);
 
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
     useState<number>(getTimeToNextMatch());
@@ -115,7 +115,7 @@ const GameSection = () => {
         setNextMatchWithRating(nextMatchWithRatingRes);
       }
     })();
-  }, [competition]);
+  }, [activeCompetition]);
 
   useEffect(() => {
     let timerId: any;
@@ -126,7 +126,7 @@ const GameSection = () => {
     }
 
     return () => clearInterval(timerId);
-  }, [competition]);
+  }, [activeCompetition]);
 
   return nextMatchFound && nextMatchWithRating ? (
     <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
