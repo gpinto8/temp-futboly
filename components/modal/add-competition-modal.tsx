@@ -55,15 +55,13 @@ export const AddCompetitionModal = () => {
     const leagueRef = getLeagueRefById(league.id);
 
     if (endDate && name && playersRefs.length && leagueRef) {
-        const todayDate = new Date();
+      const todayDate = new Date();
       const checkDateValidity = todayDate.getTime() < endDate.seconds;
-
-
 
       checkDateValidity &&
         (await addCompetition({
           name,
-        competitionStarted: false,
+          competitionStarted: false,
           endDate,
           specificPosition: false,
           league: leagueRef,

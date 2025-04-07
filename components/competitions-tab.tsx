@@ -20,8 +20,7 @@ export const CompetitionsTab = () => {
       {getCompetitions()?.length ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
           {getCompetitions().map((competition, index) => {
-            const { endDateText, players, name, id, active } =
-              competition;
+            const { endDateText, players, name, id, active } = competition;
             return (
               <Card
                 key={index + id}
@@ -38,10 +37,12 @@ export const CompetitionsTab = () => {
                 <CardContent>
                   <div className="flex flex-col gap-2 items-center">
                     <div className="font-bold">{name}</div>
-                    <div>
-                     End: {endDateText}
-                    </div>
-                    { competition.competitionStarted && (<div><Chip label="Started" color="primary" /></div>)}
+                    <div>End: {endDateText}</div>
+                    {competition.competitionStarted && (
+                      <div>
+                        <Chip label="Started" color="primary" />
+                      </div>
+                    )}
                     <div>{players?.length} users</div>
                     <CustomButton
                       className="mt-2"

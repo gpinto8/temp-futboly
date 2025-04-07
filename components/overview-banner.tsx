@@ -72,8 +72,10 @@ const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
   const { getPlayersSportmonksData } = useGetTeams();
-const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
-const competitionStarted = activeCompetition?.competitionStarted;
+  const activeCompetition = useAppSelector(
+    (state) => state.competition.activeCompetition,
+  );
+  const competitionStarted = activeCompetition?.competitionStarted;
 
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
     useState<number>(getTimeToNextMatch());
@@ -84,9 +86,9 @@ const competitionStarted = activeCompetition?.competitionStarted;
 
   useEffect(() => {
     (async () => {
-    setNextMatchFound(false);
-    setNextMatchMapped(null);
-    setNextMatchWithRating(null);
+      setNextMatchFound(false);
+      setNextMatchMapped(null);
+      setNextMatchWithRating(null);
       const nextMatch = getNextMatch();
       if (!nextMatch || nextMatch === -1) return;
       setNextMatchFound(true);
@@ -133,16 +135,17 @@ const competitionStarted = activeCompetition?.competitionStarted;
     return () => clearInterval(timerId);
   }, []);
 
-    return competitionStarted ? nextMatchFound && nextMatchWithRating ? (
-            <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
-        ) : nextMatchMapped ? (
-                <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
-            ) : (
-                    <CustomCard>
-                        <Loader />
-                    </CustomCard>
-                )
-    : null;
+  return competitionStarted ? (
+    nextMatchFound && nextMatchWithRating ? (
+      <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
+    ) : nextMatchMapped ? (
+      <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
+    ) : (
+      <CustomCard>
+        <Loader />
+      </CustomCard>
+    )
+  ) : null;
 };
 
 const GameSectionCard = ({
@@ -221,7 +224,7 @@ export const OverviewBanner = () => {
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
   const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
-    const { setCurrentTab } = useTabContext();
+  const { setCurrentTab } = useTabContext();
 
   // Timer
   useEffect(() => {
@@ -320,13 +323,15 @@ export const OverviewBanner = () => {
           </div>
         )}
         {timeLeftToNextMatch > 0 && (
-      <CustomButton
-        label={timeLeftToNextMatch > 0 ? "Insert Lineups" : "Check Match"}
-        style={timeLeftToNextMatch > 0 ? "outlineMain" : "main" }
-        handleClick={() => setCurrentTab(timeLeftToNextMatch > 0 ? "Teams" : 'Live Match' )}
-        className="rounded-full mt-3"
-        disableElevation
-      />
+          <CustomButton
+            label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
+            style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
+            handleClick={() =>
+              setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
+            }
+            className="rounded-full mt-3"
+            disableElevation
+          />
         )}
       </div>
     </div>

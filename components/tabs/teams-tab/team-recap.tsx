@@ -50,7 +50,9 @@ export const TeamRecap = ({
         <button className="mt-4 px-4 py-2 bg-gray-200 rounded self-center shadow-md hover:scale-105 flex justify-center items-center gap-2">
           {selectedTeamIndex === index ? 'Hide players' : 'Show players'}
           <CustomImage
-            imageKey={selectedTeamIndex === index ? 'EXPAND_ICON' : 'CLOSE_ICON'}
+            imageKey={
+              selectedTeamIndex === index ? 'EXPAND_ICON' : 'CLOSE_ICON'
+            }
             className="h-4 w-4 ml-2"
           />
         </button>

@@ -91,7 +91,7 @@ export const useGetMatches = () => {
   };
 
   const getTimeToNextMatch = () => {
-    const start = (new Date()).getTime();
+    const start = new Date().getTime();
     return getNextMatchDay() - start;
   };
 
@@ -157,18 +157,18 @@ export const useGetMatches = () => {
 };
 
 export function getNextMatchDay() {
-    const HOURS = 16;
-    const today = new Date(Date.now());
-    const todayDay = today.getUTCDay();
-    const todayHours = today.getUTCHours();
-    if (todayDay === 6 || todayDay === 0) return -1;
-    if (todayDay === DAY_OF_WEEK_MATCH && todayHours >= HOURS) return -1;
-    let daysLeft = DAY_OF_WEEK_MATCH - todayDay;
-    today.setUTCDate(today.getDate() + daysLeft);
-    today.setUTCHours(HOURS);
-    today.setUTCMinutes(0);
-    today.setUTCSeconds(0);
-    return today.getTime();
+  const HOURS = 16;
+  const today = new Date(Date.now());
+  const todayDay = today.getUTCDay();
+  const todayHours = today.getUTCHours();
+  if (todayDay === 6 || todayDay === 0) return -1;
+  if (todayDay === DAY_OF_WEEK_MATCH && todayHours >= HOURS) return -1;
+  let daysLeft = DAY_OF_WEEK_MATCH - todayDay;
+  today.setUTCDate(today.getDate() + daysLeft);
+  today.setUTCHours(HOURS);
+  today.setUTCMinutes(0);
+  today.setUTCSeconds(0);
+  return today.getTime();
 }
 
 function getFridaysFromDate(inputDate: Date | string): {

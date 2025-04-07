@@ -1,7 +1,4 @@
-import {
-  MatchTeamType,
-  PlayerType,
-} from '@/firebase/db-types';
+import { MatchTeamType, PlayerType } from '@/firebase/db-types';
 
 export const getMockupFormation = () => {
   return {

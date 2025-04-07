@@ -37,10 +37,10 @@ export default () => {
         <HomePageLayout>
           <div className="flex flex-col gap-10">
             <Header hideUsername />
-        <TabProvider>
-            <OverviewBanner />
-            <AppTabs />
-        </TabProvider>
+            <TabProvider>
+              <OverviewBanner />
+              <AppTabs />
+            </TabProvider>
             <Footer />
           </div>
         </HomePageLayout>

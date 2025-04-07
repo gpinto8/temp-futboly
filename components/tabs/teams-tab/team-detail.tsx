@@ -1,7 +1,4 @@
-import {
-  MatchTeamType,
-  PlayerType,
-} from '@/firebase/db-types';
+import { MatchTeamType, PlayerType } from '@/firebase/db-types';
 import { CustomCard } from '@/components/custom/custom-card';
 import { CustomImage } from '@/components/custom/custom-image';
 import { CustomField } from '@/components/custom/custom-field';

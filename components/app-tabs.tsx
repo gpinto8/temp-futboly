@@ -14,7 +14,7 @@ import { useTabContext } from '@/utils/tab-context';
 
 export const AppTabs = () => {
   const { isUserLeagueOwner } = useGetLeagues();
-    const { currentTab, setCurrentTab } = useTabContext();
+  const { currentTab, setCurrentTab } = useTabContext();
 
   const [tabComponents, setTabComponents] = useState([
     { label: 'Competitions', Component: () => <CompetitionsTab /> },
@@ -26,7 +26,10 @@ export const AppTabs = () => {
 
   const isUserOwner = isUserLeagueOwner();
   useEffect(() => {
-    if (isUserOwner && tabComponents.filter((el) => el.label === "Admin").length === 0) {
+    if (
+      isUserOwner &&
+      tabComponents.filter((el) => el.label === 'Admin').length === 0
+    ) {
       setTabComponents([
         ...tabComponents,
         { label: 'Admin', Component: () => <AdminTab /> },
@@ -34,17 +37,17 @@ export const AppTabs = () => {
     }
   }, [isUserOwner]);
 
-    const {
-  components,
-  currentComponentId,
-  setComponentId,
-  SwitchedComponent,
-  isCurrentId,
-} = useSwitchComponents(tabComponents, currentTab);
+  const {
+    components,
+    currentComponentId,
+    setComponentId,
+    SwitchedComponent,
+    isCurrentId,
+  } = useSwitchComponents(tabComponents, currentTab);
 
-    useEffect(() => {
-  setCurrentTab(currentComponentId.toUpperCase());  // Forza la maiuscola
-}, [currentComponentId]);
+  useEffect(() => {
+    setCurrentTab(currentComponentId.toUpperCase()); // Forza la maiuscola
+  }, [currentComponentId]);
 
   const theme = createTheme({
     palette: {
@@ -74,7 +77,10 @@ export const AppTabs = () => {
               key={id}
               value={id}
               label={label}
-              onClick={() => {setComponentId(id); setCurrentTab(id);}}
+              onClick={() => {
+                setComponentId(id);
+                setCurrentTab(id);
+              }}
             />
           ))}
         </Tabs>

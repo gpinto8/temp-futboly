@@ -148,9 +148,10 @@ export const useSetCompetitions = () => {
       return;
     }
     const startDate = getNextMatchDay();
-        const maxWeek = Math.ceil(
-            (competitionToBeScheduled.endDate.seconds - Math.ceil(startDate / 1000)) / (60 * 60 * 24 * 7),
-        );
+    const maxWeek = Math.ceil(
+      (competitionToBeScheduled.endDate.seconds - Math.ceil(startDate / 1000)) /
+        (60 * 60 * 24 * 7),
+    );
     const teams = competitionToBeScheduled.teams;
     const mappedTeams = await Promise.all(
       teams.map(async (team) => await mapTeamWithExtraProps(team)),
@@ -187,12 +188,17 @@ export const useSetCompetitions = () => {
     ).replaceField('matchSchedule', finalScheduleWithDate);
     if (!resultSchedule)
       console.error('Error while scheduling the matches for the competition');
-    const resultMaxWeek = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("maxWeek", maxWeek);
-    if (!resultMaxWeek)
-        console.error("Error while updating maxWeek");
-    const resultCompetitionStarted = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("competitionStarted", true);
+    const resultMaxWeek = firestoreMethods(
+      'competitions',
+      competitionToBeScheduled.id as any,
+    ).replaceField('maxWeek', maxWeek);
+    if (!resultMaxWeek) console.error('Error while updating maxWeek');
+    const resultCompetitionStarted = firestoreMethods(
+      'competitions',
+      competitionToBeScheduled.id as any,
+    ).replaceField('competitionStarted', true);
     if (!resultCompetitionStarted)
-        console.error("Error while updating competitionStarted");
+      console.error('Error while updating competitionStarted');
     const updatedCompetition = await getCompetitionById(competitionId);
     if (!updatedCompetition) return;
     dispatch(competitionActions.setCompetition(updatedCompetition));
