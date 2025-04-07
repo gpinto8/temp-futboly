@@ -18,7 +18,6 @@ export const useGetCompetitions = () => {
 
     return {
       ...competition,
-      startDateText: toDate(competition?.startDate),
       endDateText: toDate(competition?.endDate),
       active,
     };
