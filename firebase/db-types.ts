@@ -31,7 +31,8 @@ export type LeaguesCollectionProps = {
 export type CompetitionsCollectionProps = {
   id: string;
   name: string;
-  startDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
+    competitionStarted: Boolean;
+//  startDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
   endDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
   specificPosition: boolean;
   league: DocumentReference<LeaguesCollectionProps>;
