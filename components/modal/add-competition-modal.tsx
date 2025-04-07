@@ -35,7 +35,6 @@ export const AddCompetitionModal = () => {
   const [league, setLeague] = useState<MappedLeaguesProps>();
 
   const [name, setName] = useState<string>();
-  const [startDate, setStartDate] = useState<Timestamp>();
   const [endDate, setEndDate] = useState<Timestamp>();
 
   const columns: ColumnsProps<TeamsColumnsKeysProps> = [
@@ -55,20 +54,21 @@ export const AddCompetitionModal = () => {
       ) as DocumentReference<UsersCollectionProps>[];
     const leagueRef = getLeagueRefById(league.id);
 
-    if (endDate && startDate && name && playersRefs.length && leagueRef) {
-      const checkDateValidity = startDate.seconds < endDate.seconds;
-      const maxWeek = Math.ceil(
-        (endDate.seconds - startDate.seconds) / (60 * 60 * 24 * 7),
-      );
+    if (endDate && name && playersRefs.length && leagueRef) {
+        const todayDate = new Date();
+      const checkDateValidity = todayDate.getTime() < endDate.seconds;
+
+
+
       checkDateValidity &&
         (await addCompetition({
           name,
-          startDate,
+        competitionStarted: false,
           endDate,
           specificPosition: false,
           league: leagueRef,
           currentWeek: 0,
-          maxWeek: maxWeek,
+          maxWeek: 0,
           players: playersRefs ?? [],
           teams: [],
           standings: null,
@@ -86,9 +86,9 @@ export const AddCompetitionModal = () => {
   }, []);
 
   useEffect(() => {
-    const valid = !!(name && selectedRows.length && startDate && endDate);
+    const valid = !!(name && selectedRows.length && endDate);
     setCloseButtonDisabled(!valid);
-  }, [name, selectedRows, startDate, endDate]);
+  }, [name, selectedRows, endDate]);
 
   return (
     <CustomModal
@@ -116,11 +116,6 @@ export const AddCompetitionModal = () => {
                 handleChange={(data) => setName(data.value)}
               />
               <div className="flex gap-4 justify-between">
-                <CustomInputDateTime
-                  className="w-full"
-                  label="Start date"
-                  getValue={(value) => setStartDate(value)}
-                />
                 <CustomInputDateTime
                   className="w-full"
                   label="End date"
