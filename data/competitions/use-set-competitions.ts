@@ -10,6 +10,7 @@ import { competitionActions } from '@/store/slices/competitions';
 import { DocumentReference } from 'firebase/firestore';
 import { useGetCompetitions } from './use-get-competitions';
 import { useGetTeams } from '@/data/teams/use-get-teams';
+import { getNextMatchDay } from '@/data/matches/use-get-matches';
 import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
 
 export const useSetCompetitions = () => {
@@ -146,6 +147,10 @@ export const useSetCompetitions = () => {
       console.error("Can't schedule a competition that is already scheduled");
       return;
     }
+    const startDate = getNextMatchDay();
+        const maxWeek = Math.ceil(
+            (competitionToBeScheduled.endDate.seconds - Math.ceil(startDate / 1000)) / (60 * 60 * 24 * 7),
+        );
     const teams = competitionToBeScheduled.teams;
     const mappedTeams = await Promise.all(
       teams.map(async (team) => await mapTeamWithExtraProps(team)),
@@ -159,19 +164,16 @@ export const useSetCompetitions = () => {
         userId: mappedTeam.userId,
       };
     }) as ShortTeamProps[];
-    const maxWeek = competitionToBeScheduled.maxWeek;
     const schedule = createRoundRobinSchedule(shortMapTeams, maxWeek);
     if (!schedule) return;
     const finalSchedule = mapHomeAway(
       randomizeWeeks(schedule, teams.length, maxWeek),
     );
-    const competitionStart = new Date(
-      competitionToBeScheduled.startDate.toDate(),
-    );
+    const competitionStart = new Date(startDate);
     const dayOfWeekStart = competitionStart.getDay();
     const finalScheduleWithDate = finalSchedule.map((schedule) => {
       const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
-      const startCopy = new Date(competitionToBeScheduled.startDate.toDate());
+      const startCopy = new Date(startDate);
       const totalDaysToAdd = daysToAdd + (schedule.week - 1) * 7;
       startCopy.setDate(totalDaysToAdd);
       return {
@@ -179,12 +181,18 @@ export const useSetCompetitions = () => {
         date: startCopy.getTime(),
       };
     });
-    const result = await firestoreMethods(
+    const resultSchedule = await firestoreMethods(
       'competitions',
       competitionToBeScheduled.id as any,
     ).replaceField('matchSchedule', finalScheduleWithDate);
-    if (!result)
+    if (!resultSchedule)
       console.error('Error while scheduling the matches for the competition');
+    const resultMaxWeek = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("maxWeek", maxWeek);
+    if (!resultMaxWeek)
+        console.error("Error while updating maxWeek");
+    const resultCompetitionStarted = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("competitionStarted", true);
+    if (!resultCompetitionStarted)
+        console.error("Error while updating competitionStarted");
     const updatedCompetition = await getCompetitionById(competitionId);
     if (!updatedCompetition) return;
     dispatch(competitionActions.setCompetition(updatedCompetition));
