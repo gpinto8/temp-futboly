@@ -71,7 +71,8 @@ const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
   const { getPlayersSportmonksData } = useGetTeams();
-  const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
+const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
+const competitionStarted = activeCompetition?.competitionStarted;
 
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
     useState<number>(getTimeToNextMatch());
@@ -82,6 +83,9 @@ const GameSection = () => {
 
   useEffect(() => {
     (async () => {
+    setNextMatchFound(false);
+    setNextMatchMapped(null);
+    setNextMatchWithRating(null);
       const nextMatch = getNextMatch();
       if (!nextMatch || nextMatch === -1) return;
       setNextMatchFound(true);
@@ -126,17 +130,18 @@ const GameSection = () => {
     }
 
     return () => clearInterval(timerId);
-  }, [activeCompetition]);
+  }, []);
 
-  return nextMatchFound && nextMatchWithRating ? (
-    <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
-  ) : nextMatchMapped ? (
-    <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
-  ) : (
-    <CustomCard>
-      <Loader />
-    </CustomCard>
-  );
+    return competitionStarted ? nextMatchFound && nextMatchWithRating ? (
+            <GameSectionCard isLive={true} nextMatch={nextMatchWithRating} />
+        ) : nextMatchMapped ? (
+                <GameSectionCard isLive={false} nextMatch={nextMatchMapped} />
+            ) : (
+                    <CustomCard>
+                        <Loader />
+                    </CustomCard>
+                )
+    : null;
 };
 
 const GameSectionCard = ({
