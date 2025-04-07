@@ -10,6 +10,7 @@ import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { PageLoader } from '@/components/page-loader';
 import { NoLeagues } from '@/components/no-leagues';
 import { useAppSelector } from '@/store/hooks';
+import { TabProvider } from '@/utils/tab-context';
 
 export default () => {
   const user = useAppSelector((state) => state.user);
@@ -36,8 +37,10 @@ export default () => {
         <HomePageLayout>
           <div className="flex flex-col gap-10">
             <Header hideUsername />
+        <TabProvider>
             <OverviewBanner />
             <AppTabs />
+        </TabProvider>
             <Footer />
           </div>
         </HomePageLayout>

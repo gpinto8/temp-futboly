@@ -10,9 +10,11 @@ import { MatchesTab } from './matches-tab';
 import { TeamsTab } from './teams-tab';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useEffect, useState } from 'react';
+import { useTabContext } from '@/utils/tab-context';
 
 export const AppTabs = () => {
   const { isUserLeagueOwner } = useGetLeagues();
+    const { currentTab, setCurrentTab } = useTabContext();
 
   const [tabComponents, setTabComponents] = useState([
     { label: 'Competitions', Component: () => <CompetitionsTab /> },
@@ -24,7 +26,7 @@ export const AppTabs = () => {
 
   const isUserOwner = isUserLeagueOwner();
   useEffect(() => {
-    if (isUserOwner) {
+    if (isUserOwner && tabComponents.filter((el) => el.label === "Admin").length === 0) {
       setTabComponents([
         ...tabComponents,
         { label: 'Admin', Component: () => <AdminTab /> },
@@ -32,13 +34,17 @@ export const AppTabs = () => {
     }
   }, [isUserOwner]);
 
-  const {
-    currentComponentId,
-    components,
-    setComponentId,
-    SwitchedComponent,
-    isCurrentId,
-  } = useSwitchComponents(tabComponents);
+    const {
+  components,
+  currentComponentId,
+  setComponentId,
+  SwitchedComponent,
+  isCurrentId,
+} = useSwitchComponents(tabComponents, currentTab);
+
+    useEffect(() => {
+  setCurrentTab(currentComponentId.toUpperCase());  // Forza la maiuscola
+}, [currentComponentId]);
 
   const theme = createTheme({
     palette: {
@@ -53,7 +59,7 @@ export const AppTabs = () => {
       <div className="flex flex-col gap-8">
         <Tabs
           classes={{ scrollableX: 'md:flex md:justify-center' }}
-          value={currentComponentId}
+          value={currentComponentId.toUpperCase()}
           textColor="primary"
           indicatorColor="primary"
           scrollButtons
@@ -68,7 +74,7 @@ export const AppTabs = () => {
               key={id}
               value={id}
               label={label}
-              onClick={() => setComponentId(id)}
+              onClick={() => {setComponentId(id); setCurrentTab(id);}}
             />
           ))}
         </Tabs>

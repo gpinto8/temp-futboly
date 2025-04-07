@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type ComponentProps = {
   label: string;
@@ -15,27 +15,35 @@ type ResultProps = {
 
 export const useSwitchComponents = (
   components: ComponentProps[],
-  defaultComponentIndex?: number,
+  externalComponentId?: string, // id esterno controllato da context
 ): ResultProps => {
   const newComponents = components.map((component) => ({
     ...component,
     id: component.label.toUpperCase(),
   }));
 
-  const [value, setValue] = useState(
-    newComponents?.at(defaultComponentIndex || 0)?.id,
+  const [internalValue, setInternalValue] = useState(
+    externalComponentId || newComponents[0]?.id,
   );
 
-  const componentToRender = newComponents?.find(
-    (component) => component?.id === value,
+  useEffect(() => {
+    if (externalComponentId && externalComponentId !== internalValue) {
+      setInternalValue(externalComponentId);
+    }
+  }, [externalComponentId]);
+
+  const componentToRender = newComponents.find(
+    (component) => component.id === internalValue,
   )?.Component;
-  const isCurrentId = (id: string) => value === id;
+
+  const isCurrentId = (id: string) => internalValue === id;
 
   return {
     components: newComponents,
-    currentComponentId: value!,
+    currentComponentId: internalValue,
+    setComponentId: setInternalValue,
     SwitchedComponent: componentToRender,
-    setComponentId: setValue,
     isCurrentId,
   };
 };
+

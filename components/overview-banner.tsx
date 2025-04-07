@@ -12,6 +12,7 @@ import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useAppSelector } from '@/store/hooks';
 import { Loader } from './loader';
+import { useTabContext } from '@/utils/tab-context';
 
 type BannerCardProps = {
   title: string;
@@ -204,12 +205,6 @@ const GameSectionCard = ({
           </span>
         </div>
       </div>
-      <CustomButton
-        label="Check Match"
-        style="main"
-        className="rounded-full mt-3"
-        disableElevation
-      />
     </div>
   );
 };
@@ -226,6 +221,7 @@ export const OverviewBanner = () => {
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
   const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
+    const { setCurrentTab } = useTabContext();
 
   // Timer
   useEffect(() => {
@@ -324,11 +320,13 @@ export const OverviewBanner = () => {
           </div>
         )}
         {timeLeftToNextMatch > 0 && (
-          <CustomButton
-            label="Insert Lineups"
-            style="outlineMain"
-            className="font-semibold rounded-full !w-3/4 sm:!w-fit"
-          />
+      <CustomButton
+        label={timeLeftToNextMatch > 0 ? "Insert Lineups" : "Check Match"}
+        style={timeLeftToNextMatch > 0 ? "outlineMain" : "main" }
+        handleClick={() => setCurrentTab(timeLeftToNextMatch > 0 ? "Teams" : 'Live Match' )}
+        className="rounded-full mt-3"
+        disableElevation
+      />
         )}
       </div>
     </div>
