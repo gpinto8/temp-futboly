@@ -1,7 +1,7 @@
 import {
   MatchTeamType,
   PlayerType,
-} from '@/components/tabs/live-match-tab/live-match-section';
+} from '@/firebase/db-types';
 
 export const getMockupFormation = () => {
   return {

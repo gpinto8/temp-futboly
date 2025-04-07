@@ -1,7 +1,7 @@
 import {
   MatchTeamType,
   PlayerType,
-} from '@/components/tabs/live-match-tab/live-match-section';
+} from '@/firebase/db-types';
 import { CustomCard } from '@/components/custom/custom-card';
 import { CustomImage } from '@/components/custom/custom-image';
 import { CustomField } from '@/components/custom/custom-field';

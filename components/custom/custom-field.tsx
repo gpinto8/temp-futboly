@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PlayerType } from '@/components/tabs/live-match-tab/live-match-section';
+import { PlayerType } from '@/firebase/db-types';
 import { CustomImage } from '@/components/custom/custom-image';
 
 type CustomFieldProps = {

@@ -72,6 +72,24 @@ export type MatchScheduleProps = {
   };
 };
 
+export type MatchTeamType = {
+  teamName: string;
+  teamLogo: string;
+  position: number;
+  module: string;
+  players: PlayerType[];
+  bench: PlayerType[];
+};
+
+export type PlayerType = {
+  name: string;
+  image: string;
+  position: string;
+  shirtNumber: number;
+  points: number;
+  isCaptain: boolean;
+};
+
 // TEAMS
 export type CompetitionsCollectionTeamsProps = {
   shortId: string;
