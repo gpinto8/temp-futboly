@@ -1,5 +1,5 @@
 import { IMG_URLS } from '@/utils/img-urls';
-import { Card, CardContent, CardMedia } from '@mui/material';
+import { Chip, Card, CardContent, CardMedia } from '@mui/material';
 import { CustomButton } from './custom/custom-button';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
@@ -20,7 +20,7 @@ export const CompetitionsTab = () => {
       {getCompetitions()?.length ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
           {getCompetitions().map((competition, index) => {
-            const { startDateText, endDateText, players, name, id, active } =
+            const { endDateText, players, name, id, active } =
               competition;
             return (
               <Card
@@ -39,8 +39,9 @@ export const CompetitionsTab = () => {
                   <div className="flex flex-col gap-2 items-center">
                     <div className="font-bold">{name}</div>
                     <div>
-                      {startDateText} - {endDateText}
+                     End: {endDateText}
                     </div>
+                    { competition.competitionStarted && (<div><Chip label="Started" color="primary" /></div>)}
                     <div>{players?.length} users</div>
                     <CustomButton
                       className="mt-2"
