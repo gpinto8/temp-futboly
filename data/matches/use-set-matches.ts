@@ -3,6 +3,7 @@ import {
   UsersCollectionProps,
 } from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { firestoreMethods } from '@/firebase/firestore-methods';
 import { competitionActions } from '@/store/slices/competitions';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -15,7 +16,7 @@ export const useSetMatches = () => {
   const dispatch = useAppDispatch();
   const matches = activeCompetition && activeCompetition.matchSchedule ? [...activeCompetition.matchSchedule] : null;
 
-  const writeGameResults = (gameResults: GameResult[], week: number) => {
+  const writeGameResults = async (gameResults: GameResult[], week: number) => {
     if (!matches) return;
     if (user.id !== leagueOwner) {
         console.error("You can't calculate game results if you are not an admin");
@@ -43,11 +44,17 @@ export const useSetMatches = () => {
         });
     // Now that I have updated the matches of the week I can merge the 2 arrays and sort them by week
     const updatedMatches = [...otherMatches, ...weekMatchesResult].sort((a, b) => a.date - b.date);
+    const scheduleResult = await firestoreMethods("competitions", activeCompetition.id as any).replaceField("matchSchedule", updatedMatches);
+    if (!scheduleResult) {
+        console.error("Updating matches failed");
+    }
+    const currentWeekResult = await firestoreMethods("competitions", activeCompetition.id as any).replaceField("currentWeek", week + 1);
+    if (!currentWeekResult) {
+        console.error("Error while updating currentWeek");
+    }
     const newActiveCompetition = cloneDeep(activeCompetition);
     newActiveCompetition.matchSchedule = updatedMatches;
-        // TODO: ADD WRITING IN DATABASE
-    console.log(newActiveCompetition);
-    // dispatch(competitionActions.setActiveCompetition(newActiveCompetition));
+    dispatch(competitionActions.setActiveCompetition(newActiveCompetition));
   };
 
   return {
