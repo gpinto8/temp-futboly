@@ -121,8 +121,7 @@ export const LiveMatch = () => {
         }
         for (const week of Object.keys(resultsByWeek)) {
             const weekGameResult = resultsByWeek[week];
-            const result = writeGameResults(weekGameResult, Number(week));
-            console.log(result);
+            await writeGameResults(weekGameResult, Number(week));
         }
     }
 
