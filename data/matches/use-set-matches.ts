@@ -13,9 +13,6 @@ export const useSetMatches = () => {
   const dispatch = useAppDispatch();
   const matches = activeCompetition ? activeCompetition.matchSchedule : null;
 
-  // TODO: Check if when I update the active competition also the competitions gets update to avoid
-  // problems when I make some changes and if I switch competition I don't see them until I refresh the page
-
   const writeGameResults = (gameResults: GameResult[], week: number) => {
     if (!matches) return;
     const weekMatches = matches.filter((match) => match.week === week);
