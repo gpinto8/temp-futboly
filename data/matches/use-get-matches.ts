@@ -83,7 +83,7 @@ export const useGetMatches = () => {
     const pastMatchesNotCalculated = () => {
         if (!matches) return;
         const todayTime = (new Date()).getTime();
-        return Boolean([...matches].filter((match) => (new Date(match.date).getTime()) < todayTime).filter((pastMatches) => (!Boolean(pastMatches.result))));
+        return [...matches].filter((match) => (new Date(match.date).getTime()) < todayTime).filter((pastMatches) => (!Boolean(pastMatches.result))).length > 0 ? true : false;
     };
 
   const getUpcomingMatches = (matchesNumber: number) => {
