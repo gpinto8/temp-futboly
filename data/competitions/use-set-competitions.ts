@@ -188,18 +188,18 @@ export const useSetCompetitions = () => {
     ).replaceField('matchSchedule', finalScheduleWithDate);
     if (!resultSchedule)
       console.error('Error while scheduling the matches for the competition');
-    const resultMaxWeek = firestoreMethods(
+    const resultMaxWeek = await firestoreMethods(
       'competitions',
       competitionToBeScheduled.id as any,
     ).replaceField('maxWeek', maxWeek);
     if (!resultMaxWeek) console.error('Error while updating maxWeek');
-    const resultCompetitionStarted = firestoreMethods(
+    const resultCompetitionStarted = await firestoreMethods(
       'competitions',
       competitionToBeScheduled.id as any,
     ).replaceField('competitionStarted', true);
     if (!resultCompetitionStarted)
       console.error('Error while updating competitionStarted');
-    const resultCurrentWeek = firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("currentWeek", 1);
+    const resultCurrentWeek = await firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("currentWeek", 1);
     if (!resultCurrentWeek)
         console.error("Error while updating currentWeek");
     const updatedCompetition = await getCompetitionById(competitionId);
