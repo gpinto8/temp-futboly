@@ -19,7 +19,7 @@ export const LiveMatch = () => {
     pastMatchesNotCalculated,
     getMatchRatings,
   } = useGetMatches();
-    const { writeGameResults } = useSetMatches();
+  const { writeGameResults } = useSetMatches();
   const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
@@ -78,52 +78,52 @@ export const LiveMatch = () => {
     return () => clearInterval(timerId);
   }, []);
 
-    async function calculateMatches() {
-        if (!nextMatchMapped) {
-            console.error("Can't calculate score without mapped players");
-            return;
-        }
-        const allTeams = await getAllTeams();
-        if (!allTeams) return;
-        const teamPlayersMap: Map<String, any[]> = new Map();
-        await Promise.all(
-            allTeams.map(async (team) => {
-                const players = await getPlayersSportmonksData(
-                    team.players.map((player) => player.sportmonksId)
-                );
-                teamPlayersMap.set(team.shortId, players);
-            })
-        );
-        const pastMatchesWithoutScore = getAllPastMatches();
-        const resultsByWeek: Record<string, GameResult[]> = {};
-        for (const week of Object.keys(pastMatchesWithoutScore)) {
-            const weekMatches = pastMatchesWithoutScore[week];
-            const weekResult: GameResult[] = [];
-            for (const match of weekMatches) {
-                const matchResult = await getMatchRatings(
-                teamPlayersMap.get(match.home.shortId) as any,
-                teamPlayersMap.get(match.away.shortId) as any,
-                match
-                );
-                const gameResult: GameResult = {
-                    home: {
-                        shortId: match.home.shortId,
-                        result: matchResult.result.home
-                    },
-                    away: {
-                        shortId: match.away.shortId,
-                        result: matchResult.result.away
-                    }
-                };
-                weekResult.push(gameResult);
-            }
-            resultsByWeek[week] = weekResult;
-        }
-        for (const week of Object.keys(resultsByWeek)) {
-            const weekGameResult = resultsByWeek[week];
-            await writeGameResults(weekGameResult, Number(week));
-        }
+  async function calculateMatches() {
+    if (!nextMatchMapped) {
+      console.error("Can't calculate score without mapped players");
+      return;
     }
+    const allTeams = await getAllTeams();
+    if (!allTeams) return;
+    const teamPlayersMap: Map<String, any[]> = new Map();
+    await Promise.all(
+      allTeams.map(async (team) => {
+        const players = await getPlayersSportmonksData(
+          team.players.map((player) => player.sportmonksId),
+        );
+        teamPlayersMap.set(team.shortId, players);
+      }),
+    );
+    const pastMatchesWithoutScore = getAllPastMatches();
+    const resultsByWeek: Record<string, GameResult[]> = {};
+    for (const week of Object.keys(pastMatchesWithoutScore)) {
+      const weekMatches = pastMatchesWithoutScore[week];
+      const weekResult: GameResult[] = [];
+      for (const match of weekMatches) {
+        const matchResult = await getMatchRatings(
+          teamPlayersMap.get(match.home.shortId) as any,
+          teamPlayersMap.get(match.away.shortId) as any,
+          match,
+        );
+        const gameResult: GameResult = {
+          home: {
+            shortId: match.home.shortId,
+            result: matchResult.result.home,
+          },
+          away: {
+            shortId: match.away.shortId,
+            result: matchResult.result.away,
+          },
+        };
+        weekResult.push(gameResult);
+      }
+      resultsByWeek[week] = weekResult;
+    }
+    for (const week of Object.keys(resultsByWeek)) {
+      const weekGameResult = resultsByWeek[week];
+      await writeGameResults(weekGameResult, Number(week));
+    }
+  }
 
   return nextMatchFound ? (
     <div>
@@ -132,17 +132,21 @@ export const LiveMatch = () => {
           <h1 className="font-bold text-4xl text-main text-nowrap">
             Current Live Match
           </h1>
-                    {/*
+          {/*
             I comment it because ATM to refresh you can just swith tabs and it will load again,
             later we will cache the result (maybe) and there a refresh is going to be needed
           <CustomButton
             label="Refresh match"
             className="rounded-full py-1 px-2 max-w-36"
           />
-          */ }
-        { pastMatchesNotCalculated() && (
-            <CustomButton label="Calculate Results" className="rounded-full py-1 px-2 max-w-40" handleClick={calculateMatches}/>
-        )}
+          */}
+          {pastMatchesNotCalculated() && (
+            <CustomButton
+              label="Calculate Results"
+              className="rounded-full py-1 px-2 max-w-40"
+              handleClick={calculateMatches}
+            />
+          )}
         </div>
         {nextMatchWithRating ? (
           <LiveMatchSection nextMatch={nextMatchWithRating} />

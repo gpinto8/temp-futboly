@@ -199,9 +199,11 @@ export const useSetCompetitions = () => {
     ).replaceField('competitionStarted', true);
     if (!resultCompetitionStarted)
       console.error('Error while updating competitionStarted');
-    const resultCurrentWeek = await firestoreMethods("competitions", competitionToBeScheduled.id as any).replaceField("currentWeek", 1);
-    if (!resultCurrentWeek)
-        console.error("Error while updating currentWeek");
+    const resultCurrentWeek = await firestoreMethods(
+      'competitions',
+      competitionToBeScheduled.id as any,
+    ).replaceField('currentWeek', 1);
+    if (!resultCurrentWeek) console.error('Error while updating currentWeek');
     const updatedCompetition = await getCompetitionById(competitionId);
     if (!updatedCompetition) return;
     dispatch(competitionActions.setCompetition(updatedCompetition));
