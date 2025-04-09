@@ -45,6 +45,7 @@ export const AddEditTeamModal = ({
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
+  const [isEndReached, setIsEndReached] = useState<Boolean>(false);
 
   const [logoId, setLogoId] = useState(data?.logoId);
   const [name, setName] = useState<HandleChangeParamProps>({
@@ -200,47 +201,22 @@ export const AddEditTeamModal = ({
         `football/players/search`,
         userValue,
       );
-
       const playersData: any[] = response.data;
 
       console.log({ userValue, playersData });
 
-      // if (inputData.value.trim()) {
-      //   // setPlayers([data.data]);
-      //   // setRows([...players]);
       if (playersData) {
         const mappedPlayers = playersData.map((player, i) =>
           mapPlayerRow(player, i),
         );
 
         console.log({ mappedPlayers });
-        // const mapPlayers = mapPlayerRow(data, 1);
+
         setRows(mappedPlayers);
       }
-      //   console.log({ data });
-      // } else {
-      //   getPlayers();
-      // }
+    } else {
+      getPlayers();
     }
-
-    // setRows([
-    //   {
-    //     ID: index + 1,
-    //     PLAYER: (
-    //       <div className="flex gap-1">
-    //         <Avatar
-    //           src={data.image_path}
-    //           alt={display_name}
-    //           sx={{ width: 24, height: 24 }}
-    //         />
-    //         <span className="line-clamp-1">{display_name}</span>
-    //       </div>
-    //     ),
-    //     POSITION: detailedPosition?.name || position?.name,
-    //     RATING: rating,
-    //     CLUB: club,
-    //   },
-    // ]);
   };
 
   return (
