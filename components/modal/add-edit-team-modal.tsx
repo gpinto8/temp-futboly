@@ -194,28 +194,38 @@ export const AddEditTeamModal = ({
     }
   };
 
-  const handlePlayerSearch = async (inputData: any) => {
-    // const data =
-    //   await fetchSportmonksApiClient<PlayersGetBySearchQueryParamProps>(
-    //     'PLAYERS/GET-BY-SEARCH',
-    //     { name: `${inputData.value}` },
-    //   );
-    // console.log(data);
-    const data = await fetchSportmonksApiClient<PlayersGetAllQueryParamProps>(
-      'PLAYERS/GET-ALL',
-    );
+  const handlePlayerSearch = async (userValue?: string) => {
+    if (userValue) {
+      const response = await fetchSportmonksApi(
+        `football/players/search`,
+        userValue,
+      );
 
-    if (inputData.value) {
-      setPlayers([players[0]]);
-      setRows(players);
-    } else {
-      setPlayers(data.data);
-      setRows(players);
+      const playersData: any[] = response.data;
+
+      console.log({ userValue, playersData });
+
+      // if (inputData.value.trim()) {
+      //   // setPlayers([data.data]);
+      //   // setRows([...players]);
+      if (playersData) {
+        const mappedPlayers = playersData.map((player, i) =>
+          mapPlayerRow(player, i),
+        );
+
+        console.log({ mappedPlayers });
+        // const mapPlayers = mapPlayerRow(data, 1);
+        setRows(mappedPlayers);
+      }
+      //   console.log({ data });
+      // } else {
+      //   getPlayers();
+      // }
     }
 
     // setRows([
     //   {
-    //     ID: data.index + 1,
+    //     ID: index + 1,
     //     PLAYER: (
     //       <div className="flex gap-1">
     //         <Avatar
@@ -278,7 +288,10 @@ export const AddEditTeamModal = ({
             <div className="flex items-center justify-between">
               <div className="font-bold">Choose players:</div>
               <div className="w-90">
-                <CustomInput label="Search" handleChange={handlePlayerSearch} />
+                <CustomInput
+                  label="Search"
+                  handleChange={(data) => handlePlayerSearch(data.value)}
+                />
               </div>
             </div>
             {isEdit ? (
@@ -288,6 +301,7 @@ export const AddEditTeamModal = ({
                 onEndReached={handleEndReached}
                 initialSelectedRows={initialSelectedPlayers}
                 getSelectedRows={handleSelectedRows}
+                // avoidEndReload
               />
             ) : (
               <div className="my-2 mx-auto ">
