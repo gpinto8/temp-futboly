@@ -75,7 +75,7 @@ export const AllTeams = () => {
               <span className="line-clamp-1">{player.display_name}</span>
             </div>
           ),
-          POSITION: player.position.name,
+          POSITION: player?.position?.name,
           RATING: getPlayerRating(player.statistics),
         }),
       );

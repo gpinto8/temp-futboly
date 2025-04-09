@@ -61,11 +61,7 @@ export const useGetMatches = () => {
   const getAllMatches = () => {
     if (!matches) return [];
     const matchesClone = [...matches];
-    let grouped = matchesClone.reduce((acc, curr) => {
-      acc[curr.week] = acc[curr.week] || [];
-      acc[curr.week].push(curr);
-      return acc;
-    }, {} as any);
+    let grouped = groupMatchesByWeek(matchesClone);
     const keys = Object.keys(grouped);
     const groupedMatches = keys.map((key) => {
       return {
@@ -74,6 +70,26 @@ export const useGetMatches = () => {
       };
     });
     return groupedMatches;
+  };
+
+  const getAllPastMatches = () => {
+    if (!matches) return;
+    if (!pastMatchesNotCalculated) return;
+    const todayTime = new Date().getTime();
+    const pastMatches = [...matches]
+      .filter((match) => new Date(match.date).getTime() < todayTime)
+      .filter((pastMatches) => !Boolean(pastMatches.result));
+    return groupMatchesByWeek(pastMatches);
+  };
+
+  const pastMatchesNotCalculated = () => {
+    if (!matches) return;
+    const todayTime = new Date().getTime();
+    return [...matches]
+      .filter((match) => new Date(match.date).getTime() < todayTime)
+      .filter((pastMatches) => !Boolean(pastMatches.result)).length > 0
+      ? true
+      : false;
   };
 
   const getUpcomingMatches = (matchesNumber: number) => {
@@ -117,6 +133,14 @@ export const useGetMatches = () => {
     if (!nextPersonalMatch) return;
     if (nextPersonalMatch === -1) return -1;
     // if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players --> Commented because I am checking in the component
+    return getMatchRatings(home, away, nextPersonalMatch);
+  };
+
+  const getMatchRatings = async (
+    home: any[],
+    away: any[],
+    match: MatchScheduleProps,
+  ) => {
     const homeTeamPlayersMap = home.reduce((acc: any, player: any) => {
       if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
       acc[player.teams[0]?.team_id].push(player.id);
@@ -128,14 +152,20 @@ export const useGetMatches = () => {
       return acc;
     }, {});
     const { previousFriday: startDate, nextFriday: endDate } =
-      getFridaysFromDate(nextPersonalMatch.date);
+      getFridaysFromDate(match.date);
     home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate);
     away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate);
     //}
-    const homeScore = home.reduce((prev, curr) => (prev += curr.score));
-    const awayScore = away.reduce((prev, curr) => (prev += curr.score));
+    const homeScore = home.reduce(
+      (prev, curr) => prev + Number(curr.score || 0),
+      0,
+    );
+    const awayScore = away.reduce(
+      (prev, curr) => prev + Number(curr.score || 0),
+      0,
+    );
     return {
-      ...nextPersonalMatch,
+      ...match,
       home,
       away,
       result: {
@@ -153,6 +183,9 @@ export const useGetMatches = () => {
     getTimeToNextMatch,
     getNextMatch,
     getNextMatchRatings,
+    getAllPastMatches,
+    pastMatchesNotCalculated,
+    getMatchRatings,
   };
 };
 
@@ -169,6 +202,14 @@ export function getNextMatchDay() {
   today.setUTCMinutes(0);
   today.setUTCSeconds(0);
   return today.getTime();
+}
+
+function groupMatchesByWeek(schedule) {
+  return schedule.reduce((acc, curr) => {
+    acc[curr.week] = acc[curr.week] || [];
+    acc[curr.week].push(curr);
+    return acc;
+  }, {} as any);
 }
 
 function getFridaysFromDate(inputDate: Date | string): {
