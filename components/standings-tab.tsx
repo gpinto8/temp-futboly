@@ -6,9 +6,11 @@ import { CustomImage } from './custom/custom-image';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
 import { useAppSelector } from '@/store/hooks';
+import { getRealTeamLogoById } from '@/utils/real-team-logos';
 
 type ColumnKeysProps =
   | 'INDEX'
+    | "TEAM_LOGO"
   | 'TEAM'
   | 'WINS'
   | 'DRAWS'
@@ -39,6 +41,17 @@ const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
   );
 };
 
+const getTeamLogo = (teamLogoId) => {
+    const teamLogo = getRealTeamLogoById(teamLogoId);
+    return ( 
+        <CustomImage
+            forceSrc={teamLogo?.src}
+            forcedAlt={teamLogo?.alt}
+            className="h-8 w-8"
+        />
+    );
+};
+
 export const StandingsTab = () => {
     const user = useAppSelector((state) => state.user);
     const leagueOwner = useAppSelector(state => state.league.owner);
@@ -52,13 +65,13 @@ export const StandingsTab = () => {
     useEffect(() => {
         (async () => {
         const _standings = await getActiveCompetitionStandings();    
-        console.log(_standings);
         setStandings(_standings);
         })();
     }, []);
 
     const rows: RowsProps<ColumnKeysProps> = standings?.map((team, index) => { return {
         INDEX: index + 1,
+        TEAM_LOGO: getTeamLogo(team.logoId),
         TEAM: team.name,
         WINS: team.results.W,
         DRAWS: team.results.D,
@@ -69,6 +82,7 @@ export const StandingsTab = () => {
 
   const columns: ColumnsProps<ColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },
+    { label: "", id: "TEAM_LOGO", minWidth: 40 },
     { label: 'Team', id: 'TEAM', minWidth: 100 },
     {
       label: breakpoint === 'sm' ? 'W' : 'Wins',
