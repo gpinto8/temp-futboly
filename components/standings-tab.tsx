@@ -88,7 +88,7 @@ export const StandingsTab = () => {
 
   const columns: ColumnsProps<ColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },
-    { label: '', id: 'TEAM_LOGO', minWidth: 40 },
+    { label: 'Logo', id: 'TEAM_LOGO', minWidth: 40 },
     { label: 'Team', id: 'TEAM', minWidth: 100 },
     {
       label: breakpoint === 'sm' ? 'W' : 'Wins',
