@@ -45,7 +45,7 @@ export const AddEditTeamModal = ({
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
-  const [isEndReached, setIsEndReached] = useState<Boolean>(false);
+  // const [isEndReached, setIsEndReached] = useState<Boolean>(false);
 
   const [logoId, setLogoId] = useState(data?.logoId);
   const [name, setName] = useState<HandleChangeParamProps>({
