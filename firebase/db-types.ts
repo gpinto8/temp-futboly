@@ -101,6 +101,7 @@ export type CompetitionsCollectionTeamsProps = {
   coach: string;
   logoId: RealTeamLogoIds; // TODO: To change in the future
   formation?: AllPosibleFormationsProps;
+    results?: StandingsResults;
   players: {
     sportmonksId: number;
     // actualPosition: {
@@ -109,6 +110,15 @@ export type CompetitionsCollectionTeamsProps = {
     // };
     position?: string; // Look at the "mapFormationPosition" function for the mapping format
   }[];
+};
+
+export type GameStandingsResult = "W" | "D" | "L";
+
+export type StandingsResults = {
+    lastMatches: GameStandingsResult[];
+    W: number;
+    L: number;
+    D: number;
 };
 
 export type ShortTeamProps = {
