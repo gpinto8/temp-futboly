@@ -104,12 +104,8 @@ export type CompetitionsCollectionTeamsProps = {
   results?: StandingsResults;
   players: {
     sportmonksId: number;
-    // actualPosition: {
-    //   isBenched: Boolean;
-    //   slot: number;
-    // };
     position?: string; // Look at the "mapFormationPosition" function for the mapping format
-  }[];
+  }[]; // Only 11 players per team (for now)
 };
 
 export type GameStandingsResult = 'W' | 'D' | 'L';

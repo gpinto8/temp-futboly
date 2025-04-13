@@ -121,7 +121,9 @@ export const AddEditTeamModal = ({
 
   // Disable the inputs if they are not valid
   useEffect(() => {
-    const allowPlayersCondition = isEdit ? selectedPlayerIds?.length : true;
+    const allowPlayersCondition = isEdit
+      ? selectedPlayerIds?.length === 11
+      : true;
     const shouldDisable = !!(
       logoId &&
       name?.value &&
@@ -184,7 +186,9 @@ export const AddEditTeamModal = ({
   };
 
   const handleSetTeam = () => {
-    const allowPlayersCondition = isEdit ? selectedPlayerIds?.length : true;
+    const allowPlayersCondition = isEdit
+      ? selectedPlayerIds?.length === 11
+      : true;
     if (logoId && name?.isValid && coach?.isValid && allowPlayersCondition) {
       onSetData?.({
         logoId,
@@ -237,7 +241,10 @@ export const AddEditTeamModal = ({
           </div>
           {/* PLAYERS */}
           <div className="flex flex-col gap-2 h-full">
-            <div className="font-bold">Choose players:</div>
+            <div className="font-bold">
+              Choose players:{' '}
+              {isEdit && <span className="text-sm font-normal">(only 11)</span>}
+            </div>
             {isEdit ? (
               <SelectableTable<PlayersColumnKeysProps>
                 columns={columns}
@@ -248,7 +255,7 @@ export const AddEditTeamModal = ({
               />
             ) : (
               <EmptyMessage
-                classNameDescription="text-black"
+                classNameDescription="!text-black"
                 description="Ask your admin to add your players."
                 noSpaces
               />

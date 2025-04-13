@@ -164,7 +164,7 @@ export function CustomTable<ColumnKeysProps>({
         />
       ) : (
         <div className="flex justify-center items-center pt-10">
-          There are not data to display.
+          There are no data to display.
         </div>
       )}
     </Paper>
