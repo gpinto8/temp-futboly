@@ -4,39 +4,53 @@ import {
 } from '@/components/custom/custom-button';
 
 type EmptyMessageProps = {
-  title: string | JSX.Element;
+  title?: string | JSX.Element;
   description?: string | JSX.Element;
   ctaButton?: {
     label: CustomButtonProps['label'];
     handleClick: CustomButtonProps['handleClick'];
   };
+  noSpaces?: boolean;
+  classNameDescription?: string;
 };
 
 export const EmptyMessage = ({
   title,
   description,
   ctaButton,
-}: EmptyMessageProps) => (
-  <section className="bg-white w-full">
-    <div className="container flex flex-col items-center px-4 py-12 mx-auto text-center md:max-w-[70%]">
-      <h2 className="max-w-2xl mx-auto text-2xl font-semibold tracking-tight text-gray-800 xl:text-3xl">
-        {title}
-      </h2>
+  noSpaces,
+  classNameDescription,
+}: EmptyMessageProps) => {
+  const empty = noSpaces ? 'p-0 m-0' : 'px-4 py-12';
 
-      {description && (
-        <p className="max-w-4xl mt-6 text-center text-gray-500">
-          {description}
-        </p>
-      )}
+  return (
+    <section className="bg-white w-full">
+      <div
+        className={`container flex flex-col gap-6 items-center mx-auto text-center md:max-w-[70%] ${empty}`}
+      >
+        {title && (
+          <h2 className="max-w-2xl mx-auto text-2xl font-semibold tracking-tight text-gray-800 xl:text-3xl">
+            {title}
+          </h2>
+        )}
 
-      {ctaButton && (
-        <div className="inline-flex w-full mt-6 sm:w-auto">
-          <CustomButton
-            label={ctaButton.label}
-            handleClick={ctaButton.handleClick}
-          />
-        </div>
-      )}
-    </div>
-  </section>
-);
+        {description && (
+          <p
+            className={`max-w-4xl text-center text-gray-500 ${classNameDescription}`}
+          >
+            {description}
+          </p>
+        )}
+
+        {ctaButton && (
+          <div className="inline-flex w-full sm:w-auto">
+            <CustomButton
+              label={ctaButton.label}
+              handleClick={ctaButton.handleClick}
+            />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};

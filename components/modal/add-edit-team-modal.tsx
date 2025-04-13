@@ -14,6 +14,7 @@ import { TeamLogoPicker } from '../team-logo-picker';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { RealTeamLogoIds } from '@/utils/real-team-logos';
+import { EmptyMessage } from '../empty-message';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -246,10 +247,11 @@ export const AddEditTeamModal = ({
                 getSelectedRows={handleSelectedRows}
               />
             ) : (
-              <div className="my-2 mx-auto ">
-                Once you create the team you have to ask your admin to add the
-                players.
-              </div>
+              <EmptyMessage
+                classNameDescription="text-black"
+                description="Ask your admin to add your players."
+                noSpaces
+              />
             )}
           </div>
         </div>

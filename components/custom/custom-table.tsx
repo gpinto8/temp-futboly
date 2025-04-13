@@ -148,19 +148,25 @@ export function CustomTable<ColumnKeysProps>({
       }}
       elevation={newElevation}
     >
-      <Virtuoso
-        data={rows}
-        className={`w-full h-full inner-table ${className}`}
-        style={{
-          height: newHeight,
-          width: newWidth,
-          maxHeight: newMaxHeight,
-          maxWidth: newMaxWidth,
-        }}
-        itemContent={getRows}
-        endReached={endReached}
-        components={{ Footer, Header }}
-      />
+      {rows?.length ? (
+        <Virtuoso
+          data={rows}
+          className={`w-full h-full inner-table ${className}`}
+          style={{
+            height: newHeight,
+            width: newWidth,
+            maxHeight: newMaxHeight,
+            maxWidth: newMaxWidth,
+          }}
+          itemContent={getRows}
+          endReached={endReached}
+          components={{ Footer, Header }}
+        />
+      ) : (
+        <div className="flex justify-center items-center pt-10">
+          There are not data to display.
+        </div>
+      )}
     </Paper>
   );
 }
