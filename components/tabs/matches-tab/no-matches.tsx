@@ -48,7 +48,7 @@ export const NoMatches = () => {
             In order to generate the matches, you need to select a competition,
             have its teams even and some players in it.
             <span>
-              <strong>Attention:</strong> Once you start a competition you
+              <strong>Attention:</strong> Once you generate the matches, you
               cannot add any more teams or players.
             </span>
           </div>
