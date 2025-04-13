@@ -9,6 +9,7 @@ type EmptyMessageProps = {
   ctaButton?: {
     label: CustomButtonProps['label'];
     handleClick: CustomButtonProps['handleClick'];
+    disabled?: CustomButtonProps['disabled'];
   };
   noSpaces?: boolean;
   classNameDescription?: string;
@@ -47,6 +48,7 @@ export const EmptyMessage = ({
             <CustomButton
               label={ctaButton.label}
               handleClick={ctaButton.handleClick}
+              disabled={ctaButton?.disabled}
             />
           </div>
         )}
