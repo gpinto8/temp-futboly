@@ -1,6 +1,6 @@
-import { CustomButton } from '@/components/custom/custom-button';
 import { useAppSelector } from '@/store/hooks';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
+import { EmptyMessage } from '@/components/empty-message';
 
 export const NoMatches = () => {
   const user = useAppSelector((state) => state.user);
@@ -24,30 +24,20 @@ export const NoMatches = () => {
   };
 
   return (
-    <div>
-      <section className="bg-white">
-        <div className="container flex flex-col items-center px-4 py-12 mx-auto text-center">
-          <h2 className="max-w-2xl mx-auto text-2xl font-semibold tracking-tight text-gray-800 xl:text-3xl">
-            Looks like there are no matches yet...
-          </h2>
-
-          <p className="max-w-4xl mt-6 text-center text-gray-500">
-            {textForNoMatches}
-            <br />
-            <strong>Attention:</strong> Once you start a competition you cannot
-            add any more Teams or Players.
-          </p>
-
-          {leagueAdmin === user.id && (
-            <div className="inline-flex w-full mt-6 sm:w-auto">
-              <CustomButton
-                label="Generate Match Schedule"
-                handleClick={generateMatchSchedule}
-              />
-            </div>
-          )}
-        </div>
-      </section>
-    </div>
+    <EmptyMessage
+      title="Looks like there are no matches yet ... 🤨"
+      description={
+        <>
+          {textForNoMatches}
+          <br />
+          <strong>Attention:</strong> Once you start a competition you cannot
+          add any more Teams or Players.
+        </>
+      }
+      ctaButton={{
+        label: 'Generate Match Schedule',
+        handleClick: generateMatchSchedule,
+      }}
+    />
   );
 };

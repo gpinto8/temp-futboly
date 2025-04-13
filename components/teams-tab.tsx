@@ -11,6 +11,7 @@ import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { getShortBase64Id } from '@/utils/id';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
+import { EmptyMessage } from './empty-message';
 
 export const TeamsTab = () => {
   const { getCurrentUserRef, getUser } = useGetUsers();
@@ -58,20 +59,26 @@ export const TeamsTab = () => {
   return (
     <>
       {!getActiveCompetition() ? (
-        <div className="flex flex-col gap-2 justify-center items-center my-10">
-          Select a competition first.
-        </div>
+        <EmptyMessage
+          title="Select a competition to create a team! 💪"
+          description='You gotta first select any competition from the "Competitions" tab to create a team on it.'
+        />
       ) : !team ? (
-        <div className="flex flex-col gap-4 justify-center items-center my-10">
-          <div>
-            You haven't created your team yet for the "
-            <strong>{getActiveCompetition()?.name}</strong>" competition.
-          </div>
-          <AddEditTeamModal
-            data={{ owner: getUser()?.username }}
-            onSetData={handleCreateTeam}
-          />
-        </div>
+        <EmptyMessage
+          title="Create your team! 😎"
+          description={
+            <div className="flex flex-col gap-4 items-center">
+              <div>
+                Start your journey by creating your team for the{' '}
+                <strong>"{getActiveCompetition()?.name}"</strong> competition.
+              </div>
+              <AddEditTeamModal
+                data={{ owner: getUser()?.username }}
+                onSetData={handleCreateTeam}
+              />
+            </div>
+          }
+        />
       ) : (
         <div className="flex flex-col gap-4 justify-center items-center">
           <YourTeam team={team} />

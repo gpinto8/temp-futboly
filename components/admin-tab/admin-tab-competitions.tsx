@@ -2,6 +2,7 @@ import { CustomButton } from '../custom/custom-button';
 import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import { EmptyMessage } from '../empty-message';
 
 type AdminColumnKeysProps =
   | 'INDEX'
@@ -43,7 +44,7 @@ export const AdminTabCompetitions = () => {
   ];
 
   return (
-    <div className="h-[400px] flex justify-center">
+    <div className="h-[400px] flex justify-center w-full">
       {getCompetitions()?.length ? (
         <CustomTable<AdminColumnKeysProps>
           rows={rows}
@@ -52,7 +53,7 @@ export const AdminTabCompetitions = () => {
           elevation={0}
         />
       ) : (
-        <div>There are no competitions created yet.</div>
+        <EmptyMessage title="There are no competitions created yet." />
       )}
     </div>
   );

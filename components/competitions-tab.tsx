@@ -8,6 +8,7 @@ import {
   UsersCollectionProps,
   MappedCompetitionsProps,
 } from '@/firebase/db-types';
+import { EmptyMessage } from './empty-message';
 
 export const CompetitionsTab = () => {
   const user: UsersCollectionProps = useAppSelector((state) => state.user);
@@ -59,9 +60,10 @@ export const CompetitionsTab = () => {
           })}
         </div>
       ) : (
-        <div className="flex justify-center items-center my-10">
-          There are no competitions created yet.
-        </div>
+        <EmptyMessage
+          title="There are no competitions created yet 🙁"
+          description="Ask your admin to create a competition and select it to start!"
+        />
       )}
     </>
   );

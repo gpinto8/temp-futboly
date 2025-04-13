@@ -7,6 +7,7 @@ import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
 import { useAppSelector } from '@/store/hooks';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { EmptyMessage } from './empty-message';
 
 type ColumnKeysProps =
   | 'INDEX'
@@ -66,6 +67,7 @@ export const StandingsTab = () => {
     leagueOwner === user.id
       ? 'Go to Live Match and press Calculate Results'
       : 'Ask the Admin to confirm and save to update the standings';
+
   useEffect(() => {
     (async () => {
       const _standings = await getActiveCompetitionStandings();
@@ -122,7 +124,7 @@ export const StandingsTab = () => {
     },
   ];
 
-  return (
+  return standings?.length ? (
     <div className="h-[400px] text-center">
       {pastMatchesNotCalculated() && (
         <p className="text-error-400 font-semibold mb-4">
@@ -138,5 +140,10 @@ export const StandingsTab = () => {
         elevation={5}
       />
     </div>
+  ) : (
+    <EmptyMessage
+      title="No data can be calculated yet 😵"
+      description="Once some matches have any results, you'll see them here!"
+    />
   );
 };

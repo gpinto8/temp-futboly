@@ -24,7 +24,7 @@ export const AdminTab = () => {
         currentComponentId === 'COMPETITIONS' ? 'max-w-[1000px]' : '' // Limiting the width so the "Add competition" button takes exactly the below table width and not the viewport one
       }`}
     >
-      <div className="flex flex-col gap-6 justify-between md:flex-row">
+      <div className="flex flex-col gap-6 h-10 justify-between md:flex-row">
         <div className="flex gap-2 md:gap-4">
           {components.map(({ id, label }) => (
             <Chip

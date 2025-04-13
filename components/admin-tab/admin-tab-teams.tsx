@@ -9,6 +9,7 @@ import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useAppSelector } from '@/store/hooks';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { EmptyMessage } from '../empty-message';
 
 type AdminColumnKeysProps =
   | 'INDEX'
@@ -22,10 +23,14 @@ export const AdminTabTeams = () => {
   const teams = useAppSelector((state) => state.team);
   const { getAllTeamsFromAllCompetitions } = useGetTeams();
   const { deleteTeam, editTeam } = useSetTeams();
+
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
+  const [anyTeamExists, setAnyTeamExists] = useState(false);
 
   const getAllTeamsAndUpdateRows = async () => {
     const allTeams = await getAllTeamsFromAllCompetitions();
+
+    setAnyTeamExists(!!allTeams?.length);
 
     const _rows: RowsProps<AdminColumnKeysProps> = allTeams.map((team, i) => {
       const {
@@ -97,7 +102,7 @@ export const AdminTabTeams = () => {
     { label: 'Actions', id: 'ACTIONS', align: 'center', minWidth: 200 },
   ];
 
-  return (
+  return anyTeamExists ? (
     <div className="h-[400px] ">
       <CustomTable<AdminColumnKeysProps>
         rows={rows}
@@ -106,5 +111,7 @@ export const AdminTabTeams = () => {
         elevation={0}
       />
     </div>
+  ) : (
+    <EmptyMessage title="There are no teams created yet." />
   );
 };

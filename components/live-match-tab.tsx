@@ -8,6 +8,7 @@ import { useGetTeams } from '@/data/teams/use-get-teams';
 import { PageLoader } from '@/components/page-loader';
 import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
+import { EmptyMessage } from './empty-message';
 
 export const LiveMatch = () => {
   const {
@@ -23,8 +24,9 @@ export const LiveMatch = () => {
   const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
+    getTimeToNextMatch(),
+  );
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
@@ -171,6 +173,9 @@ export const LiveMatch = () => {
       </div>
     </div>
   ) : (
-    <div className="text-center">Match non trovato</div>
+    <EmptyMessage
+      title="Match not found 🤷‍♂️"
+      description="Ask your admin to generate the matches to start following the live results."
+    />
   );
 };
