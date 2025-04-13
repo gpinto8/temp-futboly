@@ -18,10 +18,10 @@ export const AppTabs = () => {
 
   const [tabComponents, setTabComponents] = useState([
     { label: 'Competitions', Component: () => <CompetitionsTab /> },
-    { label: 'Standings', Component: () => <StandingsTab /> },
     { label: 'Teams', Component: () => <TeamsTab /> },
     { label: 'Matches', Component: () => <MatchesTab /> },
     { label: 'Live Match', Component: () => <LiveMatch /> },
+    { label: 'Standings', Component: () => <StandingsTab /> },
   ]);
 
   const isUserOwner = isUserLeagueOwner();
