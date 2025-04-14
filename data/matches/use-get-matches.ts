@@ -133,7 +133,19 @@ export const useGetMatches = () => {
     if (!nextPersonalMatch) return;
     if (nextPersonalMatch === -1) return -1;
     // if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players --> Commented because I am checking in the component
-    return getMatchRatings(home, away, nextPersonalMatch);
+    const matchRatings = await getMatchRatings(home, away, nextPersonalMatch);
+    return {
+    ...nextPersonalMatch,
+    home: {
+        ...nextPersonalMatch.home,
+        players: matchRatings.home
+    },
+    away: {
+        ...nextPersonalMatch.away,
+        players: matchRatings.away
+    },
+    result: matchRatings.result
+        };
   };
 
   const getMatchRatings = async (
@@ -194,7 +206,7 @@ export function getNextMatchDay() {
   const today = new Date(Date.now());
   const todayDay = today.getUTCDay();
   const todayHours = today.getUTCHours();
-  if (todayDay === 6 || todayDay === 0) return -1;
+    if (todayDay === 6 || todayDay === 0) return -1;
   if (todayDay === DAY_OF_WEEK_MATCH && todayHours >= HOURS) return -1;
   let daysLeft = DAY_OF_WEEK_MATCH - todayDay;
   today.setUTCDate(today.getDate() + daysLeft);
