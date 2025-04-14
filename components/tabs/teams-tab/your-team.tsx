@@ -171,13 +171,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
       <div className="flex flex-col gap-12">
         {/* YOUR TEAM */}
         <div className="w-full">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6">Your Team</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold mb-6">Your Team</h1>
           <TeamCard team={team} />
         </div>
 
-        <div className="flex flex-col md:flex-row gap-12 w-full justify-between">
+        <div className="flex flex-col lg:flex-row gap-12 w-full justify-between">
           {/* FOOTBALL FIELD */}
-          <div className="md:w-[40%] flex flex-col gap-4">
+          <div className="lg:w-[50%] flex flex-col gap-4">
             <div className="flex gap-4 justify-between">
               <div className="text-xl font-bold pb-2">Starting 11</div>
               <FormationsDropdown
@@ -195,8 +195,8 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           </div>
 
           {/* TEAM PLAYERS */}
-          <div className="md:w-[60%] flex flex-col justify-between">
-            <div className="h-[350px] md:h-[500px]">
+          <div className="lg:w-[50%] flex flex-col justify-between">
+            <div className="h-[350px] lg:h-[500px]">
               <div className="text-xl font-bold pb-2">Team Players</div>
               <div className="text-xs pb-4">
                 * The <strong>bolded</strong> names are already saved.

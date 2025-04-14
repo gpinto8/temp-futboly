@@ -145,11 +145,13 @@ export const LiveMatch = () => {
         )}
       </div>
 
-      <CustomSeparator withText={false} className="!my-12 md:my-20" />
+      <CustomSeparator withText={false} className="my-20" />
 
       <div id="upcomingMatches">
-        <h1 className="font-bold text-4xl text-black mb-4">Upcoming Matches</h1>
-        <div className="flex flex-row justify-center items-center gap-4">
+        <h1 className="font-bold text-4xl text-black mb-12">
+          Upcoming Matches
+        </h1>
+        <div className="flex flex-row items-center gap-4 flex-wrap">
           {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
             upcomingMatches.map((upcomingMatch, index) => (
               <UpcomingMatch key={index} matchInfo={upcomingMatch} />

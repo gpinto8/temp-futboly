@@ -2,21 +2,22 @@ import { CustomCard } from '@/components/custom/custom-card';
 import { CustomImage } from '@/components/custom/custom-image';
 import { MatchScheduleProps } from '@/firebase/db-types';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
-import { useAppSelector } from '@/store/hooks';
+import { useGetUsers } from '@/data/users/use-get-users';
 
 export const UpcomingMatch = ({
   matchInfo,
 }: {
   matchInfo: MatchScheduleProps;
 }) => {
-  const user = useAppSelector((state) => state.user);
-  const homeClass = matchInfo.home.userId === user.id ? 'text-main' : '';
-  const awayClass = matchInfo.away.userId === user.id ? 'text-main' : '';
+  const { getUser } = useGetUsers();
+
+  const homeClass = matchInfo.home.userId === getUser().id ? 'text-main' : '';
+  const awayClass = matchInfo.away.userId === getUser().id ? 'text-main' : '';
 
   return (
-    <CustomCard style="gray">
-      <div className="text-center ">
-        <div className="flex flex-row gap-4">
+    <CustomCard style="gray" className="w-full md:max-w-fit">
+      <div className="text-center flex flex-col gap-4">
+        <div className="flex flex-row gap-4 justify-center">
           <CustomImage
             forceSrc={getRealTeamLogoById(matchInfo.home.logoId)?.src}
             forcedAlt={getRealTeamLogoById(matchInfo.home.logoId)?.alt}
@@ -32,9 +33,11 @@ export const UpcomingMatch = ({
             height={32}
           />
         </div>
-        <p className={homeClass + ' font-semibold'}>{matchInfo.home.name}</p>
-        <p className="font-semibold">vs</p>
-        <p className={awayClass + ' font-semibold'}>{matchInfo.away.name}</p>
+        <div className="w-full">
+          <p className={homeClass + ' font-semibold'}>{matchInfo.home.name}</p>
+          <p className="font-semibold">vs</p>
+          <p className={awayClass + ' font-semibold'}>{matchInfo.away.name}</p>
+        </div>
       </div>
     </CustomCard>
   );
