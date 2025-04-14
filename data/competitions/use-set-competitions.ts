@@ -234,7 +234,7 @@ export const useSetCompetitions = () => {
 
 // It is necessary that the number of teams is even, otherwise 1 player would not play
 function createRoundRobinSchedule(teams: ShortTeamProps[], maxWeek: number) {
-  if (teams.length % 2 !== 0) return null;
+  if (teams.length !== 0 && teams.length % 2 !== 0) return null;
 
   let schedule: Array<{ week: number; match: ShortTeamProps[] }> = [];
   let numTeams = teams.length;
