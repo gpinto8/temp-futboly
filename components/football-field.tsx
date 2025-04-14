@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import {
   AllPosibleFormationsProps,
   FormationPosition,
-  GOALKEEPER_FORMATION_POSITION,
   mapFormationPosition,
 } from '@/utils/formations';
-import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionTeamsProps,
+  TEAMS_GOALKEEPER_FORMATION_POSITION,
+} from '@/firebase/db-types';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
 type CircleFieldProps = {
@@ -111,7 +113,7 @@ export const FootballField = ({
 
   const getGoalKeeper = () =>
     fieldPlayers?.find(
-      (player) => player?.position === GOALKEEPER_FORMATION_POSITION,
+      (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
     );
 
   return (
@@ -162,9 +164,9 @@ export const FootballField = ({
               <CircleField
                 player={getGoalKeeper()}
                 handleClick={() =>
-                  handleCircleField(GOALKEEPER_FORMATION_POSITION)
+                  handleCircleField(TEAMS_GOALKEEPER_FORMATION_POSITION)
                 }
-                currentPosition={GOALKEEPER_FORMATION_POSITION}
+                currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
                 selectedPlayerPosition={selectedPlayerPosition}
               />
             </div>

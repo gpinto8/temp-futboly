@@ -6,7 +6,7 @@ import { RealTeamLogoIds } from '@/utils/real-team-logos';
 import { Timestamp } from 'firebase/firestore';
 import { DocumentReference } from 'firebase/firestore';
 
-// USERS
+/****************************************  USERS  ****************************************/
 export type UsersCollectionProps = {
   id: string;
   username: string;
@@ -16,7 +16,7 @@ export type UsersCollectionProps = {
   };
 };
 
-// LEAGUES
+/****************************************  LEAGUES  ****************************************/
 export type LeaguesCollectionProps = {
   id: string;
   name: string;
@@ -30,7 +30,7 @@ export type LeaguesCollectionProps = {
   ownerUsername: string;
 };
 
-// COMPETITIONS
+/****************************************  COMPETITIONS  ****************************************/
 export type CompetitionsCollectionProps = {
   id: string;
   name: string;
@@ -94,7 +94,10 @@ export type PlayerType = {
   isCaptain: boolean;
 };
 
-// TEAMS
+/****************************************  TEAMS  ****************************************/
+export const TEAMS_GOALKEEPER_FORMATION_POSITION = '1';
+export const TEAMS_PLAYERS_LIMIT = 11;
+
 export type CompetitionsCollectionTeamsProps = {
   shortId: string;
   userRef: DocumentReference<UsersCollectionProps>;
@@ -108,7 +111,7 @@ export type CompetitionsCollectionTeamsProps = {
   players: {
     sportmonksId: number;
     position?: FormationPosition; // Look at the "mapFormationPosition" function for the mapping format
-  }[]; // Only 11 players per team (for now)
+  }[]; // Only {TEAMS_PLAYERS_LIMIT} players per team (for now)
 };
 
 export type GameStandingsResult = 'W' | 'D' | 'L';

@@ -15,6 +15,7 @@ import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { RealTeamLogoIds } from '@/utils/real-team-logos';
 import { EmptyMessage } from '../empty-message';
+import { TEAMS_PLAYERS_LIMIT } from '@/firebase/db-types';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -122,8 +123,9 @@ export const AddEditTeamModal = ({
   // Disable the inputs if they are not valid
   useEffect(() => {
     const allowPlayersCondition = isEdit
-      ? selectedPlayerIds?.length === 11
+      ? selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
       : true;
+
     const shouldDisable = !!(
       logoId &&
       name?.value &&
@@ -187,8 +189,9 @@ export const AddEditTeamModal = ({
 
   const handleSetTeam = () => {
     const allowPlayersCondition = isEdit
-      ? selectedPlayerIds?.length === 11
+      ? selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
       : true;
+
     if (logoId && name?.isValid && coach?.isValid && allowPlayersCondition) {
       onSetData?.({
         logoId,
@@ -243,7 +246,11 @@ export const AddEditTeamModal = ({
           <div className="flex flex-col gap-2 h-full">
             <div className="font-bold">
               Choose players:{' '}
-              {isEdit && <span className="text-sm font-normal">(only 11)</span>}
+              {isEdit && (
+                <span className="text-sm font-normal">
+                  (only {TEAMS_PLAYERS_LIMIT})
+                </span>
+              )}
             </div>
             {isEdit ? (
               <SelectableTable<PlayersColumnKeysProps>
