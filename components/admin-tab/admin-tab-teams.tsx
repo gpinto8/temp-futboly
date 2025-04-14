@@ -20,6 +20,7 @@ type AdminColumnKeysProps =
 
 export const AdminTabTeams = () => {
   const teams = useAppSelector((state) => state.team);
+    const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
   const { getAllTeamsFromAllCompetitions } = useGetTeams();
   const { deleteTeam, editTeam } = useSetTeams();
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
@@ -27,7 +28,7 @@ export const AdminTabTeams = () => {
   const getAllTeamsAndUpdateRows = async () => {
     const allTeams = await getAllTeamsFromAllCompetitions();
 
-    const _rows: RowsProps<AdminColumnKeysProps> = allTeams.map((team, i) => {
+    const _rows: RowsProps<AdminColumnKeysProps> = allTeams.filter((team) => team.competitionRef.id === activeCompetition?.id).map((team, i) => {
       const {
         competitionName,
         shortId,
@@ -66,7 +67,7 @@ export const AdminTabTeams = () => {
         COMPETITION: competitionName,
         TEAM: name,
         OWNER: ownerUsername,
-        PLAYERS: '',
+        PLAYERS: players?.length,
         ACTIONS: (
           <div className="flex gap-1">
             <AddEditTeamModal data={data} isEdit onSetData={handleEditTeam} />
