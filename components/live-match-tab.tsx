@@ -24,15 +24,13 @@ export const LiveMatch = () => {
   const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
-    getTimeToNextMatch(),
-  );
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
 
   useEffect(() => {
+      let timeoutId: NodeJS.Timeout;
     (async () => {
       const nextMatch = getNextMatch();
       if (!nextMatch || nextMatch === -1) return;
@@ -58,26 +56,19 @@ export const LiveMatch = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
-      if (timeLeftToNextMatch < 1) {
-        //Match started
-        const nextMatchWithRatingRes = await getNextMatchRatings(
-          homeReturnAPIData,
-          awayReturnAPIData,
-        );
-        setNextMatchWithRating(nextMatchWithRatingRes);
-      }
+    const timeToStart = getTimeToNextMatch();
+        const triggerRatingsFetch = async () => {
+      const ratings = await getNextMatchRatings(homeReturnAPIData, awayReturnAPIData);
+      setNextMatchWithRating(ratings);
+    };
+        if (timeToStart <= 0) {
+            await triggerRatingsFetch();
+        } else {
+            timeoutId = setTimeout(triggerRatingsFetch, timeToStart);
+        }
     })();
-  }, []);
 
-  useEffect(() => {
-    let timerId: any;
-    if (timeLeftToNextMatch > 0) {
-      timerId = setInterval(() => {
-        setTimeLeftToNextMatch((prev) => prev - 1000);
-      }, 1000);
-    }
-
-    return () => clearInterval(timerId);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   async function calculateMatches() {
