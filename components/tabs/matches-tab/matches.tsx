@@ -92,7 +92,7 @@ export const Matches = ({
                   return (
                     <PersonalMatch
                       key={index}
-                      type={Boolean(match.result) ? "past" : "upcoming"}
+                      type={Boolean(match.result) ? 'past' : 'upcoming'}
                       matchInfo={match}
                       className="my-2"
                     />

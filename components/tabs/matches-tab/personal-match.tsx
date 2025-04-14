@@ -16,8 +16,8 @@ export const PersonalMatch = ({
   className,
 }: PersonalMatchProps) => {
   const user = useAppSelector((state) => state.user);
-    const homeLogo = getRealTeamLogoById(matchInfo?.home?.logoId);
-    const awayLogo = getRealTeamLogoById(matchInfo?.away?.logoId);
+  const homeLogo = getRealTeamLogoById(matchInfo?.home?.logoId);
+  const awayLogo = getRealTeamLogoById(matchInfo?.away?.logoId);
   return (
     <CustomCard style="gray" className={className}>
       <div className="flex flex-row gap-2 justify-around items-center">
@@ -37,7 +37,9 @@ export const PersonalMatch = ({
               <p>{matchInfo.result?.home}</p> - <p>{matchInfo.result?.away}</p>
             </div>
           )}
-          <p className={type === 'past' ? 'text-gray-400 text-xs' : 'text-black'}>
+          <p
+            className={type === 'past' ? 'text-gray-400 text-xs' : 'text-black'}
+          >
             {new Date(matchInfo.date).toLocaleString().split(',')[0]}
           </p>
         </div>

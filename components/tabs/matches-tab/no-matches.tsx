@@ -20,9 +20,8 @@ export const NoMatches = () => {
   useEffect(() => {
     (async () => {
       if (currentCompetitionId) {
-        const currentCompetition = await getCompetitionById(
-          currentCompetitionId,
-        );
+        const currentCompetition =
+          await getCompetitionById(currentCompetitionId);
         const teams = currentCompetition?.teams;
         const teamsEven = (teams?.length || 0) % 2 === 0;
         const atLeastAPlayer = teams?.every((team) => team.players.length);

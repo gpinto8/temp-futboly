@@ -24,9 +24,8 @@ export const LiveMatch = () => {
   const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
-    getTimeToNextMatch(),
-  );
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
+    useState<number>(getTimeToNextMatch());
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
