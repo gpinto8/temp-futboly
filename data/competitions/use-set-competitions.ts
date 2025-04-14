@@ -10,7 +10,7 @@ import { competitionActions } from '@/store/slices/competitions';
 import { DocumentReference } from 'firebase/firestore';
 import { useGetCompetitions } from './use-get-competitions';
 import { useGetTeams } from '@/data/teams/use-get-teams';
-import { getNextMatchDay } from '@/data/matches/use-get-matches';
+import { getNextMatchDay, getFridaysFromDate } from '@/data/matches/use-get-matches';
 import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
 
 export const useSetCompetitions = () => {
@@ -147,12 +147,21 @@ export const useSetCompetitions = () => {
       console.error("Can't schedule a competition that is already scheduled");
       return;
     }
-    const startDate = getNextMatchDay();
+    let startDate = getNextMatchDay();
+    if (startDate === -1) {
+        const todayTemp = new Date()
+        const previousFriday = new Date(todayTemp);
+        previousFriday.setDate(todayTemp.getDate() - ((todayTemp.getDay() + 2) % 7));
+        const nextFriday = new Date(previousFriday);
+        nextFriday.setDate(previousFriday.getDate() + 7);
+        startDate = nextFriday.getTime();
+    }
     const maxWeek = Math.ceil(
       (competitionToBeScheduled.endDate.seconds - Math.ceil(startDate / 1000)) /
         (60 * 60 * 24 * 7),
     );
     const teams = competitionToBeScheduled.teams;
+    if (teams.length === 0) return;
     const mappedTeams = await Promise.all(
       teams.map(async (team) => await mapTeamWithExtraProps(team)),
     );

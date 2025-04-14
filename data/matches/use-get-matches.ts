@@ -206,10 +206,9 @@ export function getNextMatchDay() {
   const today = new Date(Date.now());
   const todayDay = today.getUTCDay();
 
-  // To review these checks
-  // const todayHours = today.getUTCHours();
-  // if (todayDay === 6 || todayDay === 0) return -1;
-  // if (todayDay === DAY_OF_WEEK_MATCH && todayHours >= HOURS) return -1;
+  const todayHours = today.getUTCHours();
+  if (todayDay === 6 || todayDay === 0) return -1;
+  if (todayDay === DAY_OF_WEEK_MATCH && todayHours >= HOURS) return -1;
 
   let daysLeft = DAY_OF_WEEK_MATCH - todayDay;
   today.setUTCDate(today.getDate() + daysLeft);
@@ -228,7 +227,7 @@ function groupMatchesByWeek(schedule) {
   }, {} as any);
 }
 
-function getFridaysFromDate(inputDate: Date | string): {
+export function getFridaysFromDate(inputDate: Date | string): {
   previousFriday: DateString;
   nextFriday: DateString;
 } {
