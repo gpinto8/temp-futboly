@@ -85,4 +85,8 @@ export const IMG_URLS = {
     src: 'assets/football-field.svg',
     alt: 'Football Field Icon',
   },
+  FOOTBALL_FIELD_HORIZONTAL: {
+    src: 'assets/football-field-horizontal.svg',
+    alt: 'Football Field Horizontal Icon',
+  },
 };

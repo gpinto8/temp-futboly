@@ -1,4 +1,4 @@
-import { TEAMS_GOALKEEPER_FORMATION_POSITION } from "@/firebase/db-types";
+import { TEAMS_GOALKEEPER_FORMATION_POSITION } from '@/firebase/db-types';
 
 const formationMap = [
   {
@@ -45,7 +45,9 @@ export const getFormations = () => {
   return filteredFormationMap;
 };
 
-export type FormationPosition = `${string}+${string}+${string}` | typeof TEAMS_GOALKEEPER_FORMATION_POSITION ;
+export type FormationPosition =
+  | `${string}+${string}+${string}`
+  | typeof TEAMS_GOALKEEPER_FORMATION_POSITION;
 
 export const mapFormationPosition = (
   formationTotalPlayers: string, // e.g "4" ("432")

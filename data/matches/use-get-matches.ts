@@ -141,11 +141,11 @@ export const useGetMatches = () => {
       ...nextPersonalMatch,
       home: {
         ...nextPersonalMatch.home,
-        players: matchRatings.home,
+        playersAPI: matchRatings.home,
       },
       away: {
         ...nextPersonalMatch.away,
-        players: matchRatings.away,
+        playersAPI: matchRatings.away,
       },
       result: matchRatings.result,
     };
@@ -387,12 +387,8 @@ export type matchStatistics = {
 };
 
 export type LiveMatchProps = {
-  home: Omit<CompetitionsCollectionTeamsExtraProps, 'players'> & {
-    players: any;
-  };
-  away: Omit<CompetitionsCollectionTeamsExtraProps, 'players'> & {
-    players: any;
-  };
+  home: CompetitionsCollectionTeamsExtraProps & { playersAPI: any };
+  away: CompetitionsCollectionTeamsExtraProps & { playersAPI: any };
   date: Date;
   week: number;
   result?: {
