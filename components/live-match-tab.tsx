@@ -30,7 +30,6 @@ export const LiveMatch = () => {
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
 
   useEffect(() => {
-      let timeoutId: NodeJS.Timeout;
     (async () => {
       const nextMatch = getNextMatch();
       if (!nextMatch || nextMatch === -1) return;
@@ -57,18 +56,12 @@ export const LiveMatch = () => {
       };
       setNextMatchMapped(tempNextMatch);
     const timeToStart = getTimeToNextMatch();
-        const triggerRatingsFetch = async () => {
-      const ratings = await getNextMatchRatings(homeReturnAPIData, awayReturnAPIData);
-      setNextMatchWithRating(ratings);
-    };
-        if (timeToStart <= 0) {
-            await triggerRatingsFetch();
-        } else {
-            timeoutId = setTimeout(triggerRatingsFetch, timeToStart);
-        }
+    if (timeToStart < 1) {
+        const ratings = await getNextMatchRatings(homeReturnAPIData, awayReturnAPIData);
+        setNextMatchWithRating(ratings);
+    }
     })();
 
-    return () => clearTimeout(timeoutId);
   }, []);
 
   async function calculateMatches() {

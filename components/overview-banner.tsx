@@ -77,8 +77,6 @@ const GameSection = () => {
   );
   const competitionStarted = activeCompetition?.competitionStarted;
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
@@ -113,6 +111,7 @@ const GameSection = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
+        const timeLeftToNextMatch = getTimeToNextMatch();
       if (timeLeftToNextMatch < 1) {
         //Match started
         const nextMatchWithRatingRes = await getNextMatchRatings(
@@ -123,17 +122,6 @@ const GameSection = () => {
       }
     })();
   }, [activeCompetition]);
-
-  useEffect(() => {
-    let timerId: any;
-    if (timeLeftToNextMatch > 0) {
-      timerId = setInterval(() => {
-        setTimeLeftToNextMatch((prev) => prev - 1000);
-      }, 1000);
-    }
-
-    return () => clearInterval(timerId);
-  }, []);
 
   return competitionStarted ? (
     nextMatchFound && nextMatchWithRating ? (
@@ -214,27 +202,11 @@ export const OverviewBanner = () => {
   const { getLeague } = useGetLeagues();
   const { getTeam } = useGetTeams();
   const { getActiveCompetition } = useGetCompetitions();
-  const { getTimeToNextMatch } = useGetMatches();
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
   const [overviewLeague, setOverviewLeague] = useState<BannerCardProps>();
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
   const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
-  const { setCurrentTab } = useTabContext();
-
-  // Timer
-  useEffect(() => {
-    let timerId;
-    if (timeLeftToNextMatch > 0) {
-      timerId = setInterval(() => {
-        setTimeLeftToNextMatch((prev) => prev - 1000);
-      }, 1000);
-    }
-
-    return () => clearInterval(timerId);
-  }, []);
 
   // LEAGUE
   const league = getLeague();
@@ -299,10 +271,32 @@ export const OverviewBanner = () => {
             )}
           </div>
           <GameSection />
+        <TimerSection />
         </div>
       </div>
 
-      {/* GAME */}
+    </div>
+  );
+};
+const TimerSection = () => {
+    const competition = useAppSelector((state) => state.competition.activeCompetition);
+  const { getTimeToNextMatch } = useGetMatches();
+    const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(getTimeToNextMatch());
+  const { setCurrentTab } = useTabContext();
+
+  // Timer
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+    if (timeLeftToNextMatch > 0) {
+      timerId = setInterval(() => {
+        setTimeLeftToNextMatch((prev) => prev - 1000);
+      }, 1000);
+    }
+
+    return () => clearInterval(timerId);
+  }, []);
+
+    return (
       <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
         {competition?.competitionStarted ? (
           timeLeftToNextMatch > 0 ? (
@@ -334,10 +328,8 @@ export const OverviewBanner = () => {
           />
         )}
       </div>
-    </div>
-  );
+    );
 };
-
 function formatDateDiffToDate(millisecDiff: number) {
   if (millisecDiff <= 0) return 'Game is in progress!';
 
