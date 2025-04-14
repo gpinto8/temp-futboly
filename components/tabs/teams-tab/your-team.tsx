@@ -1,8 +1,10 @@
 import { ColumnsProps, RowsProps } from '@/components/custom/custom-table';
 import { TeamCard } from './team-card';
-import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useEffect, useState } from 'react';
-import { getPlayerRating } from '@/sportmonks/common-methods';
+import {
+  getPlayerRating,
+  getSportmonksPlayersDataByIds,
+} from '@/sportmonks/common-methods';
 import { Avatar } from '@mui/material';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import {
@@ -26,7 +28,6 @@ type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 
 export const YourTeam = ({ team }: YourTeamProps) => {
   const { getActiveCompetition } = useGetCompetitions();
-  const { getPlayersSportmonksData } = useGetTeams();
   const { editTeam } = useSetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
@@ -54,7 +55,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
       const players = team?.players;
       if (players) {
         const playerIds = team.players.map((player) => player.sportmonksId);
-        const playersData = await getPlayersSportmonksData(playerIds);
+        const playersData = await getSportmonksPlayersDataByIds(playerIds);
 
         const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => {
           const id = player.id;

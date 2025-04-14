@@ -1,3 +1,5 @@
+import { fetchSportmonksApi } from './fetch-sportmonks-api';
+
 export const getPlayerRating = (playerStatistics: any) => {
   const rating = playerStatistics // From the statistics
     ?.reverse() // Reverse the array since the last ones are the recent ones
@@ -10,4 +12,20 @@ export const getPlayerRating = (playerStatistics: any) => {
 
   const displayedRating = rating && rating !== '0.00' && rating.toFixed(2);
   return displayedRating;
+};
+
+// Get Sportmonks players data based on an array of its ids asynchronously
+export const getSportmonksPlayersDataByIds = async (playerIds: number[]) => {
+  let playersData: any[] = [];
+
+  for await (const playerId of playerIds) {
+    const response = await fetchSportmonksApi(
+      'football/players',
+      `${playerId}`,
+    );
+    const data = response.data;
+    if (data) playersData.push(data);
+  }
+
+  return playersData;
 };

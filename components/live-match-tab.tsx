@@ -9,6 +9,7 @@ import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
 import { EmptyMessage } from './empty-message';
 import { Loader } from './loader';
+import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 
 export const LiveMatch = () => {
   const {
@@ -21,7 +22,7 @@ export const LiveMatch = () => {
     getMatchRatings,
   } = useGetMatches();
   const { writeGameResults } = useSetMatches();
-  const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
+  const { getAllTeams } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
@@ -43,8 +44,8 @@ export const LiveMatch = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getPlayersSportmonksData(homePlayerIds);
-      const awayReturnAPIData = await getPlayersSportmonksData(awayPlayerIds);
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(homePlayerIds);
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(awayPlayerIds);
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -91,7 +92,7 @@ export const LiveMatch = () => {
     const teamPlayersMap: Map<String, any[]> = new Map();
     await Promise.all(
       allTeams.map(async (team) => {
-        const players = await getPlayersSportmonksData(
+        const players = await getSportmonksPlayersDataByIds(
           team.players.map((player) => player.sportmonksId),
         );
         teamPlayersMap.set(team.shortId, players);

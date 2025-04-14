@@ -14,13 +14,16 @@ import {
 } from '@/components/custom/custom-table';
 import { CustomImage } from '@/components/custom/custom-image';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
-import { getPlayerRating } from '@/sportmonks/common-methods';
+import {
+  getPlayerRating,
+  getSportmonksPlayersDataByIds,
+} from '@/sportmonks/common-methods';
 import { Avatar } from '@mui/material';
 
 type AllTeamsKeyProps = 'INDEX' | 'PLAYER' | 'POSITION' | 'RATING';
 
 export const AllTeams = () => {
-  const { getAllTeams, getPlayersSportmonksData, getTeam } = useGetTeams();
+  const { getAllTeams, getTeam } = useGetTeams();
 
   const [allTeams, setAllTeams] = useState<
     CompetitionsCollectionTeamsExtraProps[]
@@ -60,7 +63,7 @@ export const AllTeams = () => {
       setSelectedTeam(index);
 
       const playerIds = team.players.map((player) => player.sportmonksId);
-      const playersData = await getPlayersSportmonksData(playerIds);
+      const playersData = await getSportmonksPlayersDataByIds(playerIds);
 
       const rows: RowsProps<AllTeamsKeyProps> = playersData.map(
         (player, i) => ({

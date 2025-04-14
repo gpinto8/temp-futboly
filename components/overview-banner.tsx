@@ -11,8 +11,8 @@ import { useGetTeams } from '@/data/teams/use-get-teams';
 import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useAppSelector } from '@/store/hooks';
-import { Loader } from './loader';
 import { useTabContext } from '@/utils/tab-context';
+import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 
 type BannerCardProps = {
   title: string;
@@ -71,7 +71,6 @@ const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
 const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
-  const { getPlayersSportmonksData } = useGetTeams();
   const activeCompetition = useAppSelector(
     (state) => state.competition.activeCompetition,
   );
@@ -99,8 +98,12 @@ const GameSection = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getPlayersSportmonksData(homePlayerIds);
-      const awayReturnAPIData = await getPlayersSportmonksData(awayPlayerIds);
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
+        homePlayerIds,
+      );
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
+        awayPlayerIds,
+      );
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
