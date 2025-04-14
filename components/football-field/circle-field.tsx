@@ -1,13 +1,14 @@
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
+import { FormationPosition } from '@/utils/formations';
 import { Avatar } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-type CircleFieldProps = {
+export type CircleFieldProps = {
   selectedPlayerPosition?: string;
   player?: CompetitionsCollectionTeamsProps['players'][0];
   handleClick?: () => void;
-  currentPosition?: string;
+  currentPosition?: FormationPosition;
 };
 
 export const CircleField = ({

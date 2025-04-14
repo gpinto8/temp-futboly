@@ -1,80 +1,11 @@
-import { Avatar } from '@mui/material';
 import { CustomImage } from './custom/custom-image';
 import { useEffect, useState } from 'react';
 import {
   AllPosibleFormationsProps,
   FormationPosition,
-  mapFormationPosition,
 } from '@/utils/formations';
-import {
-  CompetitionsCollectionTeamsProps,
-  TEAMS_GOALKEEPER_FORMATION_POSITION,
-} from '@/firebase/db-types';
-import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
-
-type CircleFieldProps = {
-  player?: CompetitionsCollectionTeamsProps['players'][0];
-  handleClick?: () => void;
-  currentPosition?: FormationPosition;
-  selectedPlayerPosition: FormationPosition | '';
-};
-
-const CircleField = ({
-  player,
-  handleClick,
-  currentPosition,
-  selectedPlayerPosition,
-}: CircleFieldProps) => {
-  const [data, setData] = useState<{
-    src: string;
-    name: string;
-    position: string;
-  }>({ name: '', position: '', src: '' });
-
-  const isSelected = currentPosition === selectedPlayerPosition;
-
-  useEffect(() => {
-    (async () => {
-      const playerId = player?.sportmonksId;
-      if (playerId) {
-        const response = await fetchSportmonksApi(
-          'football/players',
-          `${playerId}`,
-        );
-
-        const data = response.data;
-        setData({
-          src: data?.image_path,
-          name: data?.display_name,
-          position: data?.position?.name,
-        });
-      } else {
-        setData({ src: '', name: '', position: '' });
-      }
-    })();
-  }, [player]);
-
-  return (
-    <div
-      onClick={handleClick}
-      className={`gap-2 !bg-white hover:bg-lightGray w-12 h-12 sm:w-20 sm:h-20 md:w-20 md:h-20  cursor-pointer text-center text-black rounded-full border-black border-2 ${
-        isSelected ? '!border-success-400 border-[6px]' : ''
-      }`}
-    >
-      <div className="w-full flex flex-col items-center justify-center h-full overflow-hidden">
-        {data?.src ? (
-          <Avatar
-            src={data?.src}
-            alt={data?.name}
-            className="h-4 w-4 sm:h-6 sm:w-6 md:h-6 md:w-6"
-          />
-        ) : null}
-        <div className="text-xs w-max">{data?.name}</div>
-        <div className="text-[10px] w-max text-gray-600">{data?.position}</div>
-      </div>
-    </div>
-  );
-};
+import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { CircleFieldMatchingFormation } from './football-field/circle-field-matching-formation';
 
 export type FootballFieldProps = {
   formation?: AllPosibleFormationsProps;
@@ -111,66 +42,18 @@ export const FootballField = ({
     setSelectedPlayerPosition(selected);
   };
 
-  const getGoalKeeper = () =>
-    fieldPlayers?.find(
-      (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
-    );
-
   return (
     <div className="relative w-full">
       <div className="absolute w-full h-full flex flex-col justify-between gap-4 p-4 py-2">
-        {formation ? (
-          <>
-            {formation
-              .split('')
-              ?.reverse()
-              ?.map((formationTotalPlayers, fieldRow) => {
-                return (
-                  <div
-                    key={fieldRow}
-                    className="h-full flex gap-4 justify-evenly items-center"
-                  >
-                    {new Array(+formationTotalPlayers)
-                      .fill(undefined)
-                      .map((_, playerPosition) => {
-                        const currentPosition = mapFormationPosition(
-                          formationTotalPlayers,
-                          playerPosition,
-                          fieldRow,
-                        );
-
-                        const fieldPlayer:
-                          | CompetitionsCollectionTeamsProps['players'][0]
-                          | undefined = fieldPlayers?.find(
-                          (player) => player?.position === currentPosition,
-                        );
-
-                        return (
-                          <CircleField
-                            key={playerPosition}
-                            player={fieldPlayer}
-                            handleClick={() =>
-                              handleCircleField(currentPosition)
-                            }
-                            currentPosition={currentPosition}
-                            selectedPlayerPosition={selectedPlayerPosition}
-                          />
-                        );
-                      })}
-                  </div>
-                );
-              })}
-            <div className="flex justify-center">
-              <CircleField
-                player={getGoalKeeper()}
-                handleClick={() =>
-                  handleCircleField(TEAMS_GOALKEEPER_FORMATION_POSITION)
-                }
-                currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
-                selectedPlayerPosition={selectedPlayerPosition}
-              />
-            </div>
-          </>
+        {formation && fieldPlayers?.length ? (
+          <CircleFieldMatchingFormation
+            formation={formation}
+            players={fieldPlayers}
+            circleFieldProps={{
+              handleClick: handleCircleField,
+              selectedPlayerPosition,
+            }}
+          />
         ) : (
           <div className="font-bold m-auto pb-14">{emptyFormationMessage}</div>
         )}
