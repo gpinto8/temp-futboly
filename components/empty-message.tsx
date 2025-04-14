@@ -36,11 +36,11 @@ export const EmptyMessage = ({
         )}
 
         {description && (
-          <p
+          <div
             className={`max-w-4xl text-center text-gray-500 ${classNameDescription}`}
           >
             {description}
-          </p>
+          </div>
         )}
 
         {ctaButton && (
