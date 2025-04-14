@@ -12,7 +12,6 @@ import { useGetCompetitions } from './use-get-competitions';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import {
   getNextMatchDay,
-  getFridaysFromDate,
 } from '@/data/matches/use-get-matches';
 import { DAY_OF_WEEK_MATCH } from '@/firebase/config';
 
@@ -186,11 +185,12 @@ export const useSetCompetitions = () => {
     );
     const competitionStart = new Date(startDate);
     const dayOfWeekStart = competitionStart.getDay();
+        const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
     const finalScheduleWithDate = finalSchedule.map((schedule) => {
-      const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
       const startCopy = new Date(startDate);
       const totalDaysToAdd = daysToAdd + (schedule.week - 1) * 7;
-      startCopy.setDate(totalDaysToAdd);
+      startCopy.setDate(startCopy.getDate() + totalDaysToAdd);
+        
       return {
         ...schedule,
         date: startCopy.getTime(),
