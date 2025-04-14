@@ -45,9 +45,9 @@ export const LiveMatchSection = ({
   const awayTeamLogo = getRealTeamLogoById(away.logoId);
 
   const homeClass =
-    nextMatch.home.userRef.id === getUser().id ? 'text-main' : '';
+    nextMatch?.home?.userRef?.id === getUser().id ? 'text-main' : '';
   const awayClass =
-    nextMatch.away.userRef.id === getUser().id ? 'text-main' : '';
+    nextMatch?.away?.userRef?.id === getUser().id ? 'text-main' : '';
 
   return (
     <div className="flex flex-col w-full items-center justify-between gap-8 mt-8">
@@ -98,7 +98,7 @@ export const LiveMatchSection = ({
 
       <div className="w-full flex gap-4 flex-col lg:flex-row justify-between">
         {/* MOBILE LINEUPS VERSION */}
-        <div className="flex w-full gap-8 lg:hidden">
+        <div className="flex flex-col sm:flex-row w-full gap-8 lg:hidden">
           <LineUpTable
             className="w-full"
             teamName={home.name}
