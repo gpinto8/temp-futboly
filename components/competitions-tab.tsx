@@ -91,6 +91,5 @@ async function getAndSetUserCompetitions(
   setter: (comp: any[]) => void,
 ) {
   const userComps = await getter(leagueId, userId);
-  console.log(userComps);
   setter(userComps);
 }
