@@ -136,7 +136,7 @@ export const AddEditTeamModal = ({
 
   // When opening the edit modal, we fetch all the first x players
   const getPlayers = async () => {
-    const data = await fetchSportmonksApi('football/players', );
+    const data = await fetchSportmonksApi('football/players');
     const filtered = data.data.filter((el) => el.teams.length > 0);
     setPlayers(filtered);
   };
@@ -151,7 +151,11 @@ export const AddEditTeamModal = ({
       '',
       newPageCounter,
     );
-    if (players) setPlayers([...players, ...data.data.filter((el) => el.teams.length > 0)]);
+    if (players)
+      setPlayers([
+        ...players,
+        ...data.data.filter((el) => el.teams.length > 0),
+      ]);
   };
 
   // The modal mounts whenever the parent component mounts, but our meaning of "mount" is whenever the modal is visible, so whenever that happens, we can do our shit (e.g some fetchs, which is not recommended to do in the parent component mount phase since we could be having a list of bunch instances of this modal (e.g. in the "Teams" admin tab) and do lots of fetching unnecessary)

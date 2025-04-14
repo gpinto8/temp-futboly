@@ -1,4 +1,4 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from 'react';
 import { IMG_URLS } from '@/utils/img-urls';
 import { Chip, Card, CardContent, CardMedia } from '@mui/material';
 import { CustomButton } from './custom/custom-button';
@@ -16,14 +16,19 @@ export const CompetitionsTab = () => {
   const league = useAppSelector((state) => state.league);
   const { setActiveCompetition } = useSetCompetitions();
   const { getCompetitionsByUid } = useGetCompetitions();
-    const [competitions, setCompetitions] = useState<any[]>();
-    
-    useEffect(() => {
-        setTimeout(async() => {
-            // I have to call it with a delay otherwise activeCompetition is still not set and all the "active" props are false
-            await getAndSetUserCompetitions(league.id, user.id, getCompetitionsByUid, setCompetitions);
-        }, 750);
-    }, [user, league]);
+  const [competitions, setCompetitions] = useState<any[]>();
+
+  useEffect(() => {
+    setTimeout(async () => {
+      // I have to call it with a delay otherwise activeCompetition is still not set and all the "active" props are false
+      await getAndSetUserCompetitions(
+        league.id,
+        user.id,
+        getCompetitionsByUid,
+        setCompetitions,
+      );
+    }, 750);
+  }, [user, league]);
 
   return (
     <>
@@ -78,9 +83,13 @@ export const CompetitionsTab = () => {
   );
 };
 
-
-async function getAndSetUserCompetitions(leagueId: string, userId: string, getter: (leagueId: string, userId: string) => Promise<any[]>, setter: (comp: any[]) => void) {
-    const userComps = await getter(leagueId, userId);
-    console.log(userComps);
-    setter(userComps);
-};
+async function getAndSetUserCompetitions(
+  leagueId: string,
+  userId: string,
+  getter: (leagueId: string, userId: string) => Promise<any[]>,
+  setter: (comp: any[]) => void,
+) {
+  const userComps = await getter(leagueId, userId);
+  console.log(userComps);
+  setter(userComps);
+}
