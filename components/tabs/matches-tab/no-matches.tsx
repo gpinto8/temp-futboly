@@ -23,8 +23,8 @@ export const NoMatches = () => {
         const currentCompetition =
           await getCompetitionById(currentCompetitionId);
         const teams = currentCompetition?.teams;
-        const teamsEven = (teams?.length || 0) % 2 === 0;
-        const atLeastAPlayer = teams?.every((team) => team.players.length);
+        const teamsEven = teams?.length !== 0 && (teams?.length || 0) % 2 === 0;
+        const atLeastAPlayer = teams?.length !== 0 && teams?.every((team) => team.players.length);
 
         // Enable the button only (1) if a any competition is selected and (2) if the teams are even and (3) if there is at least one players in every team // TODO: make sure there i sthe minimum: 11
         const disabled = !(currentCompetition && teamsEven && atLeastAPlayer);
