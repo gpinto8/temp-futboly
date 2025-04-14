@@ -14,6 +14,7 @@ import { EmptyMessage } from './empty-message';
 export const CompetitionsTab = () => {
   const user: UsersCollectionProps = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
+    const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
   const { setActiveCompetition } = useSetCompetitions();
   const { getCompetitionsByUid } = useGetCompetitions();
   const [competitions, setCompetitions] = useState<any[]>();
@@ -28,7 +29,7 @@ export const CompetitionsTab = () => {
         setCompetitions,
       );
     }, 750);
-  }, [user, league]);
+  }, [user, league, activeCompetition]);
 
   return (
     <>
