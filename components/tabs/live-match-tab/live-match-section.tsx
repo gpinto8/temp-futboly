@@ -6,27 +6,47 @@ import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { FootballFieldHorizontal } from '@/components/football-field/football-field-horizontal';
 import { useGetUsers } from '@/data/users/use-get-users';
 
-const LineUpTable = ({ className, teamName, players }) => (
+type LineupTableProps = {
+  className: string;
+  teamName: string;
+  players: any;
+  reverse?: boolean;
+};
+
+const LineUpTable = ({
+  className,
+  teamName,
+  players,
+  reverse,
+}: LineupTableProps) => (
   <div className={className}>
-    <h2 className="text-xl font-medium my-2">
+    <h2 className={`text-xl font-medium my-2 ${reverse ? 'text-end' : ''}`}>
       <strong>{teamName}</strong>'s lineup
     </h2>
     <CustomSeparator withText={false} />
-    <div className="flex flex-col gap-1">
+    <div className={`flex flex-col gap-1 ${reverse ? 'items-end' : ''}`}>
       {players?.length &&
-        players.map((player, index: number) => (
+        players.map((player: any, index: number) => (
           <div key={index} className="flex flex-row items-center gap-2">
-            <Avatar
-              src={player.image_path}
-              alt={player.display_name}
-              sx={{ width: 24, height: 24 }}
-            />
-            <p className="font-bold text-error">
-              {player.position?.developer_name
-                ? player.position?.developer_name?.slice(0, 3)
-                : '???'}
-            </p>
-            <p className="font-semibold !w-max">{player.common_name}</p>
+            {(() => {
+              let components = [
+                <Avatar
+                  src={player.image_path}
+                  alt={player.display_name}
+                  sx={{ width: 24, height: 24 }}
+                />,
+                <p className="font-bold text-error">
+                  {player.position?.developer_name
+                    ? player.position?.developer_name?.slice(0, 3)
+                    : '???'}
+                </p>,
+                <p className="font-semibold !w-max">{player.common_name}</p>,
+              ];
+
+              if (reverse) components.reverse();
+
+              return components;
+            })()}
           </div>
         ))}
     </div>
@@ -98,7 +118,7 @@ export const LiveMatchSection = ({
 
       <div className="w-full flex gap-4 flex-col lg:flex-row justify-between">
         {/* MOBILE LINEUPS VERSION */}
-        <div className="flex w-full gap-8 lg:hidden">
+        <div className="flex w-full gap-8 lg:hidden justify-between">
           <LineUpTable
             className="w-full"
             teamName={home.name}
@@ -108,6 +128,7 @@ export const LiveMatchSection = ({
             className="w-full"
             teamName={away.name}
             players={away.playersAPI}
+            reverse
           />
         </div>
 
@@ -129,6 +150,7 @@ export const LiveMatchSection = ({
           className="hidden lg:block w-[20%]"
           teamName={away.name}
           players={away.playersAPI}
+          reverse
         />
       </div>
     </div>

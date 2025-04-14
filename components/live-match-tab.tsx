@@ -69,6 +69,7 @@ export const LiveMatch = () => {
     })();
   }, []);
 
+  // TODO: to review this since it causes an infinite refresh for the children components, ending in even a crash (in this case one fetches an api, which could cause a unnecessary usage of it)
   // useEffect(() => {
   //   let timerId: any;
   //   if (timeLeftToNextMatch > 0) {
@@ -161,13 +162,15 @@ export const LiveMatch = () => {
         )}
       </div>
 
-      <CustomSeparator withText={false} className="!my-12 md:my-20" />
+      <CustomSeparator withText={false} className="my-20" />
 
       <div id="upcomingMatches">
-        <h1 className="font-bold text-4xl text-black mb-4">Upcoming Matches</h1>
-        <div className="flex flex-row justify-center items-center gap-4">
+        <h1 className="font-bold text-4xl text-black mb-12">
+          Upcoming Matches
+        </h1>
+        <div className="flex flex-row items-center gap-4 flex-wrap">
           {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
-            upcomingMatches.map((upcomingMatch, index) => (
+            [...upcomingMatches, ...upcomingMatches].map((upcomingMatch, index) => (
               <UpcomingMatch key={index} matchInfo={upcomingMatch} />
             ))
           ) : (
