@@ -304,7 +304,7 @@ export const OverviewBanner = () => {
 
       {/* GAME */}
       <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
-        {timeLeftToNextMatch > 0 ? (
+        {competition?.competitionStarted ? timeLeftToNextMatch > 0 ? (
           <div className="flex flex-wrap justify-center">
             <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
               {formatDateDiffToDate(timeLeftToNextMatch)}
@@ -319,7 +319,7 @@ export const OverviewBanner = () => {
               Game is in progress!
             </h3>
           </div>
-        )}
+        ) : (null)}
         {timeLeftToNextMatch > 0 && (
           <CustomButton
             label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
