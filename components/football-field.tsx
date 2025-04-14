@@ -3,16 +3,20 @@ import { CustomImage } from './custom/custom-image';
 import { useEffect, useState } from 'react';
 import {
   AllPosibleFormationsProps,
+  FormationPosition,
   mapFormationPosition,
 } from '@/utils/formations';
-import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionTeamsProps,
+  TEAMS_GOALKEEPER_FORMATION_POSITION,
+} from '@/firebase/db-types';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
 type CircleFieldProps = {
   player?: CompetitionsCollectionTeamsProps['players'][0];
   handleClick?: () => void;
-  currentPosition?: string;
-  selectedPlayerPosition: string;
+  currentPosition?: FormationPosition;
+  selectedPlayerPosition: FormationPosition | '';
 };
 
 const CircleField = ({
@@ -75,7 +79,7 @@ const CircleField = ({
 export type FootballFieldProps = {
   formation?: AllPosibleFormationsProps;
   fieldPlayers?: CompetitionsCollectionTeamsProps['players'];
-  getSelectedPlayerPosition?: (position: string) => void;
+  getSelectedPlayerPosition?: (position: FormationPosition) => void;
   emptyFormationMessage: string;
   resetField?: number; // Reset it with "Math.random()" to trigger the useEffect hook
 };
@@ -87,21 +91,30 @@ export const FootballField = ({
   emptyFormationMessage,
   resetField,
 }: FootballFieldProps) => {
-  const [selectedPlayerPosition, setSelectedPlayerPosition] = useState('');
+  const [selectedPlayerPosition, setSelectedPlayerPosition] = useState<
+    FormationPosition | ''
+  >('');
 
   useEffect(() => {
-    getSelectedPlayerPosition?.(selectedPlayerPosition);
+    if (selectedPlayerPosition) {
+      getSelectedPlayerPosition?.(selectedPlayerPosition);
+    }
   }, [selectedPlayerPosition, getSelectedPlayerPosition]);
 
   useEffect(() => {
     setSelectedPlayerPosition('');
   }, [resetField]);
 
-  const handleCircleField = (currentPosition: string) => {
-    const selected =
+  const handleCircleField = (currentPosition: FormationPosition) => {
+    const selected: FormationPosition | '' =
       currentPosition !== selectedPlayerPosition ? currentPosition : '';
     setSelectedPlayerPosition(selected);
   };
+
+  const getGoalKeeper = () =>
+    fieldPlayers?.find(
+      (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
+    );
 
   return (
     <div className="relative w-full">
@@ -149,7 +162,11 @@ export const FootballField = ({
               })}
             <div className="flex justify-center">
               <CircleField
-                // data={{ src: '', name: 'Goalkeeper', position: 'Goalkeeper' }}
+                player={getGoalKeeper()}
+                handleClick={() =>
+                  handleCircleField(TEAMS_GOALKEEPER_FORMATION_POSITION)
+                }
+                currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
                 selectedPlayerPosition={selectedPlayerPosition}
               />
             </div>

@@ -5,10 +5,10 @@ import { UpcomingMatch } from '@/components/tabs/live-match-tab/upcoming-match';
 import { LiveMatchSection } from '@/components/tabs/live-match-tab/live-match-section';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetTeams } from '@/data/teams/use-get-teams';
-import { PageLoader } from '@/components/page-loader';
 import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
 import { EmptyMessage } from './empty-message';
+import { Loader } from './loader';
 
 export const LiveMatch = () => {
   const {
@@ -24,8 +24,9 @@ export const LiveMatch = () => {
   const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
+    getTimeToNextMatch(),
+  );
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
@@ -49,11 +50,11 @@ export const LiveMatch = () => {
         ...nextMatch,
         home: {
           ...nextMatch.home,
-          players: homeReturnAPIData,
+          playersAPI: homeReturnAPIData,
         },
         away: {
           ...nextMatch.away,
-          players: awayReturnAPIData,
+          playersAPI: awayReturnAPIData,
         },
       };
       setNextMatchMapped(tempNextMatch);
@@ -130,7 +131,7 @@ export const LiveMatch = () => {
     <div>
       <div id="currentLiveMatch">
         <div className="flex flex-row justify-between items-center mb-4">
-          <h1 className="font-bold text-4xl text-main text-nowrap">
+          <h1 className="font-bold text-4xl text-black text-nowrap">
             Current Live Match
           </h1>
           {/*
@@ -154,12 +155,16 @@ export const LiveMatch = () => {
         ) : nextMatchMapped ? (
           <LiveMatchSection nextMatch={nextMatchMapped} />
         ) : (
-          <PageLoader />
+          <div className="flex justify-center items-center h-40">
+            <Loader color="main" />
+          </div>
         )}
       </div>
-      <CustomSeparator withText={false} />
+
+      <CustomSeparator withText={false} className="!my-12 md:my-20" />
+
       <div id="upcomingMatches">
-        <h1 className="font-bold text-4xl text-main mb-4">Upcoming Matches</h1>
+        <h1 className="font-bold text-4xl text-black mb-4">Upcoming Matches</h1>
         <div className="flex flex-row justify-center items-center gap-4">
           {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
             upcomingMatches.map((upcomingMatch, index) => (

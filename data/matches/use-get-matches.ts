@@ -1,6 +1,7 @@
 import {
   MappedCompetitionsProps,
   MatchScheduleProps,
+  TEAMS_PLAYERS_LIMIT,
   UsersCollectionProps,
 } from '@/firebase/db-types';
 import { useAppSelector } from '@/store/hooks';
@@ -8,9 +9,11 @@ import { useGetTeams } from '../teams/use-get-teams';
 import { DAY_OF_WEEK_MATCH, DEFAULT_SCORE } from '@/firebase/config';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { CompetitionsCollectionTeamsExtraProps } from '../teams/use-get-teams';
+import { useGetCompetitions } from '../competitions/use-get-competitions';
 
 export const useGetMatches = () => {
   const { getTeamByUid } = useGetTeams();
+  const { getCompetitionById } = useGetCompetitions();
   const activeCompetition = useAppSelector(
     (state) => state.competition.activeCompetition,
   ) as MappedCompetitionsProps;
@@ -42,8 +45,8 @@ export const useGetMatches = () => {
           personalMatch.result.home > personalMatch.result.away
             ? 'Home'
             : personalMatch.result.home !== personalMatch.result.away
-              ? 'Away'
-              : 'Draw';
+            ? 'Away'
+            : 'Draw';
         if (winnerSide === matchSide) totalWins++;
         totalScore += personalMatch.result[matchSide.toLowerCase()];
         scoredThisWeek = personalMatch.result[matchSide.toLowerCase()];
@@ -138,11 +141,11 @@ export const useGetMatches = () => {
       ...nextPersonalMatch,
       home: {
         ...nextPersonalMatch.home,
-        players: matchRatings.home,
+        playersAPI: matchRatings.home,
       },
       away: {
         ...nextPersonalMatch.away,
-        players: matchRatings.away,
+        playersAPI: matchRatings.away,
       },
       result: matchRatings.result,
     };
@@ -187,6 +190,39 @@ export const useGetMatches = () => {
     };
   };
 
+  // CHECK IF THE COMPETITION MEETS THE REQUIREMENTS TO GENERATE THE MATCHES OR NOT
+  const validMatchGeneration = async (competitionId: string) => {
+    /* The requirements are: 
+      1. A competition has to be selected
+      2. Teams gotta be even
+      3. There needs to be 11 players for each team
+      4. Each team need to have a formation
+      5. Each team need to have its players positioned based on the choosed formation (aka the football field circles have to be filled, in other words)
+    */
+
+    const currentCompetition = await getCompetitionById(competitionId); // 1.
+    const teams = currentCompetition?.teams;
+
+    const teamsAreEven = teams?.length && (teams.length || 0) % 2 === 0; // 2.
+    const teamsHaveLimitPlayers =
+      teams?.length &&
+      teams.every((team) => team.players.length === TEAMS_PLAYERS_LIMIT); // 3.
+    const teamsHaveFormation =
+      teams?.length && teams.every((team) => team.formation); // 4.
+    const teamsHavePlayersPositioned =
+      teams?.length &&
+      teams.every((team) => team.players.every((player) => player.position)); // 5.
+
+    const isValid =
+      currentCompetition &&
+      teamsAreEven &&
+      teamsHaveLimitPlayers &&
+      teamsHaveFormation &&
+      teamsHavePlayersPositioned;
+
+    return isValid;
+  };
+
   return {
     getPersonalMatches,
     getMatchStatistics,
@@ -198,6 +234,7 @@ export const useGetMatches = () => {
     getAllPastMatches,
     pastMatchesNotCalculated,
     getMatchRatings,
+    validMatchGeneration,
   };
 };
 
@@ -350,12 +387,8 @@ export type matchStatistics = {
 };
 
 export type LiveMatchProps = {
-  home: Omit<CompetitionsCollectionTeamsExtraProps, 'players'> & {
-    players: any;
-  };
-  away: Omit<CompetitionsCollectionTeamsExtraProps, 'players'> & {
-    players: any;
-  };
+  home: CompetitionsCollectionTeamsExtraProps & { playersAPI: any };
+  away: CompetitionsCollectionTeamsExtraProps & { playersAPI: any };
   date: Date;
   week: number;
   result?: {

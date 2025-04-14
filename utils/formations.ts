@@ -1,3 +1,5 @@
+import { TEAMS_GOALKEEPER_FORMATION_POSITION } from '@/firebase/db-types';
+
 const formationMap = [
   {
     title: 'Classic Positions',
@@ -43,8 +45,18 @@ export const getFormations = () => {
   return filteredFormationMap;
 };
 
+export type FormationPosition =
+  | `${string}+${string}+${string}`
+  | typeof TEAMS_GOALKEEPER_FORMATION_POSITION;
+
 export const mapFormationPosition = (
   formationTotalPlayers: string, // e.g "4" ("432")
   playerPosition: number, // e.g the first one of the "4" players, from left to right ("432")
   fieldRow: number, // e.g the first row of the 3 to display, from top to bottom ("432")
-) => `${formationTotalPlayers}+${playerPosition + 1}+${fieldRow + 1}`; // "4+4+3"
+): FormationPosition => {
+  const formation: FormationPosition = `${formationTotalPlayers}+${
+    playerPosition + 1
+  }+${fieldRow + 1}`; // "4+4+3"
+
+  return formation; // We are not including goalkeeper here, since we just gotta use "1" for it and thats it
+};

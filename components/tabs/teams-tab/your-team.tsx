@@ -11,7 +11,10 @@ import {
 } from '@/components/table/selectable-table';
 import { FootballField } from '@/components/football-field';
 import { FormationsDropdown } from '@/components/formations-dropdown';
-import { AllPosibleFormationsProps } from '@/utils/formations';
+import {
+  AllPosibleFormationsProps,
+  FormationPosition,
+} from '@/utils/formations';
 import { CustomButton } from '@/components/custom/custom-button';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
@@ -31,7 +34,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     CompetitionsCollectionTeamsProps['players']
   >(team.players);
 
-  const [fieldPosition, setFieldPosition] = useState('');
+  const [fieldPosition, setFieldPosition] = useState<FormationPosition | ''>();
   const [tablePosition, setTablePosition] =
     useState<RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>[0]>();
 
@@ -145,7 +148,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     setTablePosition(selectedRows?.[0]);
   };
 
-  const handlePlayerSelected = async (position: string) => {
+  const handlePlayerSelected = async (position: FormationPosition) => {
     setFieldPosition(position);
   };
 
