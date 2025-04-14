@@ -123,6 +123,7 @@ export type ShortTeamProps = {
   ownerUsername: string;
   shortId: string;
   logoId: RealTeamLogoIds;
+  players: any[];
 };
 
 export type MappedPlayerProps = {

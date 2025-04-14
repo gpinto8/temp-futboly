@@ -155,10 +155,10 @@ const GameSectionCard = ({
   isLive: Boolean;
 }) => {
   const user = useAppSelector((state) => state.user);
-  const homeTeamLogo = getRealTeamLogoById(nextMatch.home.logoId);
-  const awayTeamLogo = getRealTeamLogoById(nextMatch.away.logoId);
-  const homeClass = nextMatch.home.userRef.id === user.id ? 'text-main' : '';
-  const awayClass = nextMatch.away.userRef.id === user.id ? 'text-main' : '';
+  const homeTeamLogo = getRealTeamLogoById(nextMatch?.home?.logoId);
+  const awayTeamLogo = getRealTeamLogoById(nextMatch?.away?.logoId);
+  const homeClass = nextMatch?.home?.userRef?.id === user.id ? 'text-main' : '';
+  const awayClass = nextMatch?.away?.userRef?.id === user.id ? 'text-main' : '';
   return (
     <div className="w-full sm:w-0 rounded-xl p-4 shadow-xl sm:min-w-[400px] md:w-[40%] xl:min-w-[400px]">
       <div id="gameInfo" className="flex flex-row justify-between my-6">
@@ -261,7 +261,7 @@ export const OverviewBanner = () => {
       logoId: undefined,
       entries: [
         { key: 'Name', value: competition?.name },
-        { key: 'Week', value: 'TODO' },
+        { key: 'Week', value: competition?.currentWeek },
         { key: 'Teams', value: competition?.players?.length },
       ],
     };
@@ -277,7 +277,7 @@ export const OverviewBanner = () => {
       entries: [
         { key: 'Name', value: team?.name || '' },
         { key: 'Coach', value: team?.coach || '' },
-        { key: 'Position', value: 'TODO' },
+        { key: 'Position', value: team?.formation || '-' },
       ],
     };
     setOverviewTeam(data);

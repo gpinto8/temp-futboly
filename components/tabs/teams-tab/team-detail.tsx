@@ -9,9 +9,9 @@ export const TeamDetail = ({ team }: { team: MatchTeamType }) => {
       <div>
         <h2 className="text-lg md:text-xl font-bold">Starting 11</h2>
         <CustomField
+          teams={1}
           id="customFieldStarting11"
-          players={team.players}
-          module={team.module}
+          player_module={[{ players: team.players, module: team.module }]}
         />
       </div>
       <div className="px-8">
