@@ -1,4 +1,7 @@
-import { AllPosibleFormationsProps } from '@/utils/formations';
+import {
+  AllPosibleFormationsProps,
+  FormationPosition,
+} from '@/utils/formations';
 import { RealTeamLogoIds } from '@/utils/real-team-logos';
 import { Timestamp } from 'firebase/firestore';
 import { DocumentReference } from 'firebase/firestore';
@@ -104,7 +107,7 @@ export type CompetitionsCollectionTeamsProps = {
   results?: StandingsResults;
   players: {
     sportmonksId: number;
-    position?: string; // Look at the "mapFormationPosition" function for the mapping format
+    position?: FormationPosition; // Look at the "mapFormationPosition" function for the mapping format
   }[]; // Only 11 players per team (for now)
 };
 
