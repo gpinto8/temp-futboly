@@ -170,7 +170,7 @@ export const LiveMatch = () => {
         </h1>
         <div className="flex flex-row items-center gap-4 flex-wrap">
           {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
-            [...upcomingMatches, ...upcomingMatches].map((upcomingMatch, index) => (
+            upcomingMatches.map((upcomingMatch, index) => (
               <UpcomingMatch key={index} matchInfo={upcomingMatch} />
             ))
           ) : (
