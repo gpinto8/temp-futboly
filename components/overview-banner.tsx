@@ -261,7 +261,7 @@ export const OverviewBanner = () => {
       logoId: undefined,
       entries: [
         { key: 'Name', value: competition?.name },
-        { key: 'Week', value: 'TODO' },
+        { key: 'Week', value: competition?.currentWeek },
         { key: 'Teams', value: competition?.players?.length },
       ],
     };
@@ -277,7 +277,7 @@ export const OverviewBanner = () => {
       entries: [
         { key: 'Name', value: team?.name || '' },
         { key: 'Coach', value: team?.coach || '' },
-        { key: 'Position', value: 'TODO' },
+        { key: 'Position', value: team?.formation || "-" },
       ],
     };
     setOverviewTeam(data);
