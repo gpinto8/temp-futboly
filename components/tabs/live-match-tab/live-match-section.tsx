@@ -4,6 +4,8 @@ import { CustomSeparator } from '@/components/custom/custom-separator';
 import { LiveMatchProps } from '@/data/matches/use-get-matches';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { useAppSelector } from '@/store/hooks';
+import { CustomField } from '@/components/custom/custom-field';
+import { PlayerType } from '@/firebase/db-types';
 
 export const LiveMatchSection = ({
   nextMatch,
@@ -12,10 +14,10 @@ export const LiveMatchSection = ({
 }) => {
   const user = useAppSelector((state) => state.user);
   const { home, away, week, result } = nextMatch;
-  const homeTeamLogo = getRealTeamLogoById(home.logoId);
-  const awayTeamLogo = getRealTeamLogoById(away.logoId);
-  const homeClass = nextMatch.home.userRef.id === user.id ? 'text-main' : '';
-  const awayClass = nextMatch.away.userRef.id === user.id ? 'text-main' : '';
+  const homeTeamLogo = getRealTeamLogoById(nextMatch?.home?.logoId);
+  const awayTeamLogo = getRealTeamLogoById(nextMatch?.away?.logoId);
+  const homeClass = nextMatch?.home?.userRef?.id === user.id ? 'text-main' : '';
+  const awayClass = nextMatch?.away?.userRef?.id === user.id ? 'text-main' : '';
 
   return (
     <div className="flex flex-row items-center justify-between gap-8 mt-8">
@@ -89,7 +91,13 @@ export const LiveMatchSection = ({
             </div>
           </div>
         </div>
-        <div className="bg-success-600 w-full h-full text-center border-4 border-black"></div>
+        <div className="bg-success-600 w-full h-full text-center border-4 border-black">
+            <CustomField teams={2} id={"football-field-live-match"} 
+                player_module={[
+                    {players: home.players.map((player) => playerToFootballField(player)), module: home.formation ? home.formation : "4-3-3"},
+                    {players: away.players.map((player) => playerToFootballField(player)), module: away.formation ? away.formation : "4-3-3"}
+                ]}/>
+        </div>
       </div>
       <div id="awayTeamLive">
         <h2 className="text-l font-medium my-2">
@@ -129,3 +137,15 @@ export const LiveMatchSection = ({
     </div>
   );
 };
+
+function playerToFootballField(player: any): PlayerType {
+    const defaultImage = "https://cdn.sportmonks.com/images/soccer/placeholder.png";
+    return {
+        name: player.display_name,
+        image: player.image_path ? player.image_path : defaultImage,
+        shirtNumber: 99,
+        isCaptain: false,
+        points: player?.score ? player?.score : 0,
+        position: player.position
+    };
+}
