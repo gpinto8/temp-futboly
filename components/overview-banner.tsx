@@ -77,8 +77,9 @@ const GameSection = () => {
   );
   const competitionStarted = activeCompetition?.competitionStarted;
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
+    getTimeToNextMatch(),
+  );
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
@@ -216,8 +217,9 @@ export const OverviewBanner = () => {
   const { getActiveCompetition } = useGetCompetitions();
   const { getTimeToNextMatch } = useGetMatches();
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
+    getTimeToNextMatch(),
+  );
   const [overviewLeague, setOverviewLeague] = useState<BannerCardProps>();
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
@@ -275,7 +277,7 @@ export const OverviewBanner = () => {
       entries: [
         { key: 'Name', value: team?.name || '' },
         { key: 'Coach', value: team?.coach || '' },
-        { key: 'Position', value: team?.formation || '-' },
+        { key: 'Formation', value: team?.formation || '' },
       ],
     };
     setOverviewTeam(data);
@@ -295,7 +297,9 @@ export const OverviewBanner = () => {
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
           <div className="w-full flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-2 md 2xl:gap-6">
             {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
-              (data, index) => <BannerCard key={index} {...data} />,
+              (data, index) => (
+                <BannerCard key={index} {...data} />
+              ),
             )}
           </div>
           <GameSection />
