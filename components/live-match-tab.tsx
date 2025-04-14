@@ -69,16 +69,16 @@ export const LiveMatch = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    let timerId: any;
-    if (timeLeftToNextMatch > 0) {
-      timerId = setInterval(() => {
-        setTimeLeftToNextMatch((prev) => prev - 1000);
-      }, 1000);
-    }
+  // useEffect(() => {
+  //   let timerId: any;
+  //   if (timeLeftToNextMatch > 0) {
+  //     timerId = setInterval(() => {
+  //       setTimeLeftToNextMatch((prev) => prev - 1000);
+  //     }, 1000);
+  //   }
 
-    return () => clearInterval(timerId);
-  }, []);
+  //   return () => clearInterval(timerId);
+  // }, []);
 
   async function calculateMatches() {
     if (!nextMatchMapped) {
