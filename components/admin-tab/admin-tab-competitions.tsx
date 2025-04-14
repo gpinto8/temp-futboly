@@ -21,7 +21,7 @@ export const AdminTabCompetitions = () => {
       COMPETITION: name,
       TYPE: specificPosition ? 'Specific Position' : 'General Position',
       TEAMS: teams.length,
-      STATUS: active ? "Started" : "-",
+      STATUS: active ? 'Started' : '-',
       ACTIONS: (
         <CustomButton
           label="Delete"

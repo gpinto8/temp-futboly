@@ -277,7 +277,7 @@ export const OverviewBanner = () => {
       entries: [
         { key: 'Name', value: team?.name || '' },
         { key: 'Coach', value: team?.coach || '' },
-        { key: 'Position', value: team?.formation || "-" },
+        { key: 'Position', value: team?.formation || '-' },
       ],
     };
     setOverviewTeam(data);

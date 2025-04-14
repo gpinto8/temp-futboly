@@ -10,19 +10,26 @@ type AdminColumnKeysProps = 'INDEX' | 'USER' | 'ROLE' | 'TEAM' | 'ACTIONS';
 
 export const AdminTabUsers = () => {
   const league: MappedLeaguesProps = useAppSelector((state) => state.league);
-    const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
+  const activeCompetition = useAppSelector(
+    (state) => state.competition.activeCompetition,
+  );
   const { removeUserFromLeague } = useGetUsers();
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
-    const { getAllTeams } = useGetTeams();
+  const { getAllTeams } = useGetTeams();
 
   useEffect(() => {
     const setUsersRows = async () => {
       const users = league.players;
-        const teams = await getAllTeams();
+      const teams = await getAllTeams();
       const userRows = users.map((user, index) => ({
         INDEX: index + 1,
         USER: user.username,
-        TEAM: teams?.filter((team) => team.competitionRef.id === activeCompetition?.id && team.userRef.id === user.uid)[0]?.name ?? "Not Found",
+        TEAM:
+          teams?.filter(
+            (team) =>
+              team.competitionRef.id === activeCompetition?.id &&
+              team.userRef.id === user.uid,
+          )[0]?.name ?? 'Not Found',
         ROLE: (
           <span
             className={`${user.role === 'owner' ? 'text-error font-bold' : ''}`}

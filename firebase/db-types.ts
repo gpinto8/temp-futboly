@@ -127,7 +127,7 @@ export type ShortTeamProps = {
   ownerUsername: string;
   shortId: string;
   logoId: RealTeamLogoIds;
-    players: any[];
+  players: any[];
 };
 
 export type MappedPlayerProps = {

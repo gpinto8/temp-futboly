@@ -92,11 +92,24 @@ export const LiveMatchSection = ({
           </div>
         </div>
         <div className="bg-success-600 w-full h-full text-center border-4 border-black">
-            <CustomField teams={2} id={"football-field-live-match"} 
-                player_module={[
-                    {players: home.players.map((player) => playerToFootballField(player)), module: home.formation ? home.formation : "4-3-3"},
-                    {players: away.players.map((player) => playerToFootballField(player)), module: away.formation ? away.formation : "4-3-3"}
-                ]}/>
+          <CustomField
+            teams={2}
+            id={'football-field-live-match'}
+            player_module={[
+              {
+                players: home.players.map((player) =>
+                  playerToFootballField(player),
+                ),
+                module: home.formation ? home.formation : '4-3-3',
+              },
+              {
+                players: away.players.map((player) =>
+                  playerToFootballField(player),
+                ),
+                module: away.formation ? away.formation : '4-3-3',
+              },
+            ]}
+          />
         </div>
       </div>
       <div id="awayTeamLive">
@@ -139,13 +152,14 @@ export const LiveMatchSection = ({
 };
 
 function playerToFootballField(player: any): PlayerType {
-    const defaultImage = "https://cdn.sportmonks.com/images/soccer/placeholder.png";
-    return {
-        name: player.display_name,
-        image: player.image_path ? player.image_path : defaultImage,
-        shirtNumber: 99,
-        isCaptain: false,
-        points: player?.score ? player?.score : 0,
-        position: player.position
-    };
+  const defaultImage =
+    'https://cdn.sportmonks.com/images/soccer/placeholder.png';
+  return {
+    name: player.display_name,
+    image: player.image_path ? player.image_path : defaultImage,
+    shirtNumber: 99,
+    isCaptain: false,
+    points: player?.score ? player?.score : 0,
+    position: player.position,
+  };
 }
