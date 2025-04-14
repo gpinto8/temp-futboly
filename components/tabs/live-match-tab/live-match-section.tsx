@@ -67,7 +67,6 @@ export const LiveMatchSection = ({
             />
             <div>
               <p className={homeClass + ' font-bold text-l'}>{home.name}</p>
-              <p className="font-medium text-md text-gray-600">Posizione</p>
             </div>
           </div>
           <div className="flex flex-col justify-center items-center">
@@ -87,7 +86,6 @@ export const LiveMatchSection = ({
             />
             <div>
               <p className={awayClass + ' font-bold text-l'}>{away.name}</p>
-              <p className="font-medium text-md text-gray-600">Posizione</p>
             </div>
           </div>
         </div>
