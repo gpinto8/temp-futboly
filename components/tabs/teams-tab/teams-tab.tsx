@@ -70,8 +70,21 @@ export const TeamsTab = () => {
       <TabSectionSpacer
         firstSection={{
           title: 'Your Team',
-          Component: () =>
-            !team ? (
+          Component: () => (team ? <YourTeam team={team} /> : <div />),
+        }}
+        secondSection={{
+          title: 'All Teams',
+          Component: () => <AllTeams />,
+        }}
+        emptyMessage={{
+          condition: !getActiveCompetition() || !team,
+          Component: () => {
+            return !getActiveCompetition() ? (
+              <EmptyMessage
+                title="Select a competition to create a team! 💪"
+                description='You gotta first select any competition from the "Competitions" tab to create a team on it.'
+              />
+            ) : !team ? (
               <EmptyMessage
                 title="Create your team! 😎"
                 description={
@@ -89,21 +102,9 @@ export const TeamsTab = () => {
                 }
               />
             ) : (
-              <YourTeam team={team} />
-            ),
-        }}
-        secondSection={{
-          title: 'All Teams',
-          Component: () => <AllTeams />,
-        }}
-        emptyMessage={{
-          condition: !getActiveCompetition(),
-          Component: () => (
-            <EmptyMessage
-              title="Select a competition to create a team! 💪"
-              description='You gotta first select any competition from the "Competitions" tab to create a team on it.'
-            />
-          ),
+              <div />
+            );
+          },
         }}
       />
     </>
