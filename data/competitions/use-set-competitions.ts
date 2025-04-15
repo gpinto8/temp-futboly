@@ -17,7 +17,7 @@ export const useSetCompetitions = () => {
   const user = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
   const dispatch = useAppDispatch();
-  const { mapTeamWithExtraProps } = useGetTeams();
+  const { getAllShortTeams } = useGetTeams();
   const {
     getCompetitions,
     getActiveCompetition,
@@ -164,18 +164,7 @@ export const useSetCompetitions = () => {
     );
     const teams = competitionToBeScheduled.teams;
     if (teams.length === 0) return;
-    const mappedTeams = await Promise.all(
-      teams.map(async (team) => await mapTeamWithExtraProps(team)),
-    );
-    const shortMapTeams = mappedTeams.map((mappedTeam) => {
-      return {
-        name: mappedTeam.name,
-        ownerUsername: mappedTeam.ownerUsername,
-        shortId: mappedTeam.shortId,
-        logoId: mappedTeam.logoId,
-        userId: mappedTeam.userId,
-      };
-    }) as ShortTeamProps[];
+    const shortMapTeams = await getAllShortTeams();
     const schedule = createRoundRobinSchedule(shortMapTeams, maxWeek);
     if (!schedule) return;
     const finalSchedule = mapHomeAway(
