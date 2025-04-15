@@ -7,6 +7,8 @@ import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
+import { useSetStandings } from '@/data/standings/use-set-standings';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { EmptyMessage } from './empty-message';
 import { Loader } from './loader';
 
@@ -20,7 +22,9 @@ export const LiveMatch = () => {
     pastMatchesNotCalculated,
     getMatchRatings,
   } = useGetMatches();
+    const activeCompetition = useGetCompetitions().getActiveCompetition();
   const { writeGameResults } = useSetMatches();
+    const { calculateAndSaveStandings } = useSetStandings();
   const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
@@ -65,6 +69,7 @@ export const LiveMatch = () => {
   }, []);
 
   async function calculateMatches() {
+    if (!activeCompetition) return;
     if (!nextMatchMapped) {
       console.error("Can't calculate score without mapped players");
       return;
@@ -109,6 +114,7 @@ export const LiveMatch = () => {
       const weekGameResult = resultsByWeek[week];
       await writeGameResults(weekGameResult, Number(week));
     }
+    await calculateAndSaveStandings(activeCompetition.id);
   }
 
   return nextMatchFound ? (
