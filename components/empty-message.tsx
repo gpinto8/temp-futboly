@@ -27,7 +27,7 @@ export const EmptyMessage = ({
   const empty = noSpaces ? 'p-0 m-0' : 'px-4 py-12';
 
   return (
-    <section className={`bg-white w-full ${className}`}>
+    <section className={`w-full ${className}`}>
       <div
         className={`container flex flex-col gap-6 items-center mx-auto text-center md:max-w-[70%] ${empty}`}
       >

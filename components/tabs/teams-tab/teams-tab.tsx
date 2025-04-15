@@ -64,7 +64,7 @@ export const TeamsTab = () => {
           title="Your competition has started! 🎊"
           description="It meanst that you no longer can modify your formation or player's position. Wait till the competition finishes!"
           noSpaces
-          className="bg-main-100 text-white p-10 rounded-2xl"
+          className="!bg-main-100 !p-10 !rounded-2xl"
         />
       )}
       <TabSectionSpacer
