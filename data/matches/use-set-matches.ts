@@ -65,7 +65,7 @@ export const useSetMatches = () => {
     }
     const newActiveCompetition = cloneDeep(activeCompetition);
     newActiveCompetition.matchSchedule = updatedMatches;
-    dispatch(competitionActions.setActiveCompetition(newActiveCompetition));
+    dispatch(competitionActions.setCompetition(newActiveCompetition));
   };
 
   return {
