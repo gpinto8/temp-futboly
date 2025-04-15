@@ -17,7 +17,10 @@ import { TeamLogoPicker } from '../team-logo-picker';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { RealTeamLogoIds } from '@/utils/real-team-logos';
 import { EmptyMessage } from '../empty-message';
-import { TEAMS_PLAYERS_LIMIT } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionProps,
+  TEAMS_PLAYERS_LIMIT,
+} from '@/firebase/db-types';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -29,6 +32,7 @@ export type AddEditTeamModalDataProps = {
   owner?: string;
   coach: string;
   selectedPlayerIds?: number[];
+  competitionStarted?: CompetitionsCollectionProps['competitionStarted'];
 };
 
 export type AddEditTeamModalProps = {
@@ -122,6 +126,11 @@ export const AddEditTeamModal = ({
 
   // Disable the inputs if they are not valid
   useEffect(() => {
+    if (data?.competitionStarted) {
+      setDisabled(true);
+      return;
+    }
+
     const allowPlayersCondition = isEdit
       ? selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
       : true;
@@ -225,6 +234,14 @@ export const AddEditTeamModal = ({
       handleClose={handleClose}
     >
       <div className="flex flex-col gap-6 h-full">
+        {data?.competitionStarted && (
+          <EmptyMessage
+            title="This team's competition has started."
+            description="It means that you no longer can apply any modifications to its teams."
+            noSpaces
+            className="bg-main-100 text-white p-8 rounded-2xl"
+          />
+        )}
         <div className="flex flex-col gap-8 h-full">
           <div className="flex flex-col gap-4">
             <div className="font-bold">Choose information:</div>

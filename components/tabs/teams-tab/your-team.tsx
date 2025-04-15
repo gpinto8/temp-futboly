@@ -122,6 +122,12 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   }, [tablePosition, fieldPosition]);
 
   useEffect(() => {
+    const competitionStarted = getActiveCompetition()?.competitionStarted;
+    if (competitionStarted) {
+      setDisabled(true);
+      return;
+    }
+
     const diffFormation = team.formation !== formation;
 
     const areArraysIdentical = (arr1: any, arr2: any) =>

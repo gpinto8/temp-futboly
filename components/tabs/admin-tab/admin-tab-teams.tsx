@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { CustomButton } from '../../custom/custom-button';
-import { ColumnsProps, CustomTable, RowsProps } from '../../custom/custom-table';
+import {
+  ColumnsProps,
+  CustomTable,
+  RowsProps,
+} from '../../custom/custom-table';
 import {
   AddEditTeamModal,
   AddEditTeamModalDataProps,
@@ -10,6 +14,7 @@ import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useAppSelector } from '@/store/hooks';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { EmptyMessage } from '../../empty-message';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 
 type AdminColumnKeysProps =
   | 'INDEX'
@@ -26,6 +31,7 @@ export const AdminTabTeams = () => {
   );
   const { getAllTeamsFromAllCompetitions } = useGetTeams();
   const { deleteTeam, editTeam } = useSetTeams();
+  const { getCompetitionById } = useGetCompetitions();
 
   const [rows, setRows] = useState<RowsProps<AdminColumnKeysProps>>([]);
   const [anyTeamExists, setAnyTeamExists] = useState(false);
@@ -35,61 +41,73 @@ export const AdminTabTeams = () => {
 
     setAnyTeamExists(!!allTeams?.length);
 
-    const _rows: RowsProps<AdminColumnKeysProps> = allTeams
-      .filter((team) => team.competitionRef.id === activeCompetition?.id)
-      .map((team, i) => {
-        const {
-          competitionName,
-          shortId,
-          logoId,
-          name,
-          ownerUsername,
-          coach,
-          competitionRef,
-          players,
-        } = team;
+    let _rows: RowsProps<AdminColumnKeysProps> = [];
 
-        const selectedPlayerIds = players?.map((player) => player.sportmonksId);
-        const data = {
-          logoId,
-          name,
-          owner: ownerUsername,
-          coach,
-          selectedPlayerIds,
+    const filteredAllTeams = allTeams.filter(
+      (team) => team.competitionRef.id === activeCompetition?.id,
+    );
+
+    let index: number = 0;
+    for await (const team of filteredAllTeams) {
+      const {
+        competitionName,
+        shortId,
+        logoId,
+        name,
+        ownerUsername,
+        coach,
+        competitionRef,
+        players,
+      } = team;
+
+      const teamCompetitionId = competitionRef.id;
+      const competition = await getCompetitionById(teamCompetitionId);
+      const competitionStarted = competition?.competitionStarted;
+
+      const selectedPlayerIds = players?.map((player) => player.sportmonksId);
+      const data: Partial<AddEditTeamModalDataProps> = {
+        logoId,
+        name,
+        owner: ownerUsername,
+        coach,
+        selectedPlayerIds,
+        competitionStarted,
+      };
+
+      const handleEditTeam = (team: AddEditTeamModalDataProps) => {
+        const newTeam: Partial<CompetitionsCollectionTeamsProps> = {
+          coach: team?.coach,
+          logoId: team?.logoId,
+          name: team?.name,
+          players: team?.selectedPlayerIds?.map((sportmonksId) => ({
+            sportmonksId,
+          })),
         };
 
-        const handleEditTeam = (team: AddEditTeamModalDataProps) => {
-          const newTeam: Partial<CompetitionsCollectionTeamsProps> = {
-            coach: team?.coach,
-            logoId: team?.logoId,
-            name: team?.name,
-            players: team?.selectedPlayerIds?.map((sportmonksId) => ({
-              sportmonksId,
-            })),
-          };
+        editTeam(competitionRef.id, shortId, newTeam);
+      };
 
-          editTeam(competitionRef.id, shortId, newTeam);
-        };
-
-        return {
-          INDEX: i + 1,
-          COMPETITION: competitionName,
-          TEAM: name,
-          OWNER: ownerUsername,
-          PLAYERS: players?.length,
-          ACTIONS: (
-            <div className="flex gap-1">
-              <AddEditTeamModal data={data} isEdit onSetData={handleEditTeam} />
-              <CustomButton
-                label="Delete"
-                style="error"
-                className="!w-1/4 !h-1/4"
-                handleClick={() => deleteTeam(competitionRef.id, shortId)}
-              />
-            </div>
-          ),
-        };
+      _rows.push({
+        INDEX: index + 1,
+        COMPETITION: competitionName,
+        TEAM: name,
+        OWNER: ownerUsername,
+        PLAYERS: players?.length,
+        ACTIONS: (
+          <div className="flex gap-1">
+            <AddEditTeamModal data={data} isEdit onSetData={handleEditTeam} />
+            <CustomButton
+              label="Delete"
+              style="error"
+              className="!w-1/4 !h-1/4"
+              handleClick={() => deleteTeam(competitionRef.id, shortId)}
+            />
+          </div>
+        ),
       });
+
+      index++;
+    }
 
     setRows(_rows);
   };
