@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/store/hooks';
 import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { useGetUsers } from '../users/use-get-users';
-import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import { CompetitionsCollectionTeamsProps, ShortTeamProps } from '@/firebase/db-types';
 import { useGetLeagues } from '../leagues/use-get-leagues';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
@@ -96,6 +96,24 @@ export const useGetTeams = () => {
     if (allTeams?.length) return allTeams;
   };
 
+  const getAllShortTeams = async () => {
+        const mappedTeams = await getAllTeams(true);
+        if (!mappedTeams) return [];
+        const shortMappedTeams: ShortTeamProps[] = mappedTeams.map((mappedTeam) => {
+          const { name, ownerUsername, shortId, logoId, userId, players } = mappedTeam;
+          if (!name || !ownerUsername || !shortId || !logoId || !userId || !players) return null;
+          return {
+            name,
+            ownerUsername,
+            shortId,
+            logoId,
+            userId,
+            //players
+          };
+        }).filter((el) => el !== null);
+        return shortMappedTeams;
+  };
+
   // GET ALL THE TEAMS FROM ALL THE COMPETITIONS BASED ON CURRENT LEAGUE
   const getAllTeamsFromAllCompetitions = async () => {
     const currentLeagueId = getLeague()?.id;
@@ -139,5 +157,6 @@ export const useGetTeams = () => {
     getAllTeams,
     getAllTeamsFromAllCompetitions,
     getPlayersSportmonksData,
+    getAllShortTeams,
   };
 };
