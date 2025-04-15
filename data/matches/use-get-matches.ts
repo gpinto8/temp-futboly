@@ -45,8 +45,8 @@ export const useGetMatches = () => {
           personalMatch.result.home > personalMatch.result.away
             ? 'Home'
             : personalMatch.result.home !== personalMatch.result.away
-            ? 'Away'
-            : 'Draw';
+              ? 'Away'
+              : 'Draw';
         if (winnerSide === matchSide) totalWins++;
         totalScore += personalMatch.result[matchSide.toLowerCase()];
         scoredThisWeek = personalMatch.result[matchSide.toLowerCase()];
@@ -319,21 +319,21 @@ async function assignTeamRating(
               const playerLineup = teamLastResult.lineups?.filter(
                 (lineupPlayer: any) => lineupPlayer.player_id === playerId,
               );
-                // If the player was in the lineup I check his details otherwise I will assign the default
-                if (playerLineup?.length !== 0) {
-                                const playerScoreDetails = playerLineup[0]?.details?.filter(
-                                    (detail: any) => detail.type_id === 118,
-                                );
-                                // If the player has a score I will extract it otherwise I will assign the default
-                                if (playerScoreDetails?.length !== 0) {
-                                    const playerScore = playerScoreDetails[0].data?.value;
-                                    originalPlayer.score = playerScore ?? DEFAULT_SCORE;
-                                } else {
-                                    originalPlayer.score = DEFAULT_SCORE;
-                                }
-                            } else {
-                                    originalPlayer.score = DEFAULT_SCORE;
-                            }
+              // If the player was in the lineup I check his details otherwise I will assign the default
+              if (playerLineup?.length !== 0) {
+                const playerScoreDetails = playerLineup[0]?.details?.filter(
+                  (detail: any) => detail.type_id === 118,
+                );
+                // If the player has a score I will extract it otherwise I will assign the default
+                if (playerScoreDetails?.length !== 0) {
+                  const playerScore = playerScoreDetails[0].data?.value;
+                  originalPlayer.score = playerScore ?? DEFAULT_SCORE;
+                } else {
+                  originalPlayer.score = DEFAULT_SCORE;
+                }
+              } else {
+                originalPlayer.score = DEFAULT_SCORE;
+              }
             }
           });
         });
@@ -353,7 +353,7 @@ async function assignTeamRating(
 
   await Promise.all(teamPromises);
   return originalTeam;
-};
+}
 
 async function getTeamLatestFixture(
   date1: DateString,

@@ -1,6 +1,10 @@
 import { useGetUsers } from '@/data/users/use-get-users';
 import { CustomButton } from '../../custom/custom-button';
-import { ColumnsProps, CustomTable, RowsProps } from '../../custom/custom-table';
+import {
+  ColumnsProps,
+  CustomTable,
+  RowsProps,
+} from '../../custom/custom-table';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { MappedLeaguesProps } from '@/firebase/db-types';

@@ -1,7 +1,10 @@
 import { useAppSelector } from '@/store/hooks';
 import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { useGetUsers } from '../users/use-get-users';
-import { CompetitionsCollectionTeamsProps, ShortTeamProps } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionTeamsProps,
+  ShortTeamProps,
+} from '@/firebase/db-types';
 import { useGetLeagues } from '../leagues/use-get-leagues';
 
 export type CompetitionsCollectionTeamsExtraProps =
@@ -96,29 +99,39 @@ export const useGetTeams = () => {
   };
 
   const getAllShortTeams = async () => {
-        const mappedTeams = await getAllTeams(true);
-        if (!mappedTeams) return [];
-        const shortMappedTeams: ShortTeamProps[] = mappedTeams.map((mappedTeam) => {
-          const { name, ownerUsername, shortId, logoId, userId, players } = mappedTeam;
-          if (!name || !ownerUsername || !shortId || !logoId || !userId || !players) return null;
-          return {
-            name,
-            ownerUsername,
-            shortId,
-            logoId,
-            userId,
-            //players
-          };
-        }).filter((el) => el !== null);
-        return shortMappedTeams;
+    const mappedTeams = await getAllTeams(true);
+    if (!mappedTeams) return [];
+    const shortMappedTeams: ShortTeamProps[] = mappedTeams
+      .map((mappedTeam) => {
+        const { name, ownerUsername, shortId, logoId, userId, players } =
+          mappedTeam;
+        if (
+          !name ||
+          !ownerUsername ||
+          !shortId ||
+          !logoId ||
+          !userId ||
+          !players
+        )
+          return null;
+        return {
+          name,
+          ownerUsername,
+          shortId,
+          logoId,
+          userId,
+          //players
+        };
+      })
+      .filter((el) => el !== null);
+    return shortMappedTeams;
   };
 
   // GET ALL THE TEAMS FROM ALL THE COMPETITIONS BASED ON CURRENT LEAGUE
   const getAllTeamsFromAllCompetitions = async () => {
     const currentLeagueId = getLeague()?.id;
-    const currentLeagueCompetitions = await getCompetitionsByLeagueId(
-      currentLeagueId,
-    );
+    const currentLeagueCompetitions =
+      await getCompetitionsByLeagueId(currentLeagueId);
 
     const allTeams = currentLeagueCompetitions
       .map((competition) => competition.teams)

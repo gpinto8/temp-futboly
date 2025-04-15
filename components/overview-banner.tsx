@@ -76,9 +76,8 @@ const GameSection = () => {
   );
   const competitionStarted = activeCompetition?.competitionStarted;
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
-    getTimeToNextMatch(),
-  );
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
+    useState(getTimeToNextMatch());
   const [nextMatchFound, setNextMatchFound] = useState(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
@@ -98,12 +97,10 @@ const GameSection = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
-        homePlayerIds,
-      );
-      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
-        awayPlayerIds,
-      );
+      const homeReturnAPIData =
+        await getSportmonksPlayersDataByIds(homePlayerIds);
+      const awayReturnAPIData =
+        await getSportmonksPlayersDataByIds(awayPlayerIds);
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -273,9 +270,7 @@ export const OverviewBanner = () => {
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
           <div className="w-full flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-2 md 2xl:gap-6">
             {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
-              (data, index) => (
-                <BannerCard key={index} {...data} />
-              ),
+              (data, index) => <BannerCard key={index} {...data} />,
             )}
           </div>
           <GameSection />
@@ -291,9 +286,8 @@ const TimerSection = () => {
     (state) => state.competition.activeCompetition,
   );
   const { getTimeToNextMatch } = useGetMatches();
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
-    getTimeToNextMatch(),
-  );
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
+    useState<number>(getTimeToNextMatch());
   const { setCurrentTab } = useTabContext();
 
   // Timer

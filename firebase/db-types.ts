@@ -117,7 +117,7 @@ export type StandingsResults = {
   W: number;
   L: number;
   D: number;
-    points: number;
+  points: number;
 };
 
 export type ShortTeamProps = {
@@ -130,7 +130,7 @@ export type ShortTeamProps = {
 };
 
 export type ShortTeamPropsStandings = ShortTeamProps & {
-  results: StandingsResults
+  results: StandingsResults;
   position: number;
 };
 

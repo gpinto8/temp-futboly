@@ -60,7 +60,7 @@ export const LiveMatchSection = ({
   nextMatch: LiveMatchProps;
 }) => {
   const { getUser } = useGetUsers();
-    const { getTeamPositionFromActiveCompetition } = useGetStandings();
+  const { getTeamPositionFromActiveCompetition } = useGetStandings();
 
   const { home, away, week, result } = nextMatch;
   const homeTeamLogo = getRealTeamLogoById(home.logoId);
@@ -86,7 +86,11 @@ export const LiveMatchSection = ({
               <p className={homeClass + ' font-bold text-l text-left'}>
                 {home.name}
               </p>
-              <p className="font-medium text-md text-gray-600">{getPositionTextFromPosition(getTeamPositionFromActiveCompetition(home.shortId))}</p>
+              <p className="font-medium text-md text-gray-600">
+                {getPositionTextFromPosition(
+                  getTeamPositionFromActiveCompetition(home.shortId),
+                )}
+              </p>
             </div>
           </div>
 
@@ -107,7 +111,11 @@ export const LiveMatchSection = ({
               <p className={awayClass + ' font-bold text-l text-right'}>
                 {away.name}
               </p>
-              <p className="font-medium text-md text-gray-600">{getPositionTextFromPosition(getTeamPositionFromActiveCompetition(away.shortId))}</p>
+              <p className="font-medium text-md text-gray-600">
+                {getPositionTextFromPosition(
+                  getTeamPositionFromActiveCompetition(away.shortId),
+                )}
+              </p>
             </div>
             <CustomImage
               forceSrc={awayTeamLogo?.src}
@@ -159,9 +167,9 @@ export const LiveMatchSection = ({
   );
 };
 
-function getPositionTextFromPosition(position: number | undefined) : string {
-    if (!position) return "";
-    return `${position.toString()}${getOrdinalSuffix(position)} Position`;
+function getPositionTextFromPosition(position: number | undefined): string {
+  if (!position) return '';
+  return `${position.toString()}${getOrdinalSuffix(position)} Position`;
 }
 
 function getOrdinalSuffix(position: number): string {

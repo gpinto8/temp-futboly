@@ -23,9 +23,9 @@ export const LiveMatch = () => {
     pastMatchesNotCalculated,
     getMatchRatings,
   } = useGetMatches();
-    const activeCompetition = useGetCompetitions().getActiveCompetition();
+  const activeCompetition = useGetCompetitions().getActiveCompetition();
   const { writeGameResults } = useSetMatches();
-    const { calculateAndSaveStandings } = useSetStandings();
+  const { calculateAndSaveStandings } = useSetStandings();
   const { getAllTeams } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
@@ -45,12 +45,10 @@ export const LiveMatch = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
-        homePlayerIds,
-      );
-      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
-        awayPlayerIds,
-      );
+      const homeReturnAPIData =
+        await getSportmonksPlayersDataByIds(homePlayerIds);
+      const awayReturnAPIData =
+        await getSportmonksPlayersDataByIds(awayPlayerIds);
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -64,13 +62,15 @@ export const LiveMatch = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
-    const timeToStart = getTimeToNextMatch();
-    if (timeToStart < 1) {
-        const ratings = await getNextMatchRatings(homeReturnAPIData, awayReturnAPIData);
+      const timeToStart = getTimeToNextMatch();
+      if (timeToStart < 1) {
+        const ratings = await getNextMatchRatings(
+          homeReturnAPIData,
+          awayReturnAPIData,
+        );
         setNextMatchWithRating(ratings);
-    }
+      }
     })();
-
   }, []);
 
   async function calculateMatches() {

@@ -32,8 +32,8 @@ const icons = {
 };
 
 const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
-    // LastMatches contains all the results from week 1 to x so I have to reverse it
-    const lastFive = lastMatches.toReversed().slice(0,5);
+  // LastMatches contains all the results from week 1 to x so I have to reverse it
+  const lastFive = lastMatches.toReversed().slice(0, 5);
 
   return (
     <div className="flex gap-1.5 justify-center">
@@ -66,7 +66,9 @@ export const StandingsTab = () => {
   const breakpoint = useBreakpoint();
   const { pastMatchesNotCalculated } = useGetMatches();
   const { getStandingsFromActiveCompetition } = useGetStandings();
-  const [standings, setStandings] = useState<ShortTeamPropsStandings[] | null>(null);
+  const [standings, setStandings] = useState<ShortTeamPropsStandings[] | null>(
+    null,
+  );
 
   let textForPastMatches =
     'There are matches that have not been calculated yet. ';
@@ -76,23 +78,26 @@ export const StandingsTab = () => {
       : 'Ask the Admin to confirm and save to update the standings.';
 
   useEffect(() => {
-      const _standings = getStandingsFromActiveCompetition();
-        if (!_standings) return;
-      setStandings(_standings);
+    const _standings = getStandingsFromActiveCompetition();
+    if (!_standings) return;
+    setStandings(_standings);
   }, []);
 
-  const rows: RowsProps<ColumnKeysProps> = standings && standings.length > 0 ? standings?.map((team) => {
-    return {
-      INDEX: team.position,
-      TEAM_LOGO: getTeamLogo(team.logoId),
-      TEAM: team.name,
-      WINS: team.results.W,
-      DRAWS: team.results.D,
-      LOSES: team.results.L,
-      POINTS: team.results.points,
-      LAST_MATCHES: getLastMatchesIcons(team.results.lastMatches),
-    };
-  }) : [];
+  const rows: RowsProps<ColumnKeysProps> =
+    standings && standings.length > 0
+      ? standings?.map((team) => {
+          return {
+            INDEX: team.position,
+            TEAM_LOGO: getTeamLogo(team.logoId),
+            TEAM: team.name,
+            WINS: team.results.W,
+            DRAWS: team.results.D,
+            LOSES: team.results.L,
+            POINTS: team.results.points,
+            LAST_MATCHES: getLastMatchesIcons(team.results.lastMatches),
+          };
+        })
+      : [];
 
   const columns: ColumnsProps<ColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },

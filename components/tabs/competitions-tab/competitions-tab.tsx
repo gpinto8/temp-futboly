@@ -12,7 +12,9 @@ import { TabSectionSpacer } from '../tab-section-spacer';
 export const CompetitionsTab = () => {
   const user: UsersCollectionProps = useAppSelector((state) => state.user);
   const league = useAppSelector((state) => state.league);
-    const activeCompetition = useAppSelector((state) => state.competition.activeCompetition);
+  const activeCompetition = useAppSelector(
+    (state) => state.competition.activeCompetition,
+  );
   const { setActiveCompetition } = useSetCompetitions();
   const { getCompetitionsByUid } = useGetCompetitions();
   const [competitions, setCompetitions] = useState<any[]>();

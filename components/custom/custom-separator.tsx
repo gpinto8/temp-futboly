@@ -9,7 +9,7 @@ const Divider = () => <div className="border-t border-gray-400 flex-grow" />;
 export const CustomSeparator = ({
   withText,
   text = 'DEFAULT',
-  className = "",
+  className = '',
 }: CustomSeparatorProps) => {
   return (
     <div
