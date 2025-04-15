@@ -2,6 +2,7 @@ import { CustomImage } from '@/components/custom/custom-image';
 import { Avatar } from '@mui/material';
 import { CustomSeparator } from '@/components/custom/custom-separator';
 import { LiveMatchProps } from '@/data/matches/use-get-matches';
+import { useGetStandings } from '@/data/standings/use-get-standings';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { FootballFieldHorizontal } from '@/components/football-field/football-field-horizontal';
 import { useGetUsers } from '@/data/users/use-get-users';
@@ -59,6 +60,7 @@ export const LiveMatchSection = ({
   nextMatch: LiveMatchProps;
 }) => {
   const { getUser } = useGetUsers();
+    const { getTeamPositionFromActiveCompetition } = useGetStandings();
 
   const { home, away, week, result } = nextMatch;
   const homeTeamLogo = getRealTeamLogoById(home.logoId);
@@ -84,7 +86,7 @@ export const LiveMatchSection = ({
               <p className={homeClass + ' font-bold text-l text-left'}>
                 {home.name}
               </p>
-              <p className="font-medium text-md text-gray-600">Posizione</p>
+              <p className="font-medium text-md text-gray-600">{getPositionTextFromPosition(getTeamPositionFromActiveCompetition(home.shortId))}</p>
             </div>
           </div>
 
@@ -105,7 +107,7 @@ export const LiveMatchSection = ({
               <p className={awayClass + ' font-bold text-l text-right'}>
                 {away.name}
               </p>
-              <p className="font-medium text-md text-gray-600">Posizione</p>
+              <p className="font-medium text-md text-gray-600">{getPositionTextFromPosition(getTeamPositionFromActiveCompetition(away.shortId))}</p>
             </div>
             <CustomImage
               forceSrc={awayTeamLogo?.src}
@@ -156,3 +158,28 @@ export const LiveMatchSection = ({
     </div>
   );
 };
+
+function getPositionTextFromPosition(position: number | undefined) : string {
+    if (!position) return "";
+    return `${position.toString()}${getOrdinalSuffix(position)} Position`;
+}
+
+function getOrdinalSuffix(position: number): string {
+  const lastDigit = position % 10;
+  const lastTwoDigits = position % 100;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return 'th';
+  }
+
+  switch (lastDigit) {
+    case 1:
+      return 'st';
+    case 2:
+      return 'nd';
+    case 3:
+      return 'rd';
+    default:
+      return 'th';
+  }
+}
