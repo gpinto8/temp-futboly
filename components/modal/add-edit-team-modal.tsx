@@ -239,7 +239,7 @@ export const AddEditTeamModal = ({
             title="This team's competition has started."
             description="It means that you no longer can apply any modifications to its teams."
             noSpaces
-            className="bg-main-100 text-white p-8 rounded-2xl"
+            className="!bg-main-100 !p-8 !rounded-2xl"
           />
         )}
         <div className="flex flex-col gap-8 h-full">
