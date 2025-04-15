@@ -65,9 +65,9 @@ export const LiveMatchSection = ({
   const awayTeamLogo = getRealTeamLogoById(away.logoId);
 
   const homeClass =
-    nextMatch.home.userRef.id === getUser().id ? 'text-main' : '';
+    nextMatch?.home?.userRef?.id === getUser().id ? 'text-main' : '';
   const awayClass =
-    nextMatch.away.userRef.id === getUser().id ? 'text-main' : '';
+    nextMatch?.away?.userRef?.id === getUser().id ? 'text-main' : '';
 
   return (
     <div className="flex flex-col w-full items-center justify-between gap-8 mt-4">

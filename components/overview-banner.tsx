@@ -117,6 +117,7 @@ const GameSection = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
+      const timeLeftToNextMatch = getTimeToNextMatch();
       if (timeLeftToNextMatch < 1) {
         //Match started
         const nextMatchWithRatingRes = await getNextMatchRatings(
@@ -127,17 +128,6 @@ const GameSection = () => {
       }
     })();
   }, [activeCompetition]);
-
-  useEffect(() => {
-    let timerId: any;
-    if (timeLeftToNextMatch > 0) {
-      timerId = setInterval(() => {
-        setTimeLeftToNextMatch((prev) => prev - 1000);
-      }, 1000);
-    }
-
-    return () => clearInterval(timerId);
-  }, []);
 
   return competitionStarted ? (
     nextMatchFound && nextMatchWithRating ? (
@@ -218,28 +208,11 @@ export const OverviewBanner = () => {
   const { getLeague } = useGetLeagues();
   const { getTeam } = useGetTeams();
   const { getActiveCompetition } = useGetCompetitions();
-  const { getTimeToNextMatch } = useGetMatches();
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
-    getTimeToNextMatch(),
-  );
   const [overviewLeague, setOverviewLeague] = useState<BannerCardProps>();
   const [overviewCompetition, setOverviewCompetition] =
     useState<BannerCardProps>();
   const [overviewTeam, setOverviewTeam] = useState<BannerCardProps>();
-  const { setCurrentTab } = useTabContext();
-
-  // Timer
-  useEffect(() => {
-    let timerId;
-    if (timeLeftToNextMatch > 0) {
-      timerId = setInterval(() => {
-        setTimeLeftToNextMatch((prev) => prev - 1000);
-      }, 1000);
-    }
-
-    return () => clearInterval(timerId);
-  }, []);
 
   // LEAGUE
   const league = getLeague();
@@ -306,45 +279,68 @@ export const OverviewBanner = () => {
             )}
           </div>
           <GameSection />
+          <TimerSection />
         </div>
-      </div>
-
-      {/* GAME */}
-      <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
-        {competition?.competitionStarted ? (
-          timeLeftToNextMatch > 0 ? (
-            <div className="flex flex-wrap justify-center">
-              <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
-                {formatDateDiffToDate(timeLeftToNextMatch)}
-              </h3>
-              <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-gray-900 sm:text-xl">
-                to the next game!
-              </h3>
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center">
-              <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
-                Game is in progress!
-              </h3>
-            </div>
-          )
-        ) : null}
-        {timeLeftToNextMatch > 0 && (
-          <CustomButton
-            label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
-            style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
-            handleClick={() =>
-              setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
-            }
-            className="rounded-full mt-3"
-            disableElevation
-          />
-        )}
       </div>
     </div>
   );
 };
+const TimerSection = () => {
+  const competition = useAppSelector(
+    (state) => state.competition.activeCompetition,
+  );
+  const { getTimeToNextMatch } = useGetMatches();
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
+    getTimeToNextMatch(),
+  );
+  const { setCurrentTab } = useTabContext();
 
+  // Timer
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+    if (timeLeftToNextMatch > 0) {
+      timerId = setInterval(() => {
+        setTimeLeftToNextMatch((prev) => prev - 1000);
+      }, 1000);
+    }
+
+    return () => clearInterval(timerId);
+  }, []);
+
+  return (
+    <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
+      {competition?.competitionStarted ? (
+        timeLeftToNextMatch > 0 ? (
+          <div className="flex flex-wrap justify-center">
+            <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
+              {formatDateDiffToDate(timeLeftToNextMatch)}
+            </h3>
+            <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-gray-900 sm:text-xl">
+              to the next game!
+            </h3>
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-center">
+            <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
+              Game is in progress!
+            </h3>
+          </div>
+        )
+      ) : null}
+      {timeLeftToNextMatch > 0 && (
+        <CustomButton
+          label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
+          style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
+          handleClick={() =>
+            setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
+          }
+          className="rounded-full mt-3"
+          disableElevation
+        />
+      )}
+    </div>
+  );
+};
 function formatDateDiffToDate(millisecDiff: number) {
   if (millisecDiff <= 0) return 'Game is in progress!';
 

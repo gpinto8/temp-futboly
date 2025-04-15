@@ -25,10 +25,7 @@ export const LiveMatch = () => {
   const { getAllTeams } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
-    getTimeToNextMatch(),
-  );
-  const [nextMatchFound, setNextMatchFound] = useState(false);
+  const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
@@ -63,28 +60,14 @@ export const LiveMatch = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
-      if (timeLeftToNextMatch < 1) {
-        //Match started
-        const nextMatchWithRatingRes = await getNextMatchRatings(
-          homeReturnAPIData,
-          awayReturnAPIData,
-        );
-        setNextMatchWithRating(nextMatchWithRatingRes);
-      }
+    const timeToStart = getTimeToNextMatch();
+    if (timeToStart < 1) {
+        const ratings = await getNextMatchRatings(homeReturnAPIData, awayReturnAPIData);
+        setNextMatchWithRating(ratings);
+    }
     })();
+
   }, []);
-
-  // TODO: to review this since it causes an infinite refresh for the children components, ending in even a crash (in this case one fetches an api, which could cause a unnecessary usage of it)
-  // useEffect(() => {
-  //   let timerId: any;
-  //   if (timeLeftToNextMatch > 0) {
-  //     timerId = setInterval(() => {
-  //       setTimeLeftToNextMatch((prev) => prev - 1000);
-  //     }, 1000);
-  //   }
-
-  //   return () => clearInterval(timerId);
-  // }, []);
 
   async function calculateMatches() {
     if (!nextMatchMapped) {
