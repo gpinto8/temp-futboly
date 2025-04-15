@@ -87,7 +87,7 @@ export const AllTeams = () => {
   };
 
   return allTeams?.length ? (
-    <div className="grid md:grid-cols-3 gap-4 auto-rows-fr">
+    <div className="grid lg:grid-cols-3 gap-4 auto-rows-fr">
       {allTeams.map((team, index) => {
         const isSelected = selectedTeam === index;
         return (

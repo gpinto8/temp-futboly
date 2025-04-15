@@ -194,7 +194,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
         {/* TEAM PLAYERS */}
         <div className="lg:w-[50%] flex flex-col justify-between">
-          <div className="h-[580px] md:h-[520px]">
+          <div className="h-[580px]">
             <div className="text-xl font-bold pb-2">Team Players</div>
             <div className="text-xs pb-4">
               * The <strong>bolded</strong> names are already saved.
