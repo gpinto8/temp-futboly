@@ -3,11 +3,11 @@
 import { createTheme, Tab, Tabs, ThemeProvider } from '@mui/material';
 import { AdminTab } from './admin-tab/admin-tab';
 import { useSwitchComponents } from '@/utils/switch-components';
-import { StandingsTab } from './standings-tab';
-import { CompetitionsTab } from './competitions-tab';
-import { LiveMatch } from './live-match-tab';
-import { MatchesTab } from './matches-tab';
-import { TeamsTab } from './teams-tab';
+import { StandingsTab } from './standings-tab/standings-tab';
+import { CompetitionsTab } from './competitions-tab/competitions-tab';
+import { LiveMatch } from './live-match-tab/live-match-tab';
+import { MatchesTab } from './matches-tab/matches-tab';
+import { TeamsTab } from './teams-tab/teams-tab';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useEffect, useState } from 'react';
 import { useTabContext } from '@/utils/tab-context';

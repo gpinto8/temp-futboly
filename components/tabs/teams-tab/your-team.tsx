@@ -11,8 +11,8 @@ import {
   SelectableTable,
   SelectableTableColumnKeysProps,
 } from '@/components/table/selectable-table';
-import { FootballField } from '@/components/football-field';
-import { FormationsDropdown } from '@/components/formations-dropdown';
+import { FootballField } from '@/components/football-field/football-field';
+import { FormationsDropdown } from '@/components/tabs/teams-tab/formations-dropdown';
 import {
   AllPosibleFormationsProps,
   FormationPosition,

@@ -1,17 +1,17 @@
 import {
   AddEditTeamModal,
   AddEditTeamModalDataProps,
-} from './modal/add-edit-team-modal';
+} from '../../modal/add-edit-team-modal';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
-import { AllTeams } from './tabs/teams-tab/all-teams';
-import { YourTeam } from './tabs/teams-tab/your-team';
+import { AllTeams } from './all-teams';
+import { YourTeam } from './your-team';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { getShortBase64Id } from '@/utils/id';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
-import { EmptyMessage } from './empty-message';
+import { EmptyMessage } from '../../empty-message';
 
 export const TeamsTab = () => {
   const { getCurrentUserRef, getUser } = useGetUsers();

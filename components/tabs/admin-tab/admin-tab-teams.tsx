@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { CustomButton } from '../custom/custom-button';
-import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
+import { CustomButton } from '../../custom/custom-button';
+import { ColumnsProps, CustomTable, RowsProps } from '../../custom/custom-table';
 import {
   AddEditTeamModal,
   AddEditTeamModalDataProps,
-} from '../modal/add-edit-team-modal';
+} from '../../modal/add-edit-team-modal';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useAppSelector } from '@/store/hooks';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
-import { EmptyMessage } from '../empty-message';
+import { EmptyMessage } from '../../empty-message';
 
 type AdminColumnKeysProps =
   | 'INDEX'

@@ -7,8 +7,8 @@ import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetTeams } from '@/data/teams/use-get-teams';
 import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
-import { EmptyMessage } from './empty-message';
-import { Loader } from './loader';
+import { EmptyMessage } from '../../empty-message';
+import { Loader } from '../../loader';
 import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 
 export const LiveMatch = () => {

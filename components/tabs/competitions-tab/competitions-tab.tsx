@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
 import { IMG_URLS } from '@/utils/img-urls';
 import { Chip, Card, CardContent, CardMedia } from '@mui/material';
-import { CustomButton } from './custom/custom-button';
+import { CustomButton } from '../../custom/custom-button';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
 import { useAppSelector } from '@/store/hooks';
-import {
-  UsersCollectionProps,
-  MappedCompetitionsProps,
-} from '@/firebase/db-types';
-import { EmptyMessage } from './empty-message';
+import { UsersCollectionProps } from '@/firebase/db-types';
+import { EmptyMessage } from '../../empty-message';
 
 export const CompetitionsTab = () => {
   const user: UsersCollectionProps = useAppSelector((state) => state.user);

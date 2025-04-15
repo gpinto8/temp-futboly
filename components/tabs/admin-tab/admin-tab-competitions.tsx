@@ -1,8 +1,8 @@
-import { CustomButton } from '../custom/custom-button';
-import { ColumnsProps, CustomTable, RowsProps } from '../custom/custom-table';
+import { CustomButton } from '../../custom/custom-button';
+import { ColumnsProps, CustomTable, RowsProps } from '../../custom/custom-table';
 import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
-import { EmptyMessage } from '../empty-message';
+import { EmptyMessage } from '../../empty-message';
 
 type AdminColumnKeysProps =
   | 'INDEX'
