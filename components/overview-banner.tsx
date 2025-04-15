@@ -271,10 +271,9 @@ export const OverviewBanner = () => {
             )}
           </div>
           <GameSection />
-        <TimerSection />
         </div>
       </div>
-
+            <TimerSection />
     </div>
   );
 };
