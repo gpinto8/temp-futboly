@@ -19,7 +19,7 @@ export const MatchesTab = () => {
   }, [competition]);
 
   return (
-    <div>
+    <>
       {allMatchHistory?.length > 0 && personalMatchHistory?.length > 0 ? (
         <Matches
           personalMatchHistory={personalMatchHistory}
@@ -29,6 +29,6 @@ export const MatchesTab = () => {
       ) : (
         <NoMatches />
       )}
-    </div>
+    </>
   );
 };

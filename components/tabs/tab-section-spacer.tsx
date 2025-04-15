@@ -26,7 +26,7 @@ export const TabSectionSpacer = ({
     {firstSection.Component()}
 
     {/* SEPARATOR */}
-    <CustomSeparator withText={false} className="!my-20" />
+    <CustomSeparator withText={false} className="!py-20 !my-0" />
 
     {/* SECOND SECTION */}
     <TabSectionTitle title={secondSection.title} />
