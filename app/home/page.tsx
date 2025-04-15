@@ -2,8 +2,8 @@
 
 import { OverviewBanner } from '@/components/overview-banner';
 import HomePageLayout from './layout';
-import { AppTabs } from '@/components/app-tabs';
-import { Header } from '@/components/header';
+import { AppTabs } from '@/components/tabs/app-tabs';
+import { Header } from '@/components/header/header';
 import { Footer } from '@/components/footer';
 import { useEffect, useState } from 'react';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';

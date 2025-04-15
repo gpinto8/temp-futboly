@@ -54,9 +54,7 @@ export const mapFormationPosition = (
   playerPosition: number, // e.g the first one of the "4" players, from left to right ("432")
   fieldRow: number, // e.g the first row of the 3 to display, from top to bottom ("432")
 ): FormationPosition => {
-  const formation: FormationPosition = `${formationTotalPlayers}+${
-    playerPosition + 1
-  }+${fieldRow + 1}`; // "4+4+3"
+  const formation: FormationPosition = `${formationTotalPlayers}+${playerPosition}+${fieldRow}`; // "4+4+3"
 
   return formation; // We are not including goalkeeper here, since we just gotta use "1" for it and thats it
 };

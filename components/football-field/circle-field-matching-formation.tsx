@@ -99,8 +99,8 @@ export const CircleFieldMatchingFormation = ({
 
                 const currentPosition = mapFormationPosition(
                   formationTotalPlayers,
-                  playerPosition,
-                  newFieldRow,
+                  playerPosition + 1,
+                  newFieldRow + 1,
                 );
 
                 const fieldPlayer:

@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { RulesPopover } from './header/rules-popover';
-import { UserPopover } from './header/user-popover';
-import { FutbolyLogo } from './futboly-logo';
+import { RulesPopover } from './rules-popover';
+import { UserPopover } from './user-popover';
+import { FutbolyLogo } from '../futboly-logo';
 import { useSetUsers } from '@/data/users/use-set-users';
-import { CustomImage } from './custom/custom-image';
+import { CustomImage } from '../custom/custom-image';
 import { useGetUsers } from '@/data/users/use-get-users';
 
 type HeaderProps = {

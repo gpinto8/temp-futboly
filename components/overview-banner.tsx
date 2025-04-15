@@ -11,8 +11,8 @@ import { useGetTeams } from '@/data/teams/use-get-teams';
 import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useAppSelector } from '@/store/hooks';
-import { Loader } from './loader';
 import { useTabContext } from '@/utils/tab-context';
+import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 
 type BannerCardProps = {
   title: string;
@@ -71,13 +71,15 @@ const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
 const GameSection = () => {
   const { getTimeToNextMatch, getNextMatch, getNextMatchRatings } =
     useGetMatches();
-  const { getPlayersSportmonksData } = useGetTeams();
   const activeCompetition = useAppSelector(
     (state) => state.competition.activeCompetition,
   );
   const competitionStarted = activeCompetition?.competitionStarted;
 
-  const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
+    getTimeToNextMatch(),
+  );
+  const [nextMatchFound, setNextMatchFound] = useState(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
@@ -96,8 +98,12 @@ const GameSection = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getPlayersSportmonksData(homePlayerIds);
-      const awayReturnAPIData = await getPlayersSportmonksData(awayPlayerIds);
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
+        homePlayerIds,
+      );
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
+        awayPlayerIds,
+      );
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -111,7 +117,7 @@ const GameSection = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
-        const timeLeftToNextMatch = getTimeToNextMatch();
+      const timeLeftToNextMatch = getTimeToNextMatch();
       if (timeLeftToNextMatch < 1) {
         //Match started
         const nextMatchWithRatingRes = await getNextMatchRatings(
@@ -247,7 +253,7 @@ export const OverviewBanner = () => {
       entries: [
         { key: 'Name', value: team?.name || '' },
         { key: 'Coach', value: team?.coach || '' },
-        { key: 'Position', value: team?.formation || '-' },
+        { key: 'Formation', value: team?.formation || '' },
       ],
     };
     setOverviewTeam(data);
@@ -263,24 +269,32 @@ export const OverviewBanner = () => {
       </div>
 
       {/* CARDS */}
-      <div className="w-full">
+      <div className="w-full flex flex-col gap-10">
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
           <div className="w-full flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-2 md 2xl:gap-6">
             {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
-              (data, index) => <BannerCard key={index} {...data} />,
+              (data, index) => (
+                <BannerCard key={index} {...data} />
+              ),
             )}
           </div>
           <GameSection />
         </div>
+        <TimerSection />
       </div>
             <TimerSection />
     </div>
   );
 };
+
 const TimerSection = () => {
-    const competition = useAppSelector((state) => state.competition.activeCompetition);
+  const competition = useAppSelector(
+    (state) => state.competition.activeCompetition,
+  );
   const { getTimeToNextMatch } = useGetMatches();
-    const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
+    getTimeToNextMatch(),
+  );
   const { setCurrentTab } = useTabContext();
 
   // Timer
@@ -295,39 +309,39 @@ const TimerSection = () => {
     return () => clearInterval(timerId);
   }, []);
 
-    return (
-      <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
-        {competition?.competitionStarted ? (
-          timeLeftToNextMatch > 0 ? (
-            <div className="flex flex-wrap justify-center">
-              <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
-                {formatDateDiffToDate(timeLeftToNextMatch)}
-              </h3>
-              <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-gray-900 sm:text-xl">
-                to the next game!
-              </h3>
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center">
-              <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
-                Game is in progress!
-              </h3>
-            </div>
-          )
-        ) : null}
-        {timeLeftToNextMatch > 0 && (
-          <CustomButton
-            label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
-            style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
-            handleClick={() =>
-              setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
-            }
-            className="rounded-full mt-3"
-            disableElevation
-          />
-        )}
-      </div>
-    );
+  return (
+    <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
+      {competition?.competitionStarted ? (
+        timeLeftToNextMatch > 0 ? (
+          <div className="flex flex-wrap justify-center">
+            <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
+              {formatDateDiffToDate(timeLeftToNextMatch)}
+            </h3>
+            <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-gray-900 sm:text-xl">
+              to the next game!
+            </h3>
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-center">
+            <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
+              Game is in progress!
+            </h3>
+          </div>
+        )
+      ) : null}
+      {timeLeftToNextMatch > 0 && (
+        <CustomButton
+          label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
+          style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
+          handleClick={() =>
+            setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
+          }
+          className="rounded-full mt-3"
+          disableElevation
+        />
+      )}
+    </div>
+  );
 };
 function formatDateDiffToDate(millisecDiff: number) {
   if (millisecDiff <= 0) return 'Game is in progress!';

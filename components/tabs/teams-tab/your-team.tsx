@@ -1,16 +1,18 @@
 import { ColumnsProps, RowsProps } from '@/components/custom/custom-table';
 import { TeamCard } from './team-card';
-import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useEffect, useState } from 'react';
-import { getPlayerRating } from '@/sportmonks/common-methods';
+import {
+  getPlayerRating,
+  getSportmonksPlayersDataByIds,
+} from '@/sportmonks/common-methods';
 import { Avatar } from '@mui/material';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import {
   SelectableTable,
   SelectableTableColumnKeysProps,
 } from '@/components/table/selectable-table';
-import { FootballField } from '@/components/football-field';
-import { FormationsDropdown } from '@/components/formations-dropdown';
+import { FootballField } from '@/components/football-field/football-field';
+import { FormationsDropdown } from '@/components/tabs/teams-tab/formations-dropdown';
 import {
   AllPosibleFormationsProps,
   FormationPosition,
@@ -26,7 +28,6 @@ type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 
 export const YourTeam = ({ team }: YourTeamProps) => {
   const { getActiveCompetition } = useGetCompetitions();
-  const { getPlayersSportmonksData } = useGetTeams();
   const { editTeam } = useSetTeams();
 
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
@@ -54,7 +55,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
       const players = team?.players;
       if (players) {
         const playerIds = team.players.map((player) => player.sportmonksId);
-        const playersData = await getPlayersSportmonksData(playerIds);
+        const playersData = await getSportmonksPlayersDataByIds(playerIds);
 
         const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => {
           const id = player.id;
@@ -121,6 +122,12 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   }, [tablePosition, fieldPosition]);
 
   useEffect(() => {
+    const competitionStarted = getActiveCompetition()?.competitionStarted;
+    if (competitionStarted) {
+      setDisabled(true);
+      return;
+    }
+
     const diffFormation = team.formation !== formation;
 
     const areArraysIdentical = (arr1: any, arr2: any) =>
@@ -167,58 +174,54 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   };
 
   return (
-    <div className="self-start w-full">
-      <div className="flex flex-col gap-12">
-        {/* YOUR TEAM */}
-        <div className="w-full">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-6">Your Team</h1>
-          <TeamCard team={team} />
-        </div>
+    <div className="flex flex-col gap-12">
+      {/* YOUR TEAM */}
+      <TeamCard team={team} />
 
-        <div className="flex flex-col lg:flex-row gap-12 w-full justify-between">
-          {/* FOOTBALL FIELD */}
-          <div className="lg:w-[50%] flex flex-col gap-4">
-            <div className="flex gap-4 justify-between">
-              <div className="text-xl font-bold pb-2">Starting 11</div>
-              <FormationsDropdown
-                formation={team?.formation}
-                getSelectedFormation={setFormation}
-              />
-            </div>
-            <FootballField
-              formation={formation}
-              fieldPlayers={playerPositonMap}
-              getSelectedPlayerPosition={handlePlayerSelected}
-              emptyFormationMessage="Select a formation."
-              resetField={resetField}
+      <div className="flex flex-col lg:flex-row gap-12 w-full justify-between">
+        {/* FOOTBALL FIELD */}
+        {/* TODO: remove this "overflow-scroll" and handle better this responsiveness issue */}
+        <div className="lg:w-[50%] flex flex-col gap-4">
+          <div className="flex gap-4 justify-between">
+            <div className="text-xl font-bold pb-2">Starting 11</div>
+            <FormationsDropdown
+              formation={team?.formation}
+              getSelectedFormation={setFormation}
             />
           </div>
+          <FootballField
+            formation={formation}
+            fieldPlayers={playerPositonMap}
+            getSelectedPlayerPosition={handlePlayerSelected}
+            emptyFormationMessage="Select a formation."
+            resetField={resetField}
+          />
+        </div>
 
-          {/* TEAM PLAYERS */}
-          <div className="lg:w-[50%] flex flex-col justify-between">
-            <div className="h-[350px] lg:h-[500px]">
-              <div className="text-xl font-bold pb-2">Team Players</div>
-              <div className="text-xs pb-4">
-                * The <strong>bolded</strong> names are already saved.
-              </div>
-              <SelectableTable<YourTeamKeyProps>
-                rows={rows}
-                columns={columns}
-                getSelectedRows={handleSelectedRows}
-                singleSelection
-                avoidReorder
-                resetTable={resetTable}
-              />
+        {/* TEAM PLAYERS */}
+        <div className="lg:w-[50%] flex flex-col justify-between">
+          <div className="h-[580px]">
+            <div className="text-xl font-bold pb-2">Team Players</div>
+            <div className="text-xs pb-4">
+              * The <strong>bolded</strong> names are already saved.
             </div>
-            <div className="w-full flex justify-end">
-              <CustomButton
-                label="Edit team"
-                widthFit
-                className="px-14"
-                disabled={disabled}
-                handleClick={handleEditTeam}
-              />
-            </div>
+            <SelectableTable<YourTeamKeyProps>
+              rows={rows}
+              columns={columns}
+              getSelectedRows={handleSelectedRows}
+              singleSelection
+              avoidReorder
+              resetTable={resetTable}
+            />
+          </div>
+          <div className="w-full flex justify-end">
+            <CustomButton
+              label="Edit team"
+              widthFit
+              className="px-14"
+              disabled={disabled}
+              handleClick={handleEditTeam}
+            />
           </div>
         </div>
       </div>

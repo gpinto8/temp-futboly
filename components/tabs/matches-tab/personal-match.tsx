@@ -20,7 +20,7 @@ export const PersonalMatch = ({
   const awayLogo = getRealTeamLogoById(matchInfo?.away?.logoId);
   return (
     <CustomCard style="gray" className={className}>
-      <div className="flex flex-row gap-2 justify-around items-center">
+      <div className="flex flex-row gap-2 justify-around items-center p-1 md:p-0">
         <div className="flex flex-row justify-center items-center gap-2 text-lg font-medium">
           <CustomImage
             forceSrc={homeLogo?.src}

@@ -21,7 +21,7 @@ export const TeamCard = ({ team, hideLogo }: TeamCardProps) => {
           {[
             { label: 'Name', value: team.name },
             { label: 'Coach', value: team.coach },
-            { label: 'Position', value: team.formation ?? '-' },
+            { label: 'Formation', value: team.formation ?? '-' },
           ].map((team, i) => (
             <div key={i} className="flex w-full gap-2">
               <p className="font-semibold text-gray-400 w-max">{team.label}:</p>

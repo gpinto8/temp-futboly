@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
-import { ColumnsProps, CustomTable, RowsProps } from './custom/custom-table';
+import {
+  ColumnsProps,
+  CustomTable,
+  RowsProps,
+} from '../../custom/custom-table';
 import { ImageUrlsProps } from '@/utils/img-urls';
 import { useBreakpoint } from '@/utils/use-breakpoint';
-import { CustomImage } from './custom/custom-image';
+import { CustomImage } from '../../custom/custom-image';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
 import { useAppSelector } from '@/store/hooks';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
-import { EmptyMessage } from './empty-message';
 import { ShortTeamPropsStandings } from '@/firebase/db-types';
+import { EmptyMessage } from '../../empty-message';
+import { TabSectionSpacer } from '../tab-section-spacer';
 
 type ColumnKeysProps =
   | 'INDEX'
@@ -67,8 +72,8 @@ export const StandingsTab = () => {
     'There are matches that have not been calculated yet. ';
   textForPastMatches +=
     leagueOwner === user.id
-      ? 'Go to Live Match and press Calculate Results'
-      : 'Ask the Admin to confirm and save to update the standings';
+      ? 'Go to Live Match and press Calculate Results.'
+      : 'Ask the Admin to confirm and save to update the standings.';
 
   useEffect(() => {
       const _standings = getStandingsFromActiveCompetition();
@@ -125,26 +130,35 @@ export const StandingsTab = () => {
     },
   ];
 
-  return standings?.length && standings.length > 0 ? (
-    <div className="h-[400px] text-center">
-      {pastMatchesNotCalculated() && (
-        <p className="text-error-400 font-semibold mb-4">
-          {textForPastMatches}
-        </p>
+  return (
+    <TabSectionSpacer
+      UniqueSection={() => (
+        <div className="text-center">
+          {pastMatchesNotCalculated() && (
+            <p className="text-error-400 font-semibold mb-10">
+              {textForPastMatches}
+            </p>
+          )}
+          <div className="!h-[500px]">
+            <CustomTable<ColumnKeysProps>
+              rows={rows}
+              columns={columns}
+              customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
+              customizeColumns={{ className: 'border-b-gray' }}
+              elevation={0}
+            />
+          </div>
+        </div>
       )}
-      <CustomTable<ColumnKeysProps>
-        rows={rows}
-        columns={columns}
-        className="bg-lightGray"
-        customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
-        customizeColumns={{ className: 'border-b-gray' }}
-        elevation={5}
-      />
-    </div>
-  ) : (
-    <EmptyMessage
-      title="No data can be calculated yet 😵"
-      description="Once some matches have any results, you'll see them here!"
+      emptyMessage={{
+        condition: !(standings?.length && standings.length > 0),
+        Component: () => (
+          <EmptyMessage
+            title="No data can be calculated yet 😵"
+            description="Once some matches have any results, you'll see them here!"
+          />
+        ),
+      }}
     />
   );
 };

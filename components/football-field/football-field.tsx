@@ -1,11 +1,11 @@
-import { CustomImage } from './custom/custom-image';
+import { CustomImage } from '../custom/custom-image';
 import { useEffect, useState } from 'react';
 import {
   AllPosibleFormationsProps,
   FormationPosition,
 } from '@/utils/formations';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
-import { CircleFieldMatchingFormation } from './football-field/circle-field-matching-formation';
+import { CircleFieldMatchingFormation } from './circle-field-matching-formation';
 
 export type FootballFieldProps = {
   formation?: AllPosibleFormationsProps;
@@ -43,7 +43,7 @@ export const FootballField = ({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full overflow-hidden">
       <div className="absolute w-full h-full flex flex-col justify-between gap-4 p-4 py-2">
         {formation && fieldPlayers?.length ? (
           <CircleFieldMatchingFormation

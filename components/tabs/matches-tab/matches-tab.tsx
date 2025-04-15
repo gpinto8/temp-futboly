@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useGetMatches } from '@/data/matches/use-get-matches';
-import { NoMatches } from '@/components/tabs/matches-tab/no-matches';
 import { Matches } from '@/components/tabs/matches-tab/matches';
 import { useAppSelector } from '@/store/hooks';
 
@@ -19,16 +18,10 @@ export const MatchesTab = () => {
   }, [competition]);
 
   return (
-    <div>
-      {allMatchHistory?.length > 0 && personalMatchHistory?.length > 0 ? (
-        <Matches
-          personalMatchHistory={personalMatchHistory}
-          allMatchHistory={allMatchHistory}
-          matchStatistics={personalStatistics}
-        />
-      ) : (
-        <NoMatches />
-      )}
-    </div>
+    <Matches
+      personalMatchHistory={personalMatchHistory}
+      allMatchHistory={allMatchHistory}
+      matchStatistics={personalStatistics}
+    />
   );
 };

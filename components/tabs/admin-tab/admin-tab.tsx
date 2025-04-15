@@ -3,7 +3,7 @@ import { AdminTabUsers } from './admin-tab-users';
 import { useSwitchComponents } from '@/utils/switch-components';
 import { AdminTabTeams } from './admin-tab-teams';
 import { AdminTabCompetitions } from './admin-tab-competitions';
-import { AddCompetitionModal } from '../modal/add-competition-modal';
+import { AddCompetitionModal } from '../../modal/add-competition-modal';
 
 export const AdminTab = () => {
   const {

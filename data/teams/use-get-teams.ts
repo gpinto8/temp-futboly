@@ -3,7 +3,6 @@ import { useGetCompetitions } from '../competitions/use-get-competitions';
 import { useGetUsers } from '../users/use-get-users';
 import { CompetitionsCollectionTeamsProps, ShortTeamProps } from '@/firebase/db-types';
 import { useGetLeagues } from '../leagues/use-get-leagues';
-import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 
 export type CompetitionsCollectionTeamsExtraProps =
   CompetitionsCollectionTeamsProps & {
@@ -117,8 +116,9 @@ export const useGetTeams = () => {
   // GET ALL THE TEAMS FROM ALL THE COMPETITIONS BASED ON CURRENT LEAGUE
   const getAllTeamsFromAllCompetitions = async () => {
     const currentLeagueId = getLeague()?.id;
-    const currentLeagueCompetitions =
-      await getCompetitionsByLeagueId(currentLeagueId);
+    const currentLeagueCompetitions = await getCompetitionsByLeagueId(
+      currentLeagueId,
+    );
 
     const allTeams = currentLeagueCompetitions
       .map((competition) => competition.teams)
@@ -133,22 +133,6 @@ export const useGetTeams = () => {
     return mappedTeams;
   };
 
-  // GET PLAYERS SPORTMONKS DATA BASED ON AN ARRAY OF ITS IDS
-  const getPlayersSportmonksData = async (playerIds: number[]) => {
-    let playersData: any[] = [];
-
-    for await (const playerId of playerIds) {
-      const response = await fetchSportmonksApi(
-        'football/players',
-        `${playerId}`,
-      );
-      const data = response.data;
-      if (data) playersData.push(data);
-    }
-
-    return playersData;
-  };
-
   return {
     mapTeamWithExtraProps,
     getTeam,
@@ -156,7 +140,6 @@ export const useGetTeams = () => {
     getTeamByUidAndCompetitionId,
     getAllTeams,
     getAllTeamsFromAllCompetitions,
-    getPlayersSportmonksData,
     getAllShortTeams,
   };
 };

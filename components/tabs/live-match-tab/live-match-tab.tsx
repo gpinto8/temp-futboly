@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/custom/custom-button';
-import { CustomSeparator } from '@/components/custom/custom-separator';
 import { UpcomingMatch } from '@/components/tabs/live-match-tab/upcoming-match';
 import { LiveMatchSection } from '@/components/tabs/live-match-tab/live-match-section';
 import { useGetMatches } from '@/data/matches/use-get-matches';
@@ -9,8 +8,10 @@ import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
 import { useSetStandings } from '@/data/standings/use-set-standings';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
-import { EmptyMessage } from './empty-message';
-import { Loader } from './loader';
+import { EmptyMessage } from '../../empty-message';
+import { Loader } from '../../loader';
+import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
+import { TabSectionSpacer } from '../tab-section-spacer';
 
 export const LiveMatch = () => {
   const {
@@ -25,7 +26,7 @@ export const LiveMatch = () => {
     const activeCompetition = useGetCompetitions().getActiveCompetition();
   const { writeGameResults } = useSetMatches();
     const { calculateAndSaveStandings } = useSetStandings();
-  const { getAllTeams, getPlayersSportmonksData } = useGetTeams();
+  const { getAllTeams } = useGetTeams();
   const upcomingMatches = getUpcomingMatches(5);
 
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
@@ -44,8 +45,12 @@ export const LiveMatch = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getPlayersSportmonksData(homePlayerIds);
-      const awayReturnAPIData = await getPlayersSportmonksData(awayPlayerIds);
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
+        homePlayerIds,
+      );
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
+        awayPlayerIds,
+      );
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -79,7 +84,7 @@ export const LiveMatch = () => {
     const teamPlayersMap: Map<String, any[]> = new Map();
     await Promise.all(
       allTeams.map(async (team) => {
-        const players = await getPlayersSportmonksData(
+        const players = await getSportmonksPlayersDataByIds(
           team.players.map((player) => player.sportmonksId),
         );
         teamPlayersMap.set(team.shortId, players);
@@ -117,61 +122,55 @@ export const LiveMatch = () => {
     await calculateAndSaveStandings(activeCompetition.id);
   }
 
-  return nextMatchFound ? (
-    <div>
-      <div id="currentLiveMatch">
-        <div className="flex flex-row justify-between items-center mb-4">
-          <h1 className="font-bold text-4xl text-black text-nowrap">
-            Current Live Match
-          </h1>
-          {/*
-            I comment it because ATM to refresh you can just swith tabs and it will load again,
-            later we will cache the result (maybe) and there a refresh is going to be needed
-          <CustomButton
-            label="Refresh match"
-            className="rounded-full py-1 px-2 max-w-36"
-          />
-          */}
-          {pastMatchesNotCalculated() && (
-            <CustomButton
-              label="Calculate Results"
-              className="rounded-full py-1 px-2 max-w-40"
-              handleClick={calculateMatches}
-            />
-          )}
-        </div>
-        {nextMatchWithRating ? (
-          <LiveMatchSection nextMatch={nextMatchWithRating} />
-        ) : nextMatchMapped ? (
-          <LiveMatchSection nextMatch={nextMatchMapped} />
-        ) : (
-          <div className="flex justify-center items-center h-40">
-            <Loader color="main" />
-          </div>
-        )}
-      </div>
-
-      <CustomSeparator withText={false} className="my-20" />
-
-      <div id="upcomingMatches">
-        <h1 className="font-bold text-4xl text-black mb-12">
-          Upcoming Matches
-        </h1>
-        <div className="flex flex-row items-center gap-4 flex-wrap">
-          {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
-            upcomingMatches.map((upcomingMatch, index) => (
-              <UpcomingMatch key={index} matchInfo={upcomingMatch} />
-            ))
+  return (
+    <TabSectionSpacer
+      firstSection={{
+        title: 'Live Match',
+        TitleEndComponent: () => (
+          <>
+            {pastMatchesNotCalculated() && (
+              <CustomButton
+                label="Calculate Results"
+                className="rounded-full py-1 px-2 max-w-40"
+                handleClick={calculateMatches}
+              />
+            )}
+          </>
+        ),
+        Component: () =>
+          nextMatchWithRating ? (
+            <LiveMatchSection nextMatch={nextMatchWithRating} />
+          ) : nextMatchMapped ? (
+            <LiveMatchSection nextMatch={nextMatchMapped} />
           ) : (
-            <p>There are no matches left for this competitions</p>
-          )}
-        </div>
-      </div>
-    </div>
-  ) : (
-    <EmptyMessage
-      title="Match not found 🤷‍♂️"
-      description="Ask your admin to generate the matches to start following the live results."
+            <div className="flex justify-center items-center h-40">
+              <Loader color="main" />
+            </div>
+          ),
+      }}
+      secondSection={{
+        title: 'Upcoming Matches',
+        Component: () => (
+          <div className="flex flex-row items-center gap-4 flex-wrap">
+            {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
+              upcomingMatches.map((upcomingMatch, index) => (
+                <UpcomingMatch key={index} matchInfo={upcomingMatch} />
+              ))
+            ) : (
+              <p>There are no matches left for this competitions</p>
+            )}
+          </div>
+        ),
+      }}
+      emptyMessage={{
+        condition: !nextMatchFound,
+        Component: () => (
+          <EmptyMessage
+            title="Match not found 🤷‍♂️"
+            description="Ask your admin to generate the matches to start following the live results."
+          />
+        ),
+      }}
     />
   );
 };
