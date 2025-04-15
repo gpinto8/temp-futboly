@@ -12,6 +12,7 @@ import { getShortBase64Id } from '@/utils/id';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { EmptyMessage } from '../../empty-message';
+import { TabSectionSpacer } from '../tab-section-spacer';
 
 export const TeamsTab = () => {
   const { getCurrentUserRef, getUser } = useGetUsers();
@@ -80,10 +81,16 @@ export const TeamsTab = () => {
           }
         />
       ) : (
-        <div className="flex flex-col gap-4 justify-center items-center">
-          <YourTeam team={team} />
-          <AllTeams />
-        </div>
+        <TabSectionSpacer
+          firstSection={{
+            title: 'Your Team',
+            Component: () => <YourTeam team={team} />,
+          }}
+          secondSection={{
+            title: 'All Teams',
+            Component: () => <AllTeams />,
+          }}
+        />
       )}
     </>
   );

@@ -87,65 +87,59 @@ export const AllTeams = () => {
   };
 
   return allTeams?.length ? (
-    <>
-      <CustomSeparator withText={false} className="!my-12 md:my-20" />
-      <div className="w-full flex flex-col gap-6">
-        <h1 className="text-3xl md:text-4xl font-bold">All Teams</h1>
-        <div className="grid md:grid-cols-3 gap-4 auto-rows-fr">
-          {allTeams.map((team, index) => {
-            const isSelected = selectedTeam === index;
-            return (
-              <CustomCard
-                key={index}
-                style="gray"
-                className={isSelected ? 'row-span-2' : ''}
-              >
-                <div
-                  className="flex flex-col justify-center items-start gap-4"
-                  onClick={() => handleCardSelection(team, index, isSelected)}
-                >
-                  {/* TEAM OVERVIEW */}
-                  <div className="flex justify-start items-center gap-4 w-full">
-                    <CustomImage
-                      forceSrc={getRealTeamLogoById(team.logoId)?.src}
-                      className="h-16 w-16"
-                    />
-                    <p className="text-2xl md:text-3xl">
-                      <strong>{team.ownerUsername}</strong>
-                      <span className="text-xl md:text-2xl">'s team:</span>
-                    </p>
-                  </div>
-                  <div className="flex flex-row gap-8 justify-start items-center">
-                    <TeamCard team={team} hideLogo />
-                  </div>
+    <div className="grid md:grid-cols-3 gap-4 auto-rows-fr">
+      {allTeams.map((team, index) => {
+        const isSelected = selectedTeam === index;
+        return (
+          <CustomCard
+            key={index}
+            style="gray"
+            className={isSelected ? 'row-span-2' : ''}
+          >
+            <div
+              className="flex flex-col justify-center items-start gap-4"
+              onClick={() => handleCardSelection(team, index, isSelected)}
+            >
+              {/* TEAM OVERVIEW */}
+              <div className="flex justify-start items-center gap-4 w-full">
+                <CustomImage
+                  forceSrc={getRealTeamLogoById(team.logoId)?.src}
+                  className="h-16 w-16"
+                />
+                <p className="text-2xl md:text-3xl">
+                  <strong>{team.ownerUsername}</strong>
+                  <span className="text-xl md:text-2xl">'s team:</span>
+                </p>
+              </div>
+              <div className="flex flex-row gap-8 justify-start items-center">
+                <TeamCard team={team} hideLogo />
+              </div>
 
-                  {/* SHOW/HIDE BUTTON */}
-                  <CustomButton
-                    style="outlineBlack"
-                    label={isSelected ? 'Hide players' : 'Show players'}
-                    className="h-4 md:mx-auto px-8"
-                    suffixIconKey={isSelected ? 'COLLAPSE_ICON' : 'EXPAND_ICON'}
+              {/* SHOW/HIDE BUTTON */}
+              <CustomButton
+                style="outlineBlack"
+                label={isSelected ? 'Hide players' : 'Show players'}
+                className="h-4 md:mx-auto px-8"
+                suffixIconKey={isSelected ? 'COLLAPSE_ICON' : 'EXPAND_ICON'}
+              />
+
+              {/* PLAYERS TABLE */}
+              {isSelected && (
+                <div className="w-full h-[268px]">
+                  <CustomSeparator withText={false} />
+                  <CustomTable<AllTeamsKeyProps>
+                    rows={rows}
+                    columns={columns}
+                    maxWidth={1000}
+                    elevation={0}
+                    hideBackground
                   />
-
-                  {/* PLAYERS TABLE */}
-                  {isSelected && (
-                    <div className="w-full h-[268px]">
-                      <CustomSeparator withText={false} />
-                      <CustomTable<AllTeamsKeyProps>
-                        rows={rows}
-                        columns={columns}
-                        maxWidth={1000}
-                        elevation={0}
-                        hideBackground
-                      />
-                    </div>
-                  )}
                 </div>
-              </CustomCard>
-            );
-          })}
-        </div>
-      </div>
-    </>
+              )}
+            </div>
+          </CustomCard>
+        );
+      })}
+    </div>
   ) : null;
 };
