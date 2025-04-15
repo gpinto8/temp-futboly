@@ -133,7 +133,7 @@ export const LiveMatch = () => {
     }
   }
 
-  return nextMatchFound ? (
+  return (
     <TabSectionSpacer
       firstSection={{
         title: 'Live Match',
@@ -173,11 +173,15 @@ export const LiveMatch = () => {
           </div>
         ),
       }}
-    />
-  ) : (
-    <EmptyMessage
-      title="Match not found 🤷‍♂️"
-      description="Ask your admin to generate the matches to start following the live results."
+      emptyMessage={{
+        condition: !nextMatchFound,
+        Component: () => (
+          <EmptyMessage
+            title="Match not found 🤷‍♂️"
+            description="Ask your admin to generate the matches to start following the live results."
+          />
+        ),
+      }}
     />
   );
 };

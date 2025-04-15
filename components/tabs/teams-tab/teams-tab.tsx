@@ -59,39 +59,45 @@ export const TeamsTab = () => {
 
   return (
     <>
-      {!getActiveCompetition() ? (
-        <EmptyMessage
-          title="Select a competition to create a team! 💪"
-          description='You gotta first select any competition from the "Competitions" tab to create a team on it.'
-        />
-      ) : !team ? (
-        <EmptyMessage
-          title="Create your team! 😎"
-          description={
-            <div className="flex flex-col gap-4 items-center">
-              <div>
-                Start your journey by creating your team for the{' '}
-                <strong>"{getActiveCompetition()?.name}"</strong> competition.
-              </div>
-              <AddEditTeamModal
-                data={{ owner: getUser()?.username }}
-                onSetData={handleCreateTeam}
+      <TabSectionSpacer
+        firstSection={{
+          title: 'Your Team',
+          Component: () =>
+            !team ? (
+              <EmptyMessage
+                title="Create your team! 😎"
+                description={
+                  <div className="flex flex-col gap-4 items-center">
+                    <div>
+                      Start your journey by creating your team for the{' '}
+                      <strong>"{getActiveCompetition()?.name}"</strong>{' '}
+                      competition.
+                    </div>
+                    <AddEditTeamModal
+                      data={{ owner: getUser()?.username }}
+                      onSetData={handleCreateTeam}
+                    />
+                  </div>
+                }
               />
-            </div>
-          }
-        />
-      ) : (
-        <TabSectionSpacer
-          firstSection={{
-            title: 'Your Team',
-            Component: () => <YourTeam team={team} />,
-          }}
-          secondSection={{
-            title: 'All Teams',
-            Component: () => <AllTeams />,
-          }}
-        />
-      )}
+            ) : (
+              <YourTeam team={team} />
+            ),
+        }}
+        secondSection={{
+          title: 'All Teams',
+          Component: () => <AllTeams />,
+        }}
+        emptyMessage={{
+          condition: !getActiveCompetition(),
+          Component: () => (
+            <EmptyMessage
+              title="Select a competition to create a team! 💪"
+              description='You gotta first select any competition from the "Competitions" tab to create a team on it.'
+            />
+          ),
+        }}
+      />
     </>
   );
 };

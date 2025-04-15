@@ -7,6 +7,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { CustomImage } from '@/components/custom/custom-image';
 import { WeeklyMatches } from '@/components/tabs/matches-tab/weekly-matches';
 import { TabSectionSpacer } from '../tab-section-spacer';
+import { NoMatches } from './no-matches';
 
 export const Matches = ({
   personalMatchHistory,
@@ -156,6 +157,10 @@ export const Matches = ({
             ))}
           </div>
         ),
+      }}
+      emptyMessage={{
+        condition: !allMatchHistory?.length && !personalMatchHistory.length,
+        Component: () => <NoMatches />,
       }}
     />
   );
