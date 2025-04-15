@@ -130,7 +130,7 @@ export type ShortTeamProps = {
 };
 
 export type ShortTeamPropsStandings = ShortTeamProps & {
-  result: StandingsResults
+  results: StandingsResults
   position: number;
 };
 
