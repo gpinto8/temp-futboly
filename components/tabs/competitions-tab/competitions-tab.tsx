@@ -7,6 +7,7 @@ import { useSetCompetitions } from '@/data/competitions/use-set-competitions';
 import { useAppSelector } from '@/store/hooks';
 import { UsersCollectionProps } from '@/firebase/db-types';
 import { EmptyMessage } from '../../empty-message';
+import { TabSectionSpacer } from '../tab-section-spacer';
 
 export const CompetitionsTab = () => {
   const user: UsersCollectionProps = useAppSelector((state) => state.user);
@@ -28,10 +29,19 @@ export const CompetitionsTab = () => {
   }, [user, league]);
 
   return (
-    <>
-      {competitions?.length ? (
+    <TabSectionSpacer
+      emptyMessage={{
+        condition: !competitions?.length,
+        Component: () => (
+          <EmptyMessage
+            title="There are no competitions created yet 🙁"
+            description="Ask your admin to create a competition and select it to start!"
+          />
+        ),
+      }}
+      UniqueSection={() => (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 gap-y-6">
-          {competitions.map((competition, index) => {
+          {competitions?.map((competition, index) => {
             const { endDateText, players, name, id, active } = competition;
             return (
               <Card
@@ -70,13 +80,8 @@ export const CompetitionsTab = () => {
             );
           })}
         </div>
-      ) : (
-        <EmptyMessage
-          title="There are no competitions created yet 🙁"
-          description="Ask your admin to create a competition and select it to start!"
-        />
       )}
-    </>
+    />
   );
 };
 

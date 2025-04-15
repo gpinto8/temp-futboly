@@ -7,8 +7,10 @@ type TabSectionData = {
 };
 
 type TabSectionSpacerProps = {
-  firstSection: TabSectionData;
-  secondSection: TabSectionData;
+  UniqueSection?: () => JSX.Element;
+  firstSection?: TabSectionData;
+  secondSection?: TabSectionData;
+  emptyMessage: { condition: boolean; Component: () => JSX.Element };
 };
 
 const TabSectionTitle = ({
@@ -22,25 +24,33 @@ const TabSectionTitle = ({
 );
 
 export const TabSectionSpacer = ({
+  UniqueSection,
   firstSection,
   secondSection,
-}: TabSectionSpacerProps) => (
-  <div className="w-full h-full flex flex-col">
-    {/* FIRST SECTION */}
-    <TabSectionTitle
-      title={firstSection.title}
-      TitleEndComponent={firstSection.TitleEndComponent}
-    />
-    {firstSection.Component()}
+  emptyMessage,
+}: TabSectionSpacerProps) => {
+  return emptyMessage?.condition ? (
+    emptyMessage.Component()
+  ) : UniqueSection ? (
+    UniqueSection()
+  ) : (
+    <div className="w-full h-full flex flex-col">
+      {/* FIRST SECTION */}
+      <TabSectionTitle
+        title={firstSection?.title}
+        TitleEndComponent={firstSection?.TitleEndComponent}
+      />
+      {firstSection?.Component()}
 
-    {/* SEPARATOR */}
-    <CustomSeparator withText={false} className="!py-20 !my-0" />
+      {/* SEPARATOR */}
+      <CustomSeparator withText={false} className="!py-20 !my-0" />
 
-    {/* SECOND SECTION */}
-    <TabSectionTitle
-      title={secondSection.title}
-      TitleEndComponent={secondSection.TitleEndComponent}
-    />
-    {secondSection.Component()}
-  </div>
-);
+      {/* SECOND SECTION */}
+      <TabSectionTitle
+        title={secondSection?.title}
+        TitleEndComponent={secondSection?.TitleEndComponent}
+      />
+      {secondSection?.Component()}
+    </div>
+  );
+};
