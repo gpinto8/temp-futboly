@@ -269,7 +269,7 @@ export const OverviewBanner = () => {
       </div>
 
       {/* CARDS */}
-      <div className="w-full">
+      <div className="w-full flex flex-col gap-10">
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
           <div className="w-full flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-2 md 2xl:gap-6">
             {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
@@ -279,12 +279,13 @@ export const OverviewBanner = () => {
             )}
           </div>
           <GameSection />
-          <TimerSection />
         </div>
+        <TimerSection />
       </div>
     </div>
   );
 };
+
 const TimerSection = () => {
   const competition = useAppSelector(
     (state) => state.competition.activeCompetition,
