@@ -8,6 +8,7 @@ import { useGetStandings } from '@/data/standings/use-get-standings';
 import { useAppSelector } from '@/store/hooks';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { EmptyMessage } from './empty-message';
+import { ShortTeamPropsStandings } from '@/firebase/db-types';
 
 type ColumnKeysProps =
   | 'INDEX'
@@ -26,11 +27,12 @@ const icons = {
 };
 
 const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
-  lastMatches.length = 5; // Limit the UI to just show 5
+    // LastMatches contains all the results from week 1 to x so I have to reverse it
+    const lastFive = lastMatches.toReversed().slice(0,5);
 
   return (
     <div className="flex gap-1.5 justify-center">
-      {lastMatches.map((lastMatch, index) => {
+      {lastFive.map((lastMatch, index) => {
         if (lastMatch) {
           const icon = icons[lastMatch] as ImageUrlsProps;
           return (
@@ -58,8 +60,8 @@ export const StandingsTab = () => {
   const leagueOwner = useAppSelector((state) => state.league.owner);
   const breakpoint = useBreakpoint();
   const { pastMatchesNotCalculated } = useGetMatches();
-  const { getActiveCompetitionStandings } = useGetStandings();
-  const [standings, setStandings] = useState<any>(null);
+  const { getStandingsFromActiveCompetition } = useGetStandings();
+  const [standings, setStandings] = useState<ShortTeamPropsStandings[] | null>(null);
 
   let textForPastMatches =
     'There are matches that have not been calculated yet. ';
@@ -69,15 +71,14 @@ export const StandingsTab = () => {
       : 'Ask the Admin to confirm and save to update the standings';
 
   useEffect(() => {
-    (async () => {
-      const _standings = await getActiveCompetitionStandings();
+      const _standings = getStandingsFromActiveCompetition();
+        if (!_standings) return;
       setStandings(_standings);
-    })();
   }, []);
 
-  const rows: RowsProps<ColumnKeysProps> = standings?.map((team, index) => {
+  const rows: RowsProps<ColumnKeysProps> = standings && standings.length > 0 ? standings?.map((team) => {
     return {
-      INDEX: index + 1,
+      INDEX: team.position,
       TEAM_LOGO: getTeamLogo(team.logoId),
       TEAM: team.name,
       WINS: team.results.W,
@@ -86,7 +87,7 @@ export const StandingsTab = () => {
       POINTS: team.results.points,
       LAST_MATCHES: getLastMatchesIcons(team.results.lastMatches),
     };
-  });
+  }) : [];
 
   const columns: ColumnsProps<ColumnKeysProps> = [
     { label: '#', id: 'INDEX', minWidth: 30 },
@@ -124,7 +125,7 @@ export const StandingsTab = () => {
     },
   ];
 
-  return standings?.length ? (
+  return standings?.length && standings.length > 0 ? (
     <div className="h-[400px] text-center">
       {pastMatchesNotCalculated() && (
         <p className="text-error-400 font-semibold mb-4">
