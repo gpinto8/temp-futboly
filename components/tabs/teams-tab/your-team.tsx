@@ -179,7 +179,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
         <div className="flex flex-col lg:flex-row gap-12 w-full justify-between">
           {/* FOOTBALL FIELD */}
           {/* TODO: remove this "overflow-scroll" and handle better this responsiveness issue */}
-          <div className="lg:w-[50%] flex flex-col gap-4 overflow-scroll">
+          <div className="lg:w-[50%] flex flex-col gap-4">
             <div className="flex gap-4 justify-between">
               <div className="text-xl font-bold pb-2">Starting 11</div>
               <FormationsDropdown
@@ -198,7 +198,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
           {/* TEAM PLAYERS */}
           <div className="lg:w-[50%] flex flex-col justify-between">
-            <div className="h-[350px] lg:h-[500px]">
+            <div className="h-[580px] md:h-[520px]">
               <div className="text-xl font-bold pb-2">Team Players</div>
               <div className="text-xs pb-4">
                 * The <strong>bolded</strong> names are already saved.

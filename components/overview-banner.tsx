@@ -79,7 +79,7 @@ const GameSection = () => {
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
     getTimeToNextMatch(),
   );
-  const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
+  const [nextMatchFound, setNextMatchFound] = useState(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);

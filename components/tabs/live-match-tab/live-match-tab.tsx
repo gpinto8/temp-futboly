@@ -28,7 +28,7 @@ export const LiveMatch = () => {
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState<number>(
     getTimeToNextMatch(),
   );
-  const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
+  const [nextMatchFound, setNextMatchFound] = useState(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
@@ -44,8 +44,12 @@ export const LiveMatch = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData = await getSportmonksPlayersDataByIds(homePlayerIds);
-      const awayReturnAPIData = await getSportmonksPlayersDataByIds(awayPlayerIds);
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
+        homePlayerIds,
+      );
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
+        awayPlayerIds,
+      );
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -132,18 +136,10 @@ export const LiveMatch = () => {
   return nextMatchFound ? (
     <div>
       <div id="currentLiveMatch">
-        <div className="flex flex-row justify-between items-center mb-4">
+        <div className="flex flex-row justify-between items-center flex-wrap gap-4">
           <h1 className="font-bold text-4xl text-black text-nowrap">
-            Current Live Match
+            Live Match
           </h1>
-          {/*
-            I comment it because ATM to refresh you can just swith tabs and it will load again,
-            later we will cache the result (maybe) and there a refresh is going to be needed
-          <CustomButton
-            label="Refresh match"
-            className="rounded-full py-1 px-2 max-w-36"
-          />
-          */}
           {pastMatchesNotCalculated() && (
             <CustomButton
               label="Calculate Results"
@@ -163,7 +159,7 @@ export const LiveMatch = () => {
         )}
       </div>
 
-      <CustomSeparator withText={false} className="my-20" />
+      <CustomSeparator withText={false} className="!my-20" />
 
       <div id="upcomingMatches">
         <h1 className="font-bold text-4xl text-black mb-12">

@@ -59,15 +59,14 @@ export const Matches = ({
 
   return (
     <div>
-      <h1 className="text-2xl md:text-4xl font-bold my-4">Your Matches</h1>
-      <div>
-        <div
-          id="personalMatches"
-          className="my-4 flex flex-col lg:grid lg:grid-cols-2"
-        >
+      <h1 className="text-2xl md:text-4xl font-bold mb-6">Your Matches</h1>
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-10">
           <div id="personaleUpcomingMatches">
-            <h2 className="text-lg md:text-xl font-bold">Upcoming Matches</h2>
-            <div className="px-14 xl:px-24">
+            <h2 className="text-lg md:text-xl font-bold mb-4">
+              Upcoming Matches
+            </h2>
+            <div className="flex flex-col gap-2">
               {personalMatchHistory
                 .sort((a, b) => a.date.getTime() - b.date.getTime())
                 .slice(0, 3)
@@ -77,15 +76,14 @@ export const Matches = ({
                       key={index}
                       type="upcoming"
                       matchInfo={match}
-                      className="my-2"
                     />
                   );
                 })}
             </div>
           </div>
           <div id="personalHistoryMatches">
-            <h2 className="text-lg md:text-xl font-bold">All Matches</h2>
-            <div className="px-14 xl:px-24 overflow-y-auto main-scrollbar">
+            <h2 className="text-lg md:text-xl font-bold mb-4">All Matches</h2>
+            <div className="flex flex-col overflow-y-auto main-scrollbar gap-2">
               {personalMatchHistory
                 .sort((a, b) => a.date.getTime() - b.date.getTime())
                 .map((match, index) => {
@@ -94,7 +92,6 @@ export const Matches = ({
                       key={index}
                       type={Boolean(match.result) ? 'past' : 'upcoming'}
                       matchInfo={match}
-                      className="my-2"
                     />
                   );
                 })}
@@ -102,8 +99,10 @@ export const Matches = ({
           </div>
         </div>
         <div id="personalStatistics">
-          <h2 className="text-lg md:text-xl font-bold">Match Statistics</h2>
-          <div className="flex flex-wrap sm:flex-nowrap gap-4 justify-center items-center">
+          <h2 className="text-lg md:text-xl font-bold mb-4">
+            Match Statistics
+          </h2>
+          <div className="flex flex-wrap sm:flex-nowrap gap-4 items-center">
             {keys.map(({ title: cardTitle, value }, index) => {
               return (
                 <CustomCard key={index} style="gray">
@@ -119,8 +118,10 @@ export const Matches = ({
           </div>
         </div>
       </div>
-      <CustomSeparator withText={false} />
-      <h1 className="text-2xl md:text-4xl font-bold my-2">All Matches</h1>
+
+      <CustomSeparator withText={false} className="!my-20" />
+
+      <h1 className="text-2xl md:text-4xl font-bold mb-4">All Matches</h1>
       <div className="border rounded-md shadow-lg">
         {allMatchHistory.map((weeklyMatches, index) => (
           <Accordion key={index}>

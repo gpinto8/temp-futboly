@@ -125,19 +125,19 @@ export const StandingsTab = () => {
   ];
 
   return standings?.length ? (
-    <div className="h-[400px] text-center">
+    <div className="text-center">
       {pastMatchesNotCalculated() && (
-        <p className="text-error-400 font-semibold mb-4">
+        <p className="text-error-400 font-semibold mb-10">
           {textForPastMatches}
         </p>
       )}
       <CustomTable<ColumnKeysProps>
         rows={rows}
         columns={columns}
-        className="bg-lightGray"
+        className="!h-[500px]"
         customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
         customizeColumns={{ className: 'border-b-gray' }}
-        elevation={5}
+        elevation={0}
       />
     </div>
   ) : (
