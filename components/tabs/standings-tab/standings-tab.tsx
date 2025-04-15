@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { ColumnsProps, CustomTable, RowsProps } from '../../custom/custom-table';
+import {
+  ColumnsProps,
+  CustomTable,
+  RowsProps,
+} from '../../custom/custom-table';
 import { ImageUrlsProps } from '@/utils/img-urls';
 import { useBreakpoint } from '@/utils/use-breakpoint';
 import { CustomImage } from '../../custom/custom-image';
@@ -8,6 +12,7 @@ import { useGetStandings } from '@/data/standings/use-get-standings';
 import { useAppSelector } from '@/store/hooks';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { EmptyMessage } from '../../empty-message';
+import { TabSectionSpacer } from '../tab-section-spacer';
 
 type ColumnKeysProps =
   | 'INDEX'
@@ -124,26 +129,34 @@ export const StandingsTab = () => {
     },
   ];
 
-  return standings?.length ? (
-    <div className="text-center">
-      {pastMatchesNotCalculated() && (
-        <p className="text-error-400 font-semibold mb-10">
-          {textForPastMatches}
-        </p>
+  return (
+    <TabSectionSpacer
+      UniqueSection={() => (
+        <div className="text-center">
+          {pastMatchesNotCalculated() && (
+            <p className="text-error-400 font-semibold mb-10">
+              {textForPastMatches}
+            </p>
+          )}
+          <CustomTable<ColumnKeysProps>
+            rows={rows}
+            columns={columns}
+            className="!h-[500px]"
+            customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
+            customizeColumns={{ className: 'border-b-gray' }}
+            elevation={0}
+          />
+        </div>
       )}
-      <CustomTable<ColumnKeysProps>
-        rows={rows}
-        columns={columns}
-        className="!h-[500px]"
-        customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
-        customizeColumns={{ className: 'border-b-gray' }}
-        elevation={0}
-      />
-    </div>
-  ) : (
-    <EmptyMessage
-      title="No data can be calculated yet 😵"
-      description="Once some matches have any results, you'll see them here!"
+      emptyMessage={{
+        condition: !standings?.length,
+        Component: () => (
+          <EmptyMessage
+            title="No data can be calculated yet 😵"
+            description="Once some matches have any results, you'll see them here!"
+          />
+        ),
+      }}
     />
   );
 };
