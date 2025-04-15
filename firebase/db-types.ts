@@ -114,6 +114,7 @@ export type CompetitionsCollectionTeamsProps = {
   }[]; // Only {TEAMS_PLAYERS_LIMIT} players per team (for now)
 };
 
+/****************************************  STANDINGS  ****************************************/
 export type GameStandingsResult = 'W' | 'D' | 'L';
 
 export type StandingsResults = {
@@ -121,6 +122,7 @@ export type StandingsResults = {
   W: number;
   L: number;
   D: number;
+    points: number;
 };
 
 export type ShortTeamProps = {
@@ -132,6 +134,11 @@ export type ShortTeamProps = {
   players: any[];
 };
 
+export type ShortTeamPropsStandings = (Omit<ShortTeamProps, "players"> & {
+    result: StandingsResults
+})[];
+
+/****************************************  MAPPED PROPS  ****************************************/
 export type MappedPlayerProps = {
   uid: string;
   role: 'owner' | 'guest';
