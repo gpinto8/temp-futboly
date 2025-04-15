@@ -43,12 +43,7 @@ export type CompetitionsCollectionProps = {
   maxWeek: number;
   players: DocumentReference<UsersCollectionProps>[];
   teams: CompetitionsCollectionTeamsProps[];
-  standings:
-    | {
-        points: number;
-        teamId: DocumentReference<CompetitionsCollectionTeamsProps>;
-      }[]
-    | null;
+  standings: ShortTeamPropsStandings[] | null;
   /*matchSchedule: Teams are not anymore just references but they are an array with all the informations
    * I will leave it commented because in the future we will create and apposite collection for Teams
     | {
@@ -131,12 +126,13 @@ export type ShortTeamProps = {
   ownerUsername: string;
   shortId: string;
   logoId: RealTeamLogoIds;
-  players: any[];
+  /*players: any[];*/
 };
 
-export type ShortTeamPropsStandings = (Omit<ShortTeamProps, "players"> & {
-    result: StandingsResults
-})[];
+export type ShortTeamPropsStandings = ShortTeamProps & {
+  result: StandingsResults
+  position: number;
+};
 
 /****************************************  MAPPED PROPS  ****************************************/
 export type MappedPlayerProps = {
