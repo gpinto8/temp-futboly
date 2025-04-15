@@ -178,7 +178,8 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
         <div className="flex flex-col lg:flex-row gap-12 w-full justify-between">
           {/* FOOTBALL FIELD */}
-          <div className="lg:w-[50%] flex flex-col gap-4">
+          {/* TODO: remove this "overflow-scroll" and handle better this responsiveness issue */}
+          <div className="lg:w-[50%] flex flex-col gap-4 overflow-scroll">
             <div className="flex gap-4 justify-between">
               <div className="text-xl font-bold pb-2">Starting 11</div>
               <FormationsDropdown
