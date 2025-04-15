@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/custom/custom-button';
-import { CustomSeparator } from '@/components/custom/custom-separator';
 import { UpcomingMatch } from '@/components/tabs/live-match-tab/upcoming-match';
 import { LiveMatchSection } from '@/components/tabs/live-match-tab/live-match-section';
 import { useGetMatches } from '@/data/matches/use-get-matches';
@@ -10,6 +9,7 @@ import { useSetMatches } from '@/data/matches/use-set-matches';
 import { EmptyMessage } from '../../empty-message';
 import { Loader } from '../../loader';
 import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
+import { TabSectionSpacer } from '../tab-section-spacer';
 
 export const LiveMatch = () => {
   const {
@@ -134,48 +134,46 @@ export const LiveMatch = () => {
   }
 
   return nextMatchFound ? (
-    <div>
-      <div id="currentLiveMatch">
-        <div className="flex flex-row justify-between items-center flex-wrap gap-4">
-          <h1 className="font-bold text-4xl text-black text-nowrap">
-            Live Match
-          </h1>
-          {pastMatchesNotCalculated() && (
-            <CustomButton
-              label="Calculate Results"
-              className="rounded-full py-1 px-2 max-w-40"
-              handleClick={calculateMatches}
-            />
-          )}
-        </div>
-        {nextMatchWithRating ? (
-          <LiveMatchSection nextMatch={nextMatchWithRating} />
-        ) : nextMatchMapped ? (
-          <LiveMatchSection nextMatch={nextMatchMapped} />
-        ) : (
-          <div className="flex justify-center items-center h-40">
-            <Loader color="main" />
-          </div>
-        )}
-      </div>
-
-      <CustomSeparator withText={false} className="!my-20" />
-
-      <div id="upcomingMatches">
-        <h1 className="font-bold text-4xl text-black mb-12">
-          Upcoming Matches
-        </h1>
-        <div className="flex flex-row items-center gap-4 flex-wrap">
-          {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
-            upcomingMatches.map((upcomingMatch, index) => (
-              <UpcomingMatch key={index} matchInfo={upcomingMatch} />
-            ))
+    <TabSectionSpacer
+      firstSection={{
+        title: 'Live Match',
+        TitleEndComponent: () => (
+          <>
+            {pastMatchesNotCalculated() && (
+              <CustomButton
+                label="Calculate Results"
+                className="rounded-full py-1 px-2 max-w-40"
+                handleClick={calculateMatches}
+              />
+            )}
+          </>
+        ),
+        Component: () =>
+          nextMatchWithRating ? (
+            <LiveMatchSection nextMatch={nextMatchWithRating} />
+          ) : nextMatchMapped ? (
+            <LiveMatchSection nextMatch={nextMatchMapped} />
           ) : (
-            <p>There are no matches left for this competitions</p>
-          )}
-        </div>
-      </div>
-    </div>
+            <div className="flex justify-center items-center h-40">
+              <Loader color="main" />
+            </div>
+          ),
+      }}
+      secondSection={{
+        title: 'Upcoming Matches',
+        Component: () => (
+          <div className="flex flex-row items-center gap-4 flex-wrap">
+            {upcomingMatches !== -1 && upcomingMatches.length > 0 ? (
+              upcomingMatches.map((upcomingMatch, index) => (
+                <UpcomingMatch key={index} matchInfo={upcomingMatch} />
+              ))
+            ) : (
+              <p>There are no matches left for this competitions</p>
+            )}
+          </div>
+        ),
+      }}
+    />
   ) : (
     <EmptyMessage
       title="Match not found 🤷‍♂️"

@@ -70,8 +70,8 @@ export const LiveMatchSection = ({
     nextMatch.away.userRef.id === getUser().id ? 'text-main' : '';
 
   return (
-    <div className="flex flex-col w-full items-center justify-between gap-8 mt-8">
-      <div className="w-full flex flex-row items-center justify-center gap-8 md:mt-8">
+    <div className="flex flex-col w-full items-center justify-between gap-8 mt-4">
+      <div className="w-full flex flex-row items-center justify-center gap-8">
         <div className="flex justify-around items-center my-4 gap-10">
           {/* HOME RESULT */}
           <div className="flex flex-row gap-4 items-center">
