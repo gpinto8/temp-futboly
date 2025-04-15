@@ -294,16 +294,17 @@ async function assignTeamRating(
   startDate: DateString,
   endDate: DateString,
 ) {
-  Object.keys(teamPlayersMap).forEach(async (team) => {
+  const teamPromises = Object.keys(teamPlayersMap).map(async (team) => {
     if (team === 'undefined') {
       // For each player that doesn't have a team I will assign the default
-      teamPlayersMap[team].forEach((playerId) => {
-        originalTeam.forEach((originalPlayer) => {
+      teamPlayersMap[team].forEach((playerId: any) => {
+        originalTeam.forEach((originalPlayer: any) => {
           if (originalPlayer.id === playerId) {
             originalPlayer.score = DEFAULT_SCORE;
           }
         });
       });
+      return Promise.resolve(); // Restituisci una Promise risolta per questo ramo
     } else {
       const teamLastResult = await getTeamLatestFixture(
         startDate,
@@ -312,38 +313,47 @@ async function assignTeamRating(
       );
       if (teamLastResult !== -1) {
         // Means Fixture Found
-        teamPlayersMap[team].forEach((playerId) => {
-          originalTeam.forEach((originalPlayer) => {
+        teamPlayersMap[team].forEach((playerId: any) => {
+          originalTeam.forEach((originalPlayer: any) => {
             if (originalPlayer.id === playerId) {
               const playerLineup = teamLastResult.lineups?.filter(
-                (lineupPlayer) => lineupPlayer.player_id === playerId,
+                (lineupPlayer: any) => lineupPlayer.player_id === playerId,
               );
-              const playerScoreDetails = playerLineup[0]?.details?.filter(
-                (detail) => detail.type_id === 118,
-              );
-              if (playerScoreDetails) {
-                const playerScore = playerScoreDetails[0].data?.value;
-                originalPlayer.score = playerScore ?? DEFAULT_SCORE;
-              } else {
-                originalPlayer.score = DEFAULT_SCORE;
-              }
+                // If the player was in the lineup I check his details otherwise I will assign the default
+                if (playerLineup?.length !== 0) {
+                                const playerScoreDetails = playerLineup[0]?.details?.filter(
+                                    (detail: any) => detail.type_id === 118,
+                                );
+                                // If the player has a score I will extract it otherwise I will assign the default
+                                if (playerScoreDetails?.length !== 0) {
+                                    const playerScore = playerScoreDetails[0].data?.value;
+                                    originalPlayer.score = playerScore ?? DEFAULT_SCORE;
+                                } else {
+                                    originalPlayer.score = DEFAULT_SCORE;
+                                }
+                            } else {
+                                    originalPlayer.score = DEFAULT_SCORE;
+                            }
             }
           });
         });
       } else {
         // If match is not found that I assign the default
-        teamPlayersMap[team].forEach((playerId) => {
-          originalTeam.forEach((originalPlayer) => {
+        teamPlayersMap[team].forEach((playerId: any) => {
+          originalTeam.forEach((originalPlayer: any) => {
             if (originalPlayer.id === playerId) {
               originalPlayer.score = DEFAULT_SCORE;
             }
           });
         });
       }
+      return Promise.resolve(); // Restituisci una Promise risolta per questo ramo
     }
   });
+
+  await Promise.all(teamPromises);
   return originalTeam;
-}
+};
 
 async function getTeamLatestFixture(
   date1: DateString,
