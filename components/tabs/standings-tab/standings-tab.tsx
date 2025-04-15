@@ -70,8 +70,8 @@ export const StandingsTab = () => {
     'There are matches that have not been calculated yet. ';
   textForPastMatches +=
     leagueOwner === user.id
-      ? 'Go to Live Match and press Calculate Results'
-      : 'Ask the Admin to confirm and save to update the standings';
+      ? 'Go to Live Match and press Calculate Results.'
+      : 'Ask the Admin to confirm and save to update the standings.';
 
   useEffect(() => {
     (async () => {
@@ -138,14 +138,15 @@ export const StandingsTab = () => {
               {textForPastMatches}
             </p>
           )}
-          <CustomTable<ColumnKeysProps>
-            rows={rows}
-            columns={columns}
-            className="!h-[500px]"
-            customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
-            customizeColumns={{ className: 'border-b-gray' }}
-            elevation={0}
-          />
+          <div className="!h-[500px]">
+            <CustomTable<ColumnKeysProps>
+              rows={rows}
+              columns={columns}
+              customizeRows={{ hideHorizontalLine: true, className: 'py-2' }}
+              customizeColumns={{ className: 'border-b-gray' }}
+              elevation={0}
+            />
+          </div>
         </div>
       )}
       emptyMessage={{

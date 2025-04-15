@@ -14,12 +14,16 @@ export const Matches = ({
   allMatchHistory,
   matchStatistics,
 }) => {
-  const keys = Object.keys(matchStatistics).map((key) => {
-    return { title: key, value: matchStatistics[key] };
-  });
-  personalMatchHistory = personalMatchHistory.map((match) => {
-    return { ...match, date: new Date(match.date) };
-  });
+  const keys =
+    matchStatistics &&
+    Object.keys(matchStatistics).map((key) => {
+      return { title: key, value: matchStatistics[key] };
+    });
+  personalMatchHistory =
+    personalMatchHistory &&
+    personalMatchHistory.map((match) => {
+      return { ...match, date: new Date(match.date) };
+    });
 
   const resizeAllMatches = () => {
     const personaleUpcomingMatches = document
@@ -159,7 +163,7 @@ export const Matches = ({
         ),
       }}
       emptyMessage={{
-        condition: !allMatchHistory?.length && !personalMatchHistory.length,
+        condition: !allMatchHistory?.length && !personalMatchHistory?.length,
         Component: () => <NoMatches />,
       }}
     />
