@@ -45,7 +45,7 @@ export const AddEditTeamModal = ({
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
-  // const [isEndReached, setIsEndReached] = useState<Boolean>(false);
+  const [avoidReload, setAvoidReload] = useState(false);
 
   const [logoId, setLogoId] = useState(data?.logoId);
   const [name, setName] = useState<HandleChangeParamProps>({
@@ -203,18 +203,16 @@ export const AddEditTeamModal = ({
       );
       const playersData: any[] = response.data;
 
-      console.log({ userValue, playersData });
+      setAvoidReload(true);
 
       if (playersData) {
         const mappedPlayers = playersData.map((player, i) =>
           mapPlayerRow(player, i),
         );
-
-        console.log({ mappedPlayers });
-
         setRows(mappedPlayers);
       }
     } else {
+      setAvoidReload(false);
       getPlayers();
     }
   };
@@ -277,7 +275,7 @@ export const AddEditTeamModal = ({
                 onEndReached={handleEndReached}
                 initialSelectedRows={initialSelectedPlayers}
                 getSelectedRows={handleSelectedRows}
-                // avoidEndReload
+                avoidEndReload={avoidReload}
               />
             ) : (
               <div className="my-2 mx-auto ">
