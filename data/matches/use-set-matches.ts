@@ -81,6 +81,7 @@ export const useSetMatches = () => {
     dispatch(competitionActions.setCompetition(newActiveCompetition));
   };
 
+  // Calculate matches result and then writes them in DB and finally updates the standings
   const calculateMatches = async (nextMatchMapped: any[]) => {
       if (!activeCompetition) return;
       if (!nextMatchMapped) {
@@ -89,6 +90,7 @@ export const useSetMatches = () => {
       }
       const allTeams = await getAllTeams();
       if (!allTeams) return;
+      // Create a Map for each team and assigns all the players
       const teamPlayersMap: Map<String, any[]> = new Map();
       await Promise.all(
         allTeams.map(async (team) => {
@@ -98,9 +100,11 @@ export const useSetMatches = () => {
           teamPlayersMap.set(team.shortId, players);
         }),
       );
+      // Retrieve all the previous matches with no score
       const pastMatchesWithoutScore = getAllPastMatchesWithoutResult();
       const resultsByWeek: Record<string, GameResult[]> = {};
       for (const week of Object.keys(pastMatchesWithoutScore)) {
+        // For each week I get the matches and I check the rating of Home and Away using false in getMatchRatings because this is not LIVE
         const weekMatches = pastMatchesWithoutScore[week];
         const weekResult: GameResult[] = [];
         for (const match of weekMatches) {
@@ -124,10 +128,12 @@ export const useSetMatches = () => {
         }
         resultsByWeek[week] = weekResult;
       }
+      // Now that all week result are obtained I cycle on the results and for each week I update the game results calling writeGameResults
       for (const week of Object.keys(resultsByWeek)) {
         const weekGameResult = resultsByWeek[week];
         await writeGameResults(weekGameResult, Number(week));
       }
+      // Finally once everything is done I save all the informations in the standings
       await calculateAndSaveStandings(activeCompetition.id);
     }
 
