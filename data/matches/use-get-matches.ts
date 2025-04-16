@@ -139,13 +139,13 @@ export const useGetMatches = () => {
     };
   };
 
-  // Returns the rating given an array of mapped players home/away
+  // Returns the rating LIVE given an array of mapped players home/away
   const getNextMatchRatings = async (home: any[], away: any[]) => {
     const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
     if (!nextPersonalMatch) return;
     if (nextPersonalMatch === -1) return -1;
     // if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players --> Commented because I am checking in the component
-    const matchRatings = await getMatchRatings(home, away, nextPersonalMatch);
+    const matchRatings = await getMatchRatings(home, away, nextPersonalMatch, true);
     return {
       ...nextPersonalMatch,
       home: {
@@ -164,6 +164,7 @@ export const useGetMatches = () => {
     home: any[],
     away: any[],
     match: MatchScheduleProps,
+    isLive: boolean,
   ) => {
     // For home and away maps all the players to respective team, so you have a structure like {teamId: playersId[]}
     const homeTeamPlayersMap = home.reduce((acc: any, player: any) => {
@@ -180,8 +181,8 @@ export const useGetMatches = () => {
     const { previousFriday: startDate, nextFriday: endDate } =
       getFridaysFromDate(match.date);
     // I will get the rating of all the players
-    home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate);
-    away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate);
+    home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate, isLive);
+    away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate, isLive);
     // After getting the rating of every player I calculate also the result
     const homeScore = home.reduce(
       (prev, curr) => prev + Number(curr.score || 0),
@@ -301,20 +302,24 @@ export function getFridaysFromDate(inputDate: Date | string): {
   };
 }
 
+// If the match is live then I assign 0 if no result is found, if is not live (I am calculating end of week results)
+// Then I assign the DEFAULT_SCORE to a player with no available results
 async function assignTeamRating(
   teamPlayersMap: any,
   originalTeam: any,
   startDate: DateString,
   endDate: DateString,
+  isLive: boolean,
 ) {
   // Mapping all the keys of the array that correspond to the team and returns a promise to resolve in next step
   const teamPromises = Object.keys(teamPlayersMap).map(async (team) => {
+    const DEFAULT_MATCH_SCORE = isLive ? 0 : DEFAULT_SCORE;
     if (team === 'undefined') {
       // For each player that doesn't have a team I will assign the default
       teamPlayersMap[team].forEach((playerId: any) => {
         originalTeam.forEach((originalPlayer: any) => {
           if (originalPlayer.id === playerId) {
-            originalPlayer.score = DEFAULT_SCORE;
+            originalPlayer.score = DEFAULT_MATCH_SCORE;
           }
         });
       });
@@ -342,12 +347,12 @@ async function assignTeamRating(
                 // If the player has a score I will extract it otherwise I will assign the default
                 if (playerScoreDetails?.length !== 0) {
                   const playerScore = playerScoreDetails[0].data?.value;
-                  originalPlayer.score = playerScore ?? DEFAULT_SCORE;
+                  originalPlayer.score = playerScore ?? DEFAULT_MATCH_SCORE;
                 } else {
-                  originalPlayer.score = DEFAULT_SCORE;
+                  originalPlayer.score = DEFAULT_MATCH_SCORE;
                 }
               } else {
-                originalPlayer.score = DEFAULT_SCORE;
+                originalPlayer.score = DEFAULT_MATCH_SCORE;
               }
             }
           });
@@ -357,7 +362,7 @@ async function assignTeamRating(
         teamPlayersMap[team].forEach((playerId: any) => {
           originalTeam.forEach((originalPlayer: any) => {
             if (originalPlayer.id === playerId) {
-              originalPlayer.score = DEFAULT_SCORE;
+              originalPlayer.score = DEFAULT_MATCH_SCORE;
             }
           });
         });

@@ -100,6 +100,7 @@ export const LiveMatch = () => {
           teamPlayersMap.get(match.home.shortId) as any,
           teamPlayersMap.get(match.away.shortId) as any,
           match,
+          false
         );
         const gameResult: GameResult = {
           home: {
