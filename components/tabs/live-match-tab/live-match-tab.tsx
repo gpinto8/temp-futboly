@@ -19,7 +19,7 @@ export const LiveMatch = () => {
     getTimeToNextMatch,
     getNextMatch,
     getNextMatchRatings,
-    getAllPastMatches,
+    getAllPastMatchesWithoutResult,
     pastMatchesNotCalculated,
     getMatchRatings,
   } = useGetMatches();
@@ -90,7 +90,7 @@ export const LiveMatch = () => {
         teamPlayersMap.set(team.shortId, players);
       }),
     );
-    const pastMatchesWithoutScore = getAllPastMatches();
+    const pastMatchesWithoutScore = getAllPastMatchesWithoutResult();
     const resultsByWeek: Record<string, GameResult[]> = {};
     for (const week of Object.keys(pastMatchesWithoutScore)) {
       const weekMatches = pastMatchesWithoutScore[week];
