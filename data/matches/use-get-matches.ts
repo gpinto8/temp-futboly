@@ -31,6 +31,7 @@ export const useGetMatches = () => {
       .sort((a, b) => a.week - b.week);
   };
 
+  // Returns personal statistics looping through all the matches and aggregating all the information needed in each step
   const getMatchStatistics = () => {
     const personalMatches = getPersonalMatches();
     let totalWins = 0,
@@ -57,7 +58,7 @@ export const useGetMatches = () => {
       totalMatchPlayed,
       overallScore: Math.round(totalScore / totalMatchPlayed),
       scoredThisWeek,
-    } as matchStatistics;
+    } as MatchStatistics;
   };
 
   // Return all the matches but sorted by week
@@ -75,9 +76,10 @@ export const useGetMatches = () => {
     return groupedMatches;
   };
 
-  const getAllPastMatches = () => {
+  // Returns all past matches that do not have a result
+  const getAllPastMatchesWithoutResult = () => {
     if (!matches) return;
-    if (!pastMatchesNotCalculated) return;
+    if (!pastMatchesNotCalculated()) return;
     const todayTime = new Date().getTime();
     const pastMatches = [...matches]
       .filter((match) => new Date(match.date).getTime() < todayTime)
@@ -85,6 +87,7 @@ export const useGetMatches = () => {
     return groupMatchesByWeek(pastMatches);
   };
 
+  // Returns a boolean that tells you if there are past matches not calculated
   const pastMatchesNotCalculated = () => {
     if (!matches) return;
     const todayTime = new Date().getTime();
@@ -95,9 +98,12 @@ export const useGetMatches = () => {
       : false;
   };
 
+  // Returns all the matches that are going to follow, You need to put how many you need and you will get maximum matchesNumber elements
+  // But if less elements are available then the result will be less
+  // You will receive -1 if there are no more matches
   const getUpcomingMatches = (matchesNumber: number) => {
     if (!matches) return [];
-    const personalMatches = getPersonalMatches();
+    const personalMatches = getPersonalMatches(); // Gives back an ordered array so I don't need to sort it again
     const upcomingPersonalMatches = personalMatches.filter(
       (match) => !match.result,
     );
@@ -109,11 +115,13 @@ export const useGetMatches = () => {
     }
   };
 
+  // Returns ms to next match
   const getTimeToNextMatch = () => {
     const start = new Date().getTime();
     return getNextMatchDay() - start;
   };
 
+  // Gets the next match and it returns the basic info plus the mapped teams
   const getNextMatch = () => {
     const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
     if (!nextPersonalMatch) return;
@@ -131,6 +139,7 @@ export const useGetMatches = () => {
     };
   };
 
+  // Returns the rating given an array of mapped players home/away
   const getNextMatchRatings = async (home: any[], away: any[]) => {
     const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
     if (!nextPersonalMatch) return;
@@ -156,6 +165,7 @@ export const useGetMatches = () => {
     away: any[],
     match: MatchScheduleProps,
   ) => {
+    // For home and away maps all the players to respective team, so you have a structure like {teamId: playersId[]}
     const homeTeamPlayersMap = home.reduce((acc: any, player: any) => {
       if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
       acc[player.teams[0]?.team_id].push(player.id);
@@ -166,11 +176,13 @@ export const useGetMatches = () => {
       acc[player.teams[0]?.team_id].push(player.id);
       return acc;
     }, {});
+    // Given the match date I will extract the lower and upper bound
     const { previousFriday: startDate, nextFriday: endDate } =
       getFridaysFromDate(match.date);
+    // I will get the rating of all the players
     home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate);
     away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate);
-    //}
+    // After getting the rating of every player I calculate also the result
     const homeScore = home.reduce(
       (prev, curr) => prev + Number(curr.score || 0),
       0,
@@ -231,13 +243,14 @@ export const useGetMatches = () => {
     getTimeToNextMatch,
     getNextMatch,
     getNextMatchRatings,
-    getAllPastMatches,
+    getAllPastMatchesWithoutResult,
     pastMatchesNotCalculated,
     getMatchRatings,
     validMatchGeneration,
   };
 };
 
+// It will check if it's the match day returns -1 otherwise the timestamp of the next match
 export function getNextMatchDay() {
   const HOURS = 16;
   const today = new Date(Date.now());
@@ -294,6 +307,7 @@ async function assignTeamRating(
   startDate: DateString,
   endDate: DateString,
 ) {
+  // Mapping all the keys of the array that correspond to the team and returns a promise to resolve in next step
   const teamPromises = Object.keys(teamPlayersMap).map(async (team) => {
     if (team === 'undefined') {
       // For each player that doesn't have a team I will assign the default
@@ -304,8 +318,9 @@ async function assignTeamRating(
           }
         });
       });
-      return Promise.resolve(); // Restituisci una Promise risolta per questo ramo
+      return Promise.resolve(); // Returns resolved promise
     } else {
+      // A team is found so I get it's latest fixture
       const teamLastResult = await getTeamLatestFixture(
         startDate,
         endDate,
@@ -347,7 +362,7 @@ async function assignTeamRating(
           });
         });
       }
-      return Promise.resolve(); // Restituisci una Promise risolta per questo ramo
+      return Promise.resolve(); // Returns resolved promise
     }
   });
 
@@ -355,10 +370,11 @@ async function assignTeamRating(
   return originalTeam;
 }
 
+// Checks if given two dates and a teamId there are any fixtures. -1 means no fixtures found
 async function getTeamLatestFixture(
   date1: DateString,
   date2: DateString,
-  team: number,
+  teamId: number,
 ) {
   if (date1 && !isValidDateString(date1)) {
     console.error(`date1 non è una data valida: ${date1}`);
@@ -368,7 +384,7 @@ async function getTeamLatestFixture(
   }
   const result = await fetchSportmonksApi(
     'football/fixtures/between',
-    `${date1}/${date2}/${team}`,
+    `${date1}/${date2}/${teamId}`,
     undefined,
     undefined,
     'filters=lineupDetailTypes:118',
@@ -389,7 +405,7 @@ const isValidDateString = (date: string): date is DateString => {
   return /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/.test(date);
 };
 
-export type matchStatistics = {
+export type MatchStatistics = {
   totalWins: number;
   totalMatchPlayed: number;
   overallScore: number;

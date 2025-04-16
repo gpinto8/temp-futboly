@@ -17,16 +17,20 @@ export const useSetStandings = () => {
   const dispatch = useAppDispatch();
 
   const calculateAndSaveStandings = async (competitionId: string) => {
+    // First I retrieve the competition to make sure it didn't change and Redux is out of sync
     const competitionData = await getCompetitionById(competitionId);
     if (!competitionData) return;
     if (!competitionData.matchSchedule) return;
+    // I filter all the matches with a result
     const matchesWithResult = [...competitionData.matchSchedule].filter(
       (match) => Boolean(match.result),
     );
     if (matchesWithResult.length === 0) return;
+    // If there are matches with a result I will retrieve all the teams with ShortTeamsProps
     const allCompetitionTeams = await getAllShortTeams();
     if (!allCompetitionTeams) return;
     const mapTeamMatches: any[] = [];
+    // For each team I will filter the matches where it is either home or away
     for (let i = 0; i < allCompetitionTeams.length; i++) {
       const team = allCompetitionTeams[i];
       const teamMatches = matchesWithResult.filter(
@@ -34,10 +38,12 @@ export const useSetStandings = () => {
           team.shortId === match.home.shortId ||
           team.shortId === match.away.shortId,
       );
+      // Once I have all the matches with a result of a team I will calculate all the results
       const teamResults = teamMatches
         .map((match) => calculateMatchResult(match, team))
         .filter((result) => result !== null);
       const teamClone = cloneDeep(team);
+      // Then I calculate the points and summing up all the informations such as wins, loses, draws and so on
       const countResultsAndPoint = teamResults.reduce(
         (acc, result) => aggregateTeamResults(acc, result),
         { W: 0, L: 0, D: 0, points: 0 }, // Initialization
@@ -47,14 +53,17 @@ export const useSetStandings = () => {
         ...countResultsAndPoint,
       };
       teamClone.results = standingsResults;
+      // Lastly I push the results and the modified Team into the "final" array
       mapTeamMatches.push(teamClone);
     }
+    // Here I have all the teams elaborated so I sort them by points and assign to each team the standing position
     const completeStandings: ShortTeamPropsStandings[] = mapTeamMatches
       .sort((a, b) => a.results.points - b.results.points)
       .toReversed()
       .map((teamStandingsResult, index) => {
         return { ...teamStandingsResult, position: index + 1 };
       });
+    // Then I write the updated standings in the db and if no errors are found I dispatch the modified competition
     const updateStandingResult = await firestoreMethods(
       'competitions',
       competitionData.id as any,

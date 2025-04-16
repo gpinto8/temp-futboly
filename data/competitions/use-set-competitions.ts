@@ -4,6 +4,7 @@ import {
   UsersCollectionProps,
   MappedCompetitionsProps,
   ShortTeamProps,
+  MatchScheduleProps,
 } from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { competitionActions } from '@/store/slices/competitions';
@@ -139,7 +140,7 @@ export const useSetCompetitions = () => {
   };
 
   const scheduleCompetitionMatches = async (competitionId: string) => {
-    // Check if the user is the owner of the league
+    // Check if the user is the owner of the league and basic condition to start the function
     if (!(league.owner === user.id)) return;
     const competitionToBeScheduled = await getCompetitionById(competitionId);
     if (!competitionToBeScheduled) return;
@@ -147,7 +148,7 @@ export const useSetCompetitions = () => {
       console.error("Can't schedule a competition that is already scheduled");
       return;
     }
-    let startDate = getNextMatchDay();
+    let startDate = getNextMatchDay();    // Setting the start date as the next match day or the following one if it's already weekend
     if (startDate === -1) {
       const todayTemp = new Date();
       const previousFriday = new Date(todayTemp);
@@ -158,20 +159,21 @@ export const useSetCompetitions = () => {
       nextFriday.setDate(previousFriday.getDate() + 7);
       startDate = nextFriday.getTime();
     }
-    const maxWeek = Math.ceil(
+    const maxWeek = Math.ceil(  // Difference rounded down by defect of start/end divided in weeks
       (competitionToBeScheduled.endDate.seconds - Math.ceil(startDate / 1000)) /
         (60 * 60 * 24 * 7),
     );
     const teams = competitionToBeScheduled.teams;
     if (teams.length === 0) return;
-    const shortMapTeams = await getAllShortTeams();
+    // After setting up the basic informations I start the logic retrieving ShortTeamProps and creating the basic schedule
+    const shortMapTeams: ShortTeamProps[] = await getAllShortTeams();
     const schedule = createRoundRobinSchedule(shortMapTeams, maxWeek);
     if (!schedule) return;
     const finalSchedule = mapHomeAway(
-      randomizeWeeks(schedule, teams.length, maxWeek),
-    );
+      randomizeWeeks(schedule, teams.length, maxWeek), // Once the schedule is created I will randomize the weeks to not have a repeated sequence
+    );  // The return is an bidimensional array like [[Home, Away], [Home, Away]] so I map through it fixing the structure
     const competitionStart = new Date(startDate);
-    const dayOfWeekStart = competitionStart.getDay();
+    const dayOfWeekStart = competitionStart.getDay(); // Critical function that calculates for each mach it's date using as reference the week
     const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
     const finalScheduleWithDate = finalSchedule.map((schedule) => {
       const startCopy = new Date(startDate);
@@ -183,6 +185,8 @@ export const useSetCompetitions = () => {
         date: startCopy.getTime(),
       };
     });
+    // Here I am writing the schedule, the maxWeek, I am initializing currentWeek to 1 and changing the competitionStarted to true
+    // Once everything worked out without errors I will dispatch the modified competition
     const resultSchedule = await firestoreMethods(
       'competitions',
       competitionToBeScheduled.id as any,
@@ -281,9 +285,11 @@ function randomizeWeeks(
   return finalSchedule;
 }
 
+// The match at this moment is an array with 2 element, Home at index 0 and Away at index 1, with this function I fix the structure
+// I am omitting the date because it will be added in the following cicle
 function mapHomeAway(
   schedule: Array<{ week: number; match: ShortTeamProps[] }>,
-) {
+): Omit<MatchScheduleProps, "date">[] {
   return schedule.map((el) => {
     return { week: el.week, home: el.match[0], away: el.match[1] };
   });
