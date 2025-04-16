@@ -145,7 +145,12 @@ export const useGetMatches = () => {
     if (!nextPersonalMatch) return;
     if (nextPersonalMatch === -1) return -1;
     // if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players --> Commented because I am checking in the component
-    const matchRatings = await getMatchRatings(home, away, nextPersonalMatch, true);
+    const matchRatings = await getMatchRatings(
+      home,
+      away,
+      nextPersonalMatch,
+      true,
+    );
     return {
       ...nextPersonalMatch,
       home: {
@@ -181,8 +186,20 @@ export const useGetMatches = () => {
     const { previousFriday: startDate, nextFriday: endDate } =
       getFridaysFromDate(match.date);
     // I will get the rating of all the players
-    home = await assignTeamRating(homeTeamPlayersMap, home, startDate, endDate, isLive);
-    away = await assignTeamRating(awayTeamPlayersMap, away, startDate, endDate, isLive);
+    home = await assignTeamRating(
+      homeTeamPlayersMap,
+      home,
+      startDate,
+      endDate,
+      isLive,
+    );
+    away = await assignTeamRating(
+      awayTeamPlayersMap,
+      away,
+      startDate,
+      endDate,
+      isLive,
+    );
     // After getting the rating of every player I calculate also the result
     const homeScore = home.reduce(
       (prev, curr) => prev + Number(curr.score || 0),
