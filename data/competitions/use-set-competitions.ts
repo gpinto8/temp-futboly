@@ -148,7 +148,7 @@ export const useSetCompetitions = () => {
       console.error("Can't schedule a competition that is already scheduled");
       return;
     }
-    let startDate = getNextMatchDay();    // Setting the start date as the next match day or the following one if it's already weekend
+    let startDate = getNextMatchDay(); // Setting the start date as the next match day or the following one if it's already weekend
     if (startDate === -1) {
       const todayTemp = new Date();
       const previousFriday = new Date(todayTemp);
@@ -159,7 +159,8 @@ export const useSetCompetitions = () => {
       nextFriday.setDate(previousFriday.getDate() + 7);
       startDate = nextFriday.getTime();
     }
-    const maxWeek = Math.ceil(  // Difference rounded down by defect of start/end divided in weeks
+    const maxWeek = Math.ceil(
+      // Difference rounded down by defect of start/end divided in weeks
       (competitionToBeScheduled.endDate.seconds - Math.ceil(startDate / 1000)) /
         (60 * 60 * 24 * 7),
     );
@@ -171,7 +172,7 @@ export const useSetCompetitions = () => {
     if (!schedule) return;
     const finalSchedule = mapHomeAway(
       randomizeWeeks(schedule, teams.length, maxWeek), // Once the schedule is created I will randomize the weeks to not have a repeated sequence
-    );  // The return is an bidimensional array like [[Home, Away], [Home, Away]] so I map through it fixing the structure
+    ); // The return is an bidimensional array like [[Home, Away], [Home, Away]] so I map through it fixing the structure
     const competitionStart = new Date(startDate);
     const dayOfWeekStart = competitionStart.getDay(); // Critical function that calculates for each mach it's date using as reference the week
     const daysToAdd = (DAY_OF_WEEK_MATCH - dayOfWeekStart + 7) % 7;
@@ -289,7 +290,7 @@ function randomizeWeeks(
 // I am omitting the date because it will be added in the following cicle
 function mapHomeAway(
   schedule: Array<{ week: number; match: ShortTeamProps[] }>,
-): Omit<MatchScheduleProps, "date">[] {
+): Omit<MatchScheduleProps, 'date'>[] {
   return schedule.map((el) => {
     return { week: el.week, home: el.match[0], away: el.match[1] };
   });
