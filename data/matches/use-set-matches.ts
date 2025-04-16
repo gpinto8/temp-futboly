@@ -5,6 +5,10 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { competitionActions } from '@/store/slices/competitions';
+import { useGetMatches } from '@/data/matches/use-get-matches';
+import { useGetTeams } from '@/data/teams/use-get-teams';
+import { useSetStandings } from '@/data/standings/use-set-standings';
+import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 import cloneDeep from 'lodash/cloneDeep';
 
 export const useSetMatches = () => {
@@ -19,6 +23,9 @@ export const useSetMatches = () => {
     activeCompetition && activeCompetition.matchSchedule
       ? [...activeCompetition.matchSchedule]
       : null;
+  const { getAllPastMatchesWithoutResult, getMatchRatings } = useGetMatches();
+  const { calculateAndSaveStandings } = useSetStandings();
+  const { getAllTeams } = useGetTeams();
 
   const writeGameResults = async (gameResults: GameResult[], week: number) => {
     // Basic checks to state the situation of the program
@@ -74,8 +81,59 @@ export const useSetMatches = () => {
     dispatch(competitionActions.setCompetition(newActiveCompetition));
   };
 
+  const calculateMatches = async (nextMatchMapped: any[]) => {
+      if (!activeCompetition) return;
+      if (!nextMatchMapped) {
+        console.error("Can't calculate score without mapped players");
+        return;
+      }
+      const allTeams = await getAllTeams();
+      if (!allTeams) return;
+      const teamPlayersMap: Map<String, any[]> = new Map();
+      await Promise.all(
+        allTeams.map(async (team) => {
+          const players = await getSportmonksPlayersDataByIds(
+            team.players.map((player) => player.sportmonksId),
+          );
+          teamPlayersMap.set(team.shortId, players);
+        }),
+      );
+      const pastMatchesWithoutScore = getAllPastMatchesWithoutResult();
+      const resultsByWeek: Record<string, GameResult[]> = {};
+      for (const week of Object.keys(pastMatchesWithoutScore)) {
+        const weekMatches = pastMatchesWithoutScore[week];
+        const weekResult: GameResult[] = [];
+        for (const match of weekMatches) {
+          const matchResult = await getMatchRatings(
+            teamPlayersMap.get(match.home.shortId) as any,
+            teamPlayersMap.get(match.away.shortId) as any,
+            match,
+            false
+          );
+          const gameResult: GameResult = {
+            home: {
+              shortId: match.home.shortId,
+              result: matchResult.result.home,
+            },
+            away: {
+              shortId: match.away.shortId,
+              result: matchResult.result.away,
+            },
+          };
+          weekResult.push(gameResult);
+        }
+        resultsByWeek[week] = weekResult;
+      }
+      for (const week of Object.keys(resultsByWeek)) {
+        const weekGameResult = resultsByWeek[week];
+        await writeGameResults(weekGameResult, Number(week));
+      }
+      await calculateAndSaveStandings(activeCompetition.id);
+    }
+
   return {
     writeGameResults,
+    calculateMatches,
   };
 };
 

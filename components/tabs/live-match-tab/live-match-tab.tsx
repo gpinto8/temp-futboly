@@ -3,11 +3,7 @@ import { CustomButton } from '@/components/custom/custom-button';
 import { UpcomingMatch } from '@/components/tabs/live-match-tab/upcoming-match';
 import { LiveMatchSection } from '@/components/tabs/live-match-tab/live-match-section';
 import { useGetMatches } from '@/data/matches/use-get-matches';
-import { useGetTeams } from '@/data/teams/use-get-teams';
-import { GameResult } from '@/data/matches/use-set-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
-import { useSetStandings } from '@/data/standings/use-set-standings';
-import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { EmptyMessage } from '../../empty-message';
 import { Loader } from '../../loader';
 import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
@@ -19,18 +15,12 @@ export const LiveMatch = () => {
     getTimeToNextMatch,
     getNextMatch,
     getNextMatchRatings,
-    getAllPastMatchesWithoutResult,
     pastMatchesNotCalculated,
-    getMatchRatings,
   } = useGetMatches();
-  const activeCompetition = useGetCompetitions().getActiveCompetition();
-  const { writeGameResults } = useSetMatches();
-  const { calculateAndSaveStandings } = useSetStandings();
-  const { getAllTeams } = useGetTeams();
+  const { calculateMatches } = useSetMatches();
   const upcomingMatches = getUpcomingMatches(5);
 
   const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
-
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
   const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
 
@@ -73,56 +63,6 @@ export const LiveMatch = () => {
     })();
   }, []);
 
-  async function calculateMatches() {
-    if (!activeCompetition) return;
-    if (!nextMatchMapped) {
-      console.error("Can't calculate score without mapped players");
-      return;
-    }
-    const allTeams = await getAllTeams();
-    if (!allTeams) return;
-    const teamPlayersMap: Map<String, any[]> = new Map();
-    await Promise.all(
-      allTeams.map(async (team) => {
-        const players = await getSportmonksPlayersDataByIds(
-          team.players.map((player) => player.sportmonksId),
-        );
-        teamPlayersMap.set(team.shortId, players);
-      }),
-    );
-    const pastMatchesWithoutScore = getAllPastMatchesWithoutResult();
-    const resultsByWeek: Record<string, GameResult[]> = {};
-    for (const week of Object.keys(pastMatchesWithoutScore)) {
-      const weekMatches = pastMatchesWithoutScore[week];
-      const weekResult: GameResult[] = [];
-      for (const match of weekMatches) {
-        const matchResult = await getMatchRatings(
-          teamPlayersMap.get(match.home.shortId) as any,
-          teamPlayersMap.get(match.away.shortId) as any,
-          match,
-          false
-        );
-        const gameResult: GameResult = {
-          home: {
-            shortId: match.home.shortId,
-            result: matchResult.result.home,
-          },
-          away: {
-            shortId: match.away.shortId,
-            result: matchResult.result.away,
-          },
-        };
-        weekResult.push(gameResult);
-      }
-      resultsByWeek[week] = weekResult;
-    }
-    for (const week of Object.keys(resultsByWeek)) {
-      const weekGameResult = resultsByWeek[week];
-      await writeGameResults(weekGameResult, Number(week));
-    }
-    await calculateAndSaveStandings(activeCompetition.id);
-  }
-
   return (
     <TabSectionSpacer
       firstSection={{
@@ -133,7 +73,7 @@ export const LiveMatch = () => {
               <CustomButton
                 label="Calculate Results"
                 className="rounded-full py-1 px-2 max-w-40"
-                handleClick={calculateMatches}
+                handleClick={() => calculateMatches(nextMatchMapped)}
               />
             )}
           </>
