@@ -1,58 +1,10 @@
 import { CustomImage } from '@/components/custom/custom-image';
-import { Avatar } from '@mui/material';
-import { CustomSeparator } from '@/components/custom/custom-separator';
 import { LiveMatchProps } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
 import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { FootballFieldHorizontal } from '@/components/football-field/football-field-horizontal';
 import { useGetUsers } from '@/data/users/use-get-users';
-
-type LineupTableProps = {
-  className: string;
-  teamName: string;
-  players: any;
-  reverse?: boolean;
-};
-
-const LineUpTable = ({
-  className,
-  teamName,
-  players,
-  reverse,
-}: LineupTableProps) => (
-  <div className={className}>
-    <h2 className={`text-xl font-medium my-2 ${reverse ? 'text-end' : ''}`}>
-      <strong>{teamName}</strong>'s lineup
-    </h2>
-    <CustomSeparator withText={false} />
-    <div className={`flex flex-col gap-1 ${reverse ? 'items-end' : ''}`}>
-      {players?.length &&
-        players.map((player: any, index: number) => (
-          <div key={index} className="flex flex-row items-center gap-2">
-            {(() => {
-              let components = [
-                <Avatar
-                  src={player.image_path}
-                  alt={player.display_name}
-                  sx={{ width: 24, height: 24 }}
-                />,
-                <p className="font-bold text-error">
-                  {player.position?.developer_name
-                    ? player.position?.developer_name?.slice(0, 3)
-                    : '???'}
-                </p>,
-                <p className="font-semibold !w-max">{player.common_name}</p>,
-              ];
-
-              if (reverse) components.reverse();
-
-              return components;
-            })()}
-          </div>
-        ))}
-    </div>
-  </div>
-);
+import { LineUpTable } from './lineup-table';
 
 export const LiveMatchSection = ({
   nextMatch,
