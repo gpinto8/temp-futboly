@@ -131,16 +131,11 @@ export const AddEditTeamModal = ({
       return;
     }
 
-    const allowPlayersCondition = isEdit
-      ? selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
-      : true;
-
-    const shouldDisable = !!(
-      logoId &&
-      name?.value &&
-      coach?.value &&
-      allowPlayersCondition
-    );
+    // The button is always available, till you select any of the players .. if so then you gotta select till the "TEAMS_PLAYERS_LIMIT" to have it available again
+    let shouldDisable = !!(logoId && name?.value && coach?.value);
+    if (isEdit && selectedPlayerIds?.length) {
+      shouldDisable &&= selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT;
+    }
 
     setDisabled(!shouldDisable);
   }, [logoId, name, coach, selectedPlayerIds]);
@@ -202,16 +197,17 @@ export const AddEditTeamModal = ({
   };
 
   const handleSetTeam = () => {
-    const allowPlayersCondition = isEdit
-      ? selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
-      : true;
+    if (data?.competitionStarted) return;
 
-    if (logoId && name?.isValid && coach?.isValid && allowPlayersCondition) {
+    if (logoId && name?.isValid && coach?.isValid) {
       onSetData?.({
         logoId,
         name: name.value,
         coach: coach.value,
-        selectedPlayerIds: isEdit ? selectedPlayerIds : undefined,
+        selectedPlayerIds:
+          isEdit && selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
+            ? selectedPlayerIds
+            : undefined,
       });
     }
   };
