@@ -3,23 +3,11 @@ import { TEAMS_GOALKEEPER_FORMATION_POSITION } from '@/firebase/db-types';
 const formationMap = [
   {
     title: 'Classic Positions',
-    formations: ['442', '451', '433', '343', '352', '361', '424', '334'],
+    formations: ['442', '451', '433', '343', '352', '361', '424', '334'], // MAKE SURE YOU DONT REPEAT THE SAME FORMATION (HERE AND IN THE OTHER ARRAY BELOW)
   },
   {
     title: 'Speficic Positions',
-    formations: [
-      '343',
-      '3412',
-      '3421',
-      '352',
-      '3511',
-      '433',
-      '4312',
-      '442',
-      '4141',
-      '4411',
-      '4231',
-    ],
+    formations: ['3412', '3421', '3511', '4312', '4141', '4411', '4231'], // MAKE SURE YOU DONT REPEAT THE SAME FORMATION (HERE AND IN THE OTHER ARRAY ABOVE)
   },
 ] as const;
 
