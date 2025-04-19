@@ -216,7 +216,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           </div>
           <div className="w-full flex justify-end">
             <CustomButton
-              label="Edit team"
+              label="Save"
               widthFit
               className="px-14"
               disabled={disabled}
