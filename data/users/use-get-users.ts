@@ -22,20 +22,22 @@ export const useGetUsers = () => {
 
   // REMOVE AN USER FROM CURRENT LEAGUE
   const removeUserFromLeague = async (userId: string) => {
-    if (!userId || !league.players[userId]) return;
+    if (userId && league.players?.length) {
+      const userLeagueData = league.players?.find(
+        (player) => player?.uid === userId,
+      );
+      if (!userLeagueData?.uid) return; // If the user doesnt exist or its not inside the league players, then return
+      if (userLeagueData?.role === 'owner') return; // Cant remove the owner of the league ofc ..
 
-    if (league.players[userId] === 'owner') {
-      return "Can't remove the owner of the league";
+      const filteredPlayers = league.players.filter(
+        (player) => player.uid !== userId,
+      );
+
+      await firestoreMethods('leagues', league.id as any).replaceField(
+        'players',
+        filteredPlayers,
+      );
     }
-
-    const filteredPlayers = Object.entries(league.players).filter(
-      ([player]) => player !== userId,
-    );
-
-    await firestoreMethods('leagues', league.id as any).replaceField(
-      'players',
-      filteredPlayers,
-    );
   };
 
   const getUserRefById = (userId: string) => {
