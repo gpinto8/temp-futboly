@@ -21,41 +21,44 @@ type BannerCardProps = {
     key: string;
     value?: string | number;
   }[];
+  avoidLogo?: boolean;
 };
 
-const BannerCard = ({ title, logoId, entries }: BannerCardProps) => {
+const BannerCard = ({ title, logoId, entries, avoidLogo }: BannerCardProps) => {
   const realTeamLogosData = getRealTeamLogoById(logoId);
 
   return (
     <CustomCard
       style="light"
       hoverable
-      className="deep-faded-shadow-around w-full p-4 md:p-4 lg:p-4 xl:!p-4 flex flex-col gap-4"
+      className="deep-faded-shadow-around !min-w-fit w-full p-4 md:p-4 lg:p-4 xl:!p-4 flex flex-col gap-4"
     >
       <div className="flex justify-between gap-2 items-center">
         <h3 className="w-full line-clamp-1 text-nowrap text-xl md:text-2xl font-semibold">
           {title}
         </h3>
 
-        <CustomImage
-          className="rounded-full border object-cover shadow-md w-7 h-7 lg:w-10 lg:h-10"
-          {...(realTeamLogosData
-            ? {
-                forceSrc: realTeamLogosData.src,
-                forcedAlt: realTeamLogosData.alt,
-              }
-            : { imageKey: 'AT_ICON' })}
-        />
+        {!avoidLogo && (
+          <CustomImage
+            className="rounded-full border object-cover shadow-md w-7 h-7 lg:w-10 lg:h-10"
+            {...(realTeamLogosData
+              ? {
+                  forceSrc: realTeamLogosData.src,
+                  forcedAlt: realTeamLogosData.alt,
+                }
+              : { imageKey: 'AT_ICON' })}
+          />
+        )}
       </div>
 
-      <div className="flex flex-col gap-1 h-full">
+      <div className="flex flex-col gap-1 h-full w-fit md:w-full">
         {entries && Object.values(entries)?.some((entry) => entry.value) ? (
           entries.map(({ key, value }, index) => (
-            <div key={index} className="flex gap-2">
-              <span className="text-pretty text-sm text-gray font-semibold">
+            <div key={index} className="flex gap-2 w-fit md:w-full">
+              <span className="text-pretty text-sm text-gray font-semibold w-fit">
                 {key}:{' '}
               </span>
-              <span className="text-pretty text-sm font-bold max-w-[50ch] overflow-hidden">
+              <span className="text-pretty text-sm font-bold max-w-[50ch] overflow-hidden w-fit">
                 {value}
               </span>
             </div>
@@ -76,8 +79,9 @@ const GameSection = () => {
   );
   const competitionStarted = activeCompetition?.competitionStarted;
 
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
+    getTimeToNextMatch(),
+  );
   const [nextMatchFound, setNextMatchFound] = useState(false);
 
   const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
@@ -97,10 +101,12 @@ const GameSection = () => {
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData =
-        await getSportmonksPlayersDataByIds(homePlayerIds);
-      const awayReturnAPIData =
-        await getSportmonksPlayersDataByIds(awayPlayerIds);
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
+        homePlayerIds,
+      );
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
+        awayPlayerIds,
+      );
       if (!homeReturnAPIData && !awayReturnAPIData) return;
       const tempNextMatch = {
         ...nextMatch,
@@ -222,6 +228,7 @@ export const OverviewBanner = () => {
         { key: 'Owner', value: league?.ownerUsername },
         { key: 'Competitions', value: league?.competitionsNo },
       ],
+      avoidLogo: true,
     };
     setOverviewLeague(data);
   }, [league]);
@@ -237,6 +244,7 @@ export const OverviewBanner = () => {
         { key: 'Week', value: competition?.currentWeek },
         { key: 'Teams', value: competition?.players?.length },
       ],
+      avoidLogo: true,
     };
     setOverviewCompetition(data);
   }, [competition]);
@@ -268,9 +276,11 @@ export const OverviewBanner = () => {
       {/* CARDS */}
       <div className="w-full flex flex-col gap-10">
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
-          <div className="w-full flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-2 md 2xl:gap-6">
+          <div className="w-full flex flex-row overflow-x-scroll md:overflow-hidden p-4 sm:flex-nowrap md:justify-center items-center gap-4 2xl:gap-6">
             {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
-              (data, index) => <BannerCard key={index} {...data} />,
+              (data, index) => (
+                <BannerCard key={index} {...data} />
+              ),
             )}
           </div>
           <GameSection />
@@ -286,8 +296,9 @@ const TimerSection = () => {
     (state) => state.competition.activeCompetition,
   );
   const { getTimeToNextMatch } = useGetMatches();
-  const [timeLeftToNextMatch, setTimeLeftToNextMatch] =
-    useState<number>(getTimeToNextMatch());
+  const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
+    getTimeToNextMatch(),
+  );
   const { setCurrentTab } = useTabContext();
 
   // Timer
