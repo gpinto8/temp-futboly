@@ -5,12 +5,15 @@ import { getRealTeamLogoById } from '@/utils/real-team-logos';
 import { FootballFieldHorizontal } from '@/components/football-field/football-field-horizontal';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { LineUpTable } from './lineup-table';
+import {
+  AllPosibleFormationsProps,
+  FormationPosition,
+} from '@/utils/formations';
+import { TeamPlayersData } from '../teams-tab/your-team';
 
-export const LiveMatchSection = ({
-  nextMatch,
-}: {
-  nextMatch: LiveMatchProps;
-}) => {
+type LiveMatchSectionProps = { nextMatch: LiveMatchProps };
+
+export const LiveMatchSection = ({ nextMatch }: LiveMatchSectionProps) => {
   const { getUser } = useGetUsers();
   const { getTeamPositionFromActiveCompetition } = useGetStandings();
 
@@ -22,6 +25,32 @@ export const LiveMatchSection = ({
     nextMatch?.home?.userRef?.id === getUser().id ? 'text-main' : '';
   const awayClass =
     nextMatch?.away?.userRef?.id === getUser().id ? 'text-main' : '';
+
+  const footballFieldData: {
+    [key: string]: {
+      formation?: AllPosibleFormationsProps;
+      players: TeamPlayersData;
+    };
+  } = {
+    home: {
+      formation: home.formation,
+      players: home.players.map((player) => ({
+        ...player,
+        apiData: home.playersAPI.find(
+          (item: any) => player.sportmonksId === item?.id,
+        ),
+      })),
+    },
+    away: {
+      formation: away.formation,
+      players: away.players.map((player) => ({
+        ...player,
+        apiData: away.playersAPI.find(
+          (item: any) => player.sportmonksId === item?.id,
+        ),
+      })),
+    },
+  };
 
   return (
     <div className="flex flex-col w-full items-center justify-between gap-8 mt-4">
@@ -103,8 +132,8 @@ export const LiveMatchSection = ({
 
         {/* FOOTBALL FIELD */}
         <FootballFieldHorizontal
-          homeData={{ formation: home.formation, players: home.players }}
-          awayData={{ formation: away.formation, players: away.players }}
+          homeData={footballFieldData.home}
+          awayData={footballFieldData.away}
         />
 
         {/* AWAY LINEUP */}
