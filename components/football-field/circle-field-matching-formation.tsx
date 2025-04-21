@@ -1,17 +1,37 @@
-import {
-  CompetitionsCollectionTeamsProps,
-  TEAMS_GOALKEEPER_FORMATION_POSITION,
-} from '@/firebase/db-types';
+import { TEAMS_GOALKEEPER_FORMATION_POSITION } from '@/firebase/db-types';
 import {
   AllPosibleFormationsProps,
   FormationPosition,
   mapFormationPosition,
 } from '@/utils/formations';
 import { CircleField, CircleFieldProps } from './circle-field';
+import { TeamPlayersData } from '../tabs/teams-tab/your-team';
 
+type MappedCircleFieldProps = {
+  player: TeamPlayersData[0];
+  currentPosition: FormationPosition;
+  circleFieldProps: CircleFieldMatchingFormationProps['circleFieldProps'];
+};
+
+const MappedCircleField = ({
+  player,
+  currentPosition,
+  circleFieldProps,
+}: MappedCircleFieldProps) => {
+  const isSelected =
+    circleFieldProps?.selectedPlayerPosition === currentPosition;
+
+  return (
+    <CircleField
+      player={player}
+      handleClick={() => circleFieldProps?.handleClick?.(currentPosition)}
+      isSelected={isSelected}
+    />
+  );
+};
 type CircleFieldMatchingFormationProps = {
   formation: AllPosibleFormationsProps;
-  players: CompetitionsCollectionTeamsProps['players'];
+  players: TeamPlayersData;
   orientation?: 'bottom-to-top' | 'right-to-left' | 'left-to-right';
   circleFieldProps?: {
     handleClick?: (position?: FormationPosition) => void;
@@ -27,7 +47,7 @@ export const CircleFieldMatchingFormation = ({
 }: CircleFieldMatchingFormationProps) => {
   const goalkeeper = players?.find(
     (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
-  );
+  ) as TeamPlayersData[0];
   const isLeftToRight = orientation === 'left-to-right';
 
   let mainClassName: string;
@@ -58,15 +78,6 @@ export const CircleFieldMatchingFormation = ({
       break;
   }
 
-  const MappedCircleField = ({ player, currentPosition }: CircleFieldProps) => (
-    <CircleField
-      player={player}
-      currentPosition={currentPosition}
-      handleClick={() => circleFieldProps?.handleClick?.(currentPosition)}
-      selectedPlayerPosition={circleFieldProps?.selectedPlayerPosition}
-    />
-  );
-
   return (
     <div className={mainClassName}>
       {isLeftToRight && (
@@ -74,6 +85,7 @@ export const CircleFieldMatchingFormation = ({
           <MappedCircleField
             player={goalkeeper}
             currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
+            circleFieldProps={circleFieldProps}
           />
         </div>
       )}
@@ -103,17 +115,16 @@ export const CircleFieldMatchingFormation = ({
                   newFieldRow + 1,
                 );
 
-                const fieldPlayer:
-                  | CompetitionsCollectionTeamsProps['players'][0]
-                  | undefined = players?.find(
+                const fieldPlayer = players?.find(
                   (player) => player?.position === currentPosition,
-                );
+                ) as TeamPlayersData[0];
 
                 return (
                   <MappedCircleField
                     key={playerPosition}
                     player={fieldPlayer}
                     currentPosition={currentPosition}
+                    circleFieldProps={circleFieldProps}
                   />
                 );
               })}
@@ -125,6 +136,7 @@ export const CircleFieldMatchingFormation = ({
           <MappedCircleField
             player={goalkeeper}
             currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
+            circleFieldProps={circleFieldProps}
           />
         </div>
       )}

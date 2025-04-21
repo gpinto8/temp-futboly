@@ -4,12 +4,12 @@ import {
   AllPosibleFormationsProps,
   FormationPosition,
 } from '@/utils/formations';
-import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
 import { CircleFieldMatchingFormation } from './circle-field-matching-formation';
+import { TeamPlayersData } from '../tabs/teams-tab/your-team';
 
 export type FootballFieldProps = {
   formation?: AllPosibleFormationsProps;
-  fieldPlayers?: CompetitionsCollectionTeamsProps['players'];
+  fieldPlayers?: TeamPlayersData;
   getSelectedPlayerPosition?: (position: FormationPosition) => void;
   emptyFormationMessage: string;
   resetField?: number; // Reset it with "Math.random()" to trigger the useEffect hook

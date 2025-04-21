@@ -26,14 +26,17 @@ import isEqual from 'lodash/isEqual';
 type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 
+export type TeamPlayersData =
+  (CompetitionsCollectionTeamsProps['players'][0] & {
+    apiData?: any;
+  })[];
+
 export const YourTeam = ({ team }: YourTeamProps) => {
   const { getActiveCompetition } = useGetCompetitions();
   const { editTeam } = useSetTeams();
 
+  const [playersData, setPlayersData] = useState<TeamPlayersData>(team.players);
   const [formation, setFormation] = useState<AllPosibleFormationsProps>();
-  const [playerPositonMap, setPlayerPositionMap] = useState<
-    CompetitionsCollectionTeamsProps['players']
-  >(team.players);
 
   const [fieldPosition, setFieldPosition] = useState<FormationPosition | ''>();
   const [tablePosition, setTablePosition] =
@@ -52,65 +55,78 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     (async () => {
-      const players = team?.players;
-      if (players) {
-        const playerIds = team.players.map((player) => player.sportmonksId);
-        const playersData = await getSportmonksPlayersDataByIds(playerIds);
+      const teamPlayers = team?.players;
+      if (!teamPlayers?.length) return;
 
-        const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => {
-          const id = player.id;
-          const isInitiallySelected = !!team.players.find(
-            (player) => player?.sportmonksId === id,
-          )?.position;
+      const ids = teamPlayers.map((player) => player.sportmonksId);
+      const apiData = await getSportmonksPlayersDataByIds(ids);
 
-          return {
-            ID: id,
-            PLAYER: (
-              <div className="flex gap-1">
-                <Avatar
-                  src={player.image_path}
-                  alt={player.display_name}
-                  sx={{ width: 24, height: 24 }}
-                />
-                <span
-                  className={`line-clamp-1 ${
-                    isInitiallySelected ? 'font-bold' : ''
-                  }`}
-                >
-                  {player.display_name}
-                </span>
-              </div>
-            ),
-            POSITION: player.position?.name,
-            RATING: getPlayerRating(player.statistics),
-          };
-        });
-        setRows(rows);
-      }
+      const newTeamPlayers: TeamPlayersData = teamPlayers.map((player) => ({
+        ...player,
+        apiData: apiData.find((item) => item?.id === player.sportmonksId),
+      }));
+
+      setPlayersData(newTeamPlayers);
     })();
-  }, [team]);
+  }, []);
+
+  useEffect(() => {
+    const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => {
+      const id = player.sportmonksId;
+      const isInitiallySelected = !!playersData.find(
+        (player) => player?.sportmonksId === id,
+      )?.position;
+
+      return {
+        ID: id,
+        PLAYER: (
+          <div className="flex gap-1">
+            <Avatar
+              src={player?.apiData?.image_path}
+              alt={player?.apiData?.display_name}
+              sx={{ width: 24, height: 24 }}
+            />
+            <span
+              className={`line-clamp-1 ${
+                isInitiallySelected ? 'font-bold' : ''
+              }`}
+            >
+              {player?.apiData?.display_name}
+            </span>
+          </div>
+        ),
+        POSITION: player?.apiData?.position?.name,
+        RATING: getPlayerRating(player?.apiData?.statistics),
+      };
+    });
+    setRows(rows);
+  }, [playersData]);
 
   useEffect(() => {
     (async () => {
       const playerId = tablePosition?.ID;
       if (playerId && fieldPosition) {
         const filteredPlayerPositionMap: CompetitionsCollectionTeamsProps['players'] =
-          playerPositonMap
+          playersData
             .map((player) => {
               if (player.position === fieldPosition) {
-                return { sportmonksId: player.sportmonksId };
+                return {
+                  apiData: player.apiData,
+                  sportmonksId: player.sportmonksId,
+                };
               } else return player;
             })
             .map((player) => {
               if (player.sportmonksId === playerId) {
                 return {
+                  ...player,
                   sportmonksId: player.sportmonksId,
                   position: fieldPosition,
                 };
               } else return player;
             });
 
-        setPlayerPositionMap(filteredPlayerPositionMap);
+        setPlayersData(filteredPlayerPositionMap);
 
         await new Promise((resolve) => setTimeout(resolve, 250)); // Add a delay so the use gets a feedback that the field-table match happened
 
@@ -132,27 +148,29 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
     const areArraysIdentical = (arr1: any, arr2: any) =>
       isEqual(sortBy(arr1, 'sportmonksId'), sortBy(arr2, 'sportmonksId'));
-    const diffPlayers = !areArraysIdentical(team.players, playerPositonMap);
+
+    const noApiDataArray = playersData.map(({ apiData, ...rest }) => rest);
+    const diffPlayers = !areArraysIdentical(team.players, noApiDataArray);
 
     const shouldDisabled = !(diffFormation || diffPlayers);
     setDisabled(shouldDisabled);
-  }, [formation, playerPositonMap]);
+  }, [formation, playersData]);
 
   useEffect(() => {
-    if (formation && team.formation) {
-      if (formation !== team.formation) {
-        const playersResettedPosition = team.players.map((player) => ({
-          sportmonksId: player.sportmonksId,
-        }));
-        setPlayerPositionMap(playersResettedPosition);
-      }
+    const savedFormation = team.formation;
+    if (formation !== savedFormation) {
+      const playersResettedPosition = playersData.map((player) => ({
+        sportmonksId: player.sportmonksId,
+      }));
+      setPlayersData(playersResettedPosition);
     }
   }, [formation]);
 
   const handleSelectedRows = async (
     selectedRows: RowsProps<SelectableTableColumnKeysProps<YourTeamKeyProps>>,
   ) => {
-    setTablePosition(selectedRows?.[0]);
+    const selectedRow = selectedRows?.[0];
+    setTablePosition(selectedRow);
   };
 
   const handlePlayerSelected = async (position: FormationPosition) => {
@@ -162,11 +180,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   const handleEditTeam = async () => {
     const competitionId = getActiveCompetition()?.id;
     const shortId = team?.shortId;
+    const noApiDataArray: CompetitionsCollectionTeamsProps['players'] =
+      playersData.map(({ apiData, ...rest }) => rest);
 
     if (competitionId && shortId) {
       await editTeam(competitionId, shortId, {
         ...(formation ? { formation } : {}),
-        ...(playerPositonMap?.length ? { players: playerPositonMap } : {}),
+        ...(noApiDataArray?.length ? { players: noApiDataArray } : {}),
       });
 
       setDisabled(true);
@@ -180,7 +200,6 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
       <div className="flex flex-col lg:flex-row gap-12 w-full justify-between">
         {/* FOOTBALL FIELD */}
-        {/* TODO: remove this "overflow-scroll" and handle better this responsiveness issue */}
         <div className="lg:w-[50%] flex flex-col gap-4">
           <div className="flex gap-4 justify-between">
             <div className="text-xl font-bold pb-2">Starting 11</div>
@@ -191,7 +210,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           </div>
           <FootballField
             formation={formation}
-            fieldPlayers={playerPositonMap}
+            fieldPlayers={playersData}
             getSelectedPlayerPosition={handlePlayerSelected}
             emptyFormationMessage="Select a formation."
             resetField={resetField}
@@ -203,7 +222,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <div className="h-[580px]">
             <div className="text-xl font-bold pb-2">Team Players</div>
             <div className="text-xs pb-4">
-              * The <strong>bolded</strong> names are already saved.
+              * Click "<strong>Save</strong>" to confirm your changes.
             </div>
             <SelectableTable<YourTeamKeyProps>
               rows={rows}
