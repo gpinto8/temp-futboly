@@ -71,34 +71,39 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   }, []);
 
   useEffect(() => {
-    const rows: RowsProps<YourTeamKeyProps> = playersData.map((player) => {
-      const id = player.sportmonksId;
-      const isInitiallySelected = !!playersData.find(
-        (player) => player?.sportmonksId === id,
-      )?.position;
+    const rows: RowsProps<YourTeamKeyProps> = playersData
+      .map((player) => {
+        const id = player.sportmonksId;
+        const isInitiallySelected = !!playersData.find(
+          (player) => player?.sportmonksId === id,
+        )?.position;
 
-      return {
-        ID: id,
-        PLAYER: (
-          <div className="flex gap-1">
-            <Avatar
-              src={player?.apiData?.image_path}
-              alt={player?.apiData?.display_name}
-              sx={{ width: 24, height: 24 }}
-            />
-            <span
-              className={`line-clamp-1 ${
-                isInitiallySelected ? 'font-bold' : ''
-              }`}
-            >
-              {player?.apiData?.display_name}
-            </span>
-          </div>
-        ),
-        POSITION: player?.apiData?.position?.name,
-        RATING: getPlayerRating(player?.apiData?.statistics),
-      };
-    });
+        if (!player?.apiData) return {} as any; // To avoid to see empty data, we rather show the default empty message instead
+
+        return {
+          ID: id,
+          PLAYER: (
+            <div className="flex gap-1">
+              <Avatar
+                src={player?.apiData?.image_path}
+                alt={player?.apiData?.display_name}
+                sx={{ width: 24, height: 24 }}
+              />
+              <span
+                className={`line-clamp-1 ${
+                  isInitiallySelected ? 'font-bold' : ''
+                }`}
+              >
+                {player?.apiData?.display_name}
+              </span>
+            </div>
+          ),
+          POSITION: player?.apiData?.position?.name,
+          RATING: getPlayerRating(player?.apiData?.statistics),
+        };
+      })
+      .filter(Boolean);
+
     setRows(rows);
   }, [playersData]);
 
