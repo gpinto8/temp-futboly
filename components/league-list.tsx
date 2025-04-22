@@ -10,6 +10,7 @@ import { PageLoader } from '@/components/page-loader';
 import { JoinPublicLeagueModal } from '@/components/modal/leagues-modal';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { useGetUsers } from '@/data/users/use-get-users';
 
 type LeaguesColumnKeysProps =
   | 'PRIVATE'
@@ -26,31 +27,11 @@ const columns: ColumnsProps<LeaguesColumnKeysProps> = [
   { id: 'ACTIONS', label: ' ', minWidth: 75, align: 'center' },
 ];
 
-const getRows = (leagues: Array<LeaguesCollectionProps>) => {
-  return leagues.map((league: LeaguesCollectionProps) => {
-    const players = league.players?.length || 0;
-    return {
-      PRIVATE: (
-        <CustomImage
-          imageKey={league.isPrivate ? 'PRIVATE' : 'PUBLIC'}
-          width={20}
-          height={20}
-        />
-      ),
-      NAME: league.name,
-      WEEK: 'Week 1',
-      PLAYERS: players + ' / 10',
-      ACTIONS: (
-        <JoinPublicLeagueModal league={league as LeaguesCollectionProps} />
-      ),
-    };
-  });
-};
-
 type LeagueListProps = { hideShadow?: boolean };
 
 export const LeagueList = ({ hideShadow }: LeagueListProps) => {
-  const { getAllLeaguesByChunks } = useGetLeagues();
+  const { getUser } = useGetUsers();
+  const { getAllLeaguesByChunks, getLeaguesByUid } = useGetLeagues();
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot>();
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [rows, setRows] = useState<
@@ -59,11 +40,41 @@ export const LeagueList = ({ hideShadow }: LeagueListProps) => {
 
   const leagueChunk = 15;
 
+  const getRows = async (leagues: Array<LeaguesCollectionProps>) => {
+    const userId = getUser()?.id;
+    const userLeagues = await getLeaguesByUid(userId);
+    const userLeaguesIds = userLeagues?.map((league) => league.id);
+
+    return leagues.map((league: LeaguesCollectionProps) => {
+      const players = Object.keys(league.players)?.length || 0;
+      const alreadyJoined = !!userLeaguesIds?.includes(league?.id);
+
+      return {
+        PRIVATE: (
+          <CustomImage
+            imageKey={league.isPrivate ? 'PRIVATE' : 'PUBLIC'}
+            width={20}
+            height={20}
+          />
+        ),
+        NAME: league.name,
+        WEEK: 'Week 1',
+        PLAYERS: players + ' / 10',
+        ACTIONS: (
+          <JoinPublicLeagueModal
+            league={league}
+            alreadyJoined={alreadyJoined}
+          />
+        ),
+      };
+    });
+  };
+
   useEffect(() => {
     (async () => {
       const data = await getAllLeaguesByChunks(undefined, leagueChunk);
       const leagues = data.leagues;
-      if (data) setRows(getRows(leagues));
+      if (data) setRows(await getRows(leagues));
     })();
   }, []);
 
@@ -73,7 +84,8 @@ export const LeagueList = ({ hideShadow }: LeagueListProps) => {
       if (lastVisible) {
         const data = await getAllLeaguesByChunks(lastVisible, leagueChunk);
         const leagues = data.leagues;
-        if (data && leagues && rows) setRows([...rows, ...getRows(leagues)]);
+        if (data && leagues && rows)
+          setRows([...rows, ...(await getRows(leagues))]);
       }
       // There's no more data to fetch
       else setHasMore(false);

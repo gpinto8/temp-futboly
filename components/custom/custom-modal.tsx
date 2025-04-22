@@ -47,6 +47,7 @@ type CustomModalProps = {
     handleClick?: () => void; // This gets triggered when clicking at the CTA
     style?: CustomButtonProps['style'];
     avoidFitWidth?: boolean;
+    disabled?: boolean;
   };
   closeButton?: {
     label?: string;
@@ -115,6 +116,7 @@ export const CustomModal = ({
           }`}
           style={openButton?.style || 'black'}
           handleClick={handleModalClick}
+          disabled={openButton?.disabled}
         />
       )}
       {hasOpenButton && openButton?.isText && (

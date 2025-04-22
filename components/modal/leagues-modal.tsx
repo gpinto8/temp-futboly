@@ -144,11 +144,15 @@ export const CreateLeagueModal = ({ buttonFull }: CreateLeagueModalProps) => {
   );
 };
 
+type JoinPublicLeagueModalProps = {
+  league: LeaguesCollectionProps;
+  alreadyJoined: boolean;
+};
+
 export const JoinPublicLeagueModal = ({
   league,
-}: {
-  league: LeaguesCollectionProps;
-}) => {
+  alreadyJoined,
+}: JoinPublicLeagueModalProps) => {
   const [leaguePasswordInput, setLeaguePasswordInput] =
     useState<HandleChangeParamProps | null>(null);
   const [resetForm, setResetForm] = useState(false);
@@ -191,10 +195,11 @@ export const JoinPublicLeagueModal = ({
         disabled: disabledForm,
       }}
       openButton={{
-        label: 'Join',
+        label: alreadyJoined ? 'Joined' : 'Join',
         isText: false,
         className: 'rounded-full text-xs py-1 my-1 px-4 h-full',
         style: 'main',
+        disabled: alreadyJoined,
       }}
       handleClose={handleClose}
       isDialog={{ value: true, style: 'slim' }}
