@@ -11,12 +11,14 @@ type MappedCircleFieldProps = {
   player: TeamPlayersData[0];
   currentPosition: FormationPosition;
   circleFieldProps: CircleFieldMatchingFormationProps['circleFieldProps'];
+  avoidResponsiveClasses: CircleFieldProps['avoidResponsiveClasses'];
 };
 
 const MappedCircleField = ({
   player,
   currentPosition,
   circleFieldProps,
+  avoidResponsiveClasses,
 }: MappedCircleFieldProps) => {
   const isSelected =
     circleFieldProps?.selectedPlayerPosition === currentPosition;
@@ -26,6 +28,7 @@ const MappedCircleField = ({
       player={player}
       handleClick={() => circleFieldProps?.handleClick?.(currentPosition)}
       isSelected={isSelected}
+      avoidResponsiveClasses={avoidResponsiveClasses}
     />
   );
 };
@@ -37,6 +40,7 @@ type CircleFieldMatchingFormationProps = {
     handleClick?: (position?: FormationPosition) => void;
     selectedPlayerPosition?: CircleFieldProps['selectedPlayerPosition'];
   };
+  avoidResponsiveClasses?: CircleFieldProps['avoidResponsiveClasses'];
 };
 
 export const CircleFieldMatchingFormation = ({
@@ -44,6 +48,7 @@ export const CircleFieldMatchingFormation = ({
   players,
   orientation = 'bottom-to-top', // This is the default
   circleFieldProps,
+  avoidResponsiveClasses,
 }: CircleFieldMatchingFormationProps) => {
   const goalkeeper = players?.find(
     (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
@@ -86,6 +91,7 @@ export const CircleFieldMatchingFormation = ({
             player={goalkeeper}
             currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
             circleFieldProps={circleFieldProps}
+            avoidResponsiveClasses={avoidResponsiveClasses}
           />
         </div>
       )}
@@ -125,6 +131,7 @@ export const CircleFieldMatchingFormation = ({
                     player={fieldPlayer}
                     currentPosition={currentPosition}
                     circleFieldProps={circleFieldProps}
+                    avoidResponsiveClasses={avoidResponsiveClasses}
                   />
                 );
               })}
@@ -137,6 +144,7 @@ export const CircleFieldMatchingFormation = ({
             player={goalkeeper}
             currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
             circleFieldProps={circleFieldProps}
+            avoidResponsiveClasses={avoidResponsiveClasses}
           />
         </div>
       )}

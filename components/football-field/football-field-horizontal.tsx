@@ -24,11 +24,13 @@ export const FootballFieldHorizontal = ({
           formation={homeData.formation!}
           players={homeData.players}
           orientation="left-to-right"
+          avoidResponsiveClasses
         />
         <CircleFieldMatchingFormation
           formation={awayData.formation!}
           players={awayData.players}
           orientation="right-to-left"
+          avoidResponsiveClasses
         />
       </div>
       <CustomImage

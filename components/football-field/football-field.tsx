@@ -43,8 +43,8 @@ export const FootballField = ({
   };
 
   return (
-    <div className="relative w-full overflow-hidden">
-      <div className="absolute w-full h-full flex flex-col justify-between gap-4 p-4 py-2">
+    <div className="relative w-full overflow-auto">
+      <div className="absolute w-full h-full flex flex-col justify-between gap-2 p-2">
         {formation && fieldPlayers?.length ? (
           <CircleFieldMatchingFormation
             formation={formation}
