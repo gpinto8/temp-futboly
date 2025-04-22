@@ -71,7 +71,7 @@ export const CompetitionsTab = () => {
                     <div>{players?.length} users</div>
                     <CustomButton
                       className="mt-2"
-                      label={active ? 'Active' : 'Select'}
+                      label={active ? 'Selected' : 'Select'}
                       disabled={active}
                       handleClick={() =>
                         setActiveCompetition(id, user, league.id, competition)
