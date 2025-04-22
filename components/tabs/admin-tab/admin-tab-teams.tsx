@@ -26,9 +26,6 @@ type AdminColumnKeysProps =
 
 export const AdminTabTeams = () => {
   const teams = useAppSelector((state) => state.team);
-  const activeCompetition = useAppSelector(
-    (state) => state.competition.activeCompetition,
-  );
   const { getAllTeamsFromAllCompetitions } = useGetTeams();
   const { deleteTeam, editTeam } = useSetTeams();
   const { getCompetitionById } = useGetCompetitions();
@@ -43,12 +40,8 @@ export const AdminTabTeams = () => {
 
     let _rows: RowsProps<AdminColumnKeysProps> = [];
 
-    const filteredAllTeams = allTeams.filter(
-      (team) => team.competitionRef.id === activeCompetition?.id,
-    );
-
     let index: number = 0;
-    for await (const team of filteredAllTeams) {
+    for await (const team of allTeams) {
       const {
         competitionName,
         shortId,
