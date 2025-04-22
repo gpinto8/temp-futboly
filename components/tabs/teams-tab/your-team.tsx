@@ -163,10 +163,10 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     const savedFormation = team.formation;
-    if (formation !== savedFormation) {
-      const playersResettedPosition = playersData.map((player) => ({
-        sportmonksId: player.sportmonksId,
-      }));
+    if (formation && savedFormation && formation !== savedFormation) {
+      const playersResettedPosition = playersData.map(
+        ({ position, ...rest }) => rest,
+      );
       setPlayersData(playersResettedPosition);
     }
   }, [formation]);
