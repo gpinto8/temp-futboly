@@ -17,7 +17,7 @@ const TabSectionTitle = ({
   title,
   TitleEndComponent,
 }: Partial<TabSectionData>) => (
-  <div className="w-full flex flex-row justify-between gap-6 mb-6">
+  <div className="w-full flex flex-row justify-between items-center gap-6 mb-6">
     <h1 className="text-3xl md:text-4xl font-bold">{title}</h1>
     {TitleEndComponent?.()}
   </div>
