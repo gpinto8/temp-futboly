@@ -87,7 +87,7 @@ export const SignInSignUp = ({
   }, [resetForm]);
 
   return (
-    <div className="flex px-4 py-12 md:px-12 gap-12 h-screen w-screen">
+    <div className="flex px-4 py-12 md:px-12 gap-12 h-dvh w-dvw">
       <div className="w-full md:w-1/2 h-full flex flex-col justify-center items-center">
         <div className="flex justify-center mb-16">
           <FutbolyLogo alignCenter />

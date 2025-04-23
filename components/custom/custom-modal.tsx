@@ -95,7 +95,7 @@ export const CustomModal = ({
   const modalStatus = Boolean(hasOpenButton ? open : externalStatus);
 
   const fullPageClasses =
-    'p-4 md:p-8 w-screen h-screen md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] overflow-auto' +
+    'p-4 md:p-8 w-dvw h-dvh md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] overflow-auto' +
     className;
   const dialogPageClasses = {
     slim:
