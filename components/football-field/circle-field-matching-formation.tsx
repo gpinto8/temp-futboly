@@ -35,7 +35,11 @@ const MappedCircleField = ({
 type CircleFieldMatchingFormationProps = {
   formation: AllPosibleFormationsProps;
   players: TeamPlayersData;
-  orientation?: 'bottom-to-top' | 'right-to-left' | 'left-to-right';
+  orientation?:
+    | 'bottom-to-top'
+    | 'right-to-left'
+    | 'top-to-bottom'
+    | 'left-to-right';
   circleFieldProps?: {
     handleClick?: (position?: FormationPosition) => void;
     selectedPlayerPosition?: CircleFieldProps['selectedPlayerPosition'];
@@ -50,11 +54,6 @@ export const CircleFieldMatchingFormation = ({
   circleFieldProps,
   avoidResponsiveClasses,
 }: CircleFieldMatchingFormationProps) => {
-  const goalkeeper = players?.find(
-    (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
-  ) as TeamPlayersData[0];
-  const isLeftToRight = orientation === 'left-to-right';
-
   let mainClassName: string;
   let goalkeeperClassName: string;
   let rowsClassName: string;
@@ -68,24 +67,38 @@ export const CircleFieldMatchingFormation = ({
       formationArray = formation?.split('')?.reverse();
       break;
 
-    case 'left-to-right':
-      mainClassName = 'w-full flex';
-      goalkeeperClassName = 'flex h-full items-center';
-      rowsClassName = 'w-full flex-col';
-      formationArray = formation?.split('');
-      break;
-
     case 'right-to-left':
       mainClassName = 'w-full flex';
       goalkeeperClassName = 'flex h-full items-center';
       rowsClassName = 'w-full flex-col';
       formationArray = formation?.split('')?.reverse();
       break;
+
+    case 'top-to-bottom':
+      mainClassName = 'w-full flex flex-col justify-between h-full';
+      goalkeeperClassName = 'flex justify-center';
+      rowsClassName = 'h-full';
+      formationArray = formation?.split('');
+      break;
+
+    case 'left-to-right':
+      mainClassName = 'w-full flex';
+      goalkeeperClassName = 'flex h-full items-center';
+      rowsClassName = 'w-full flex-col';
+      formationArray = formation?.split('');
+      break;
   }
+
+  const goalkeeper = players?.find(
+    (player) => player?.position === TEAMS_GOALKEEPER_FORMATION_POSITION,
+  ) as TeamPlayersData[0];
+
+  const upsideDown =
+    orientation === 'left-to-right' || orientation === 'top-to-bottom'; // This is done so the goalkeeper is placed correctly and also the formation based on these orientations
 
   return (
     <div className={mainClassName}>
-      {isLeftToRight && (
+      {upsideDown && (
         <div className={goalkeeperClassName}>
           <MappedCircleField
             player={goalkeeper}
@@ -106,7 +119,7 @@ export const CircleFieldMatchingFormation = ({
               .map((_, playerPosition) => {
                 let newFieldRow = fieldRow;
 
-                if (isLeftToRight) {
+                if (upsideDown) {
                   const formationDigits = formation?.split('+')?.[0]?.length;
                   const reverseFieldRow = formationDigits
                     ? formationDigits - fieldRow - 1
@@ -138,7 +151,7 @@ export const CircleFieldMatchingFormation = ({
           </div>
         );
       })}
-      {!isLeftToRight && (
+      {!upsideDown && (
         <div className={goalkeeperClassName}>
           <MappedCircleField
             player={goalkeeper}
