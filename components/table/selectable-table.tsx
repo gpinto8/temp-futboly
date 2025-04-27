@@ -26,6 +26,7 @@ type SelectableTableProps<ColumnKeysProps> = {
   getSelectedRows?: (selectedRows: RowsProps<ColumnKeysProps>) => void;
   singleSelection?: boolean;
   avoidReorder?: boolean;
+  avoidEndReload?: boolean;
   resetTable?: number; // Reset it with "Math.random()" to trigger the useEffect hook
 };
 
@@ -78,6 +79,7 @@ export function SelectableTable<ColumnKeysProps>({
   columns: _columns,
   rows: _rows,
   onEndReached,
+  avoidEndReload,
   initialSelectedRows,
   getSelectedRows,
   singleSelection,
@@ -166,6 +168,7 @@ export function SelectableTable<ColumnKeysProps>({
       rows={rows}
       columns={columns as ColumnsProps<ColumnKeysProps>}
       onEndReached={onEndReached}
+      avoidEndReload={avoidEndReload}
       height={310}
       elevation={0}
       className="flex flex-col min-h-[50vh] sm:min-h-[35vh]"

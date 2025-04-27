@@ -1,6 +1,6 @@
 export const DATA = {
   URL: 'https://api.sportmonks.com/v3',
-  PATHS: ['football/players', 'football/fixtures/between'],
+  PATHS: ['football/players', 'football/fixtures/between', `football/players/search`],
   INCLUDES: [
     'teams',
     'teams.team',
@@ -23,7 +23,7 @@ export type SportmonksResponseData = {
   timezone: any;
 };
 
-const DEFAULT_INCLUDES: { [key in DataPath]: DataIncludes } = {
+const DEFAULT_INCLUDES: { [key in DataPath | any]: DataIncludes } = {
   'football/players': [
     'position',
     'detailedPosition',
