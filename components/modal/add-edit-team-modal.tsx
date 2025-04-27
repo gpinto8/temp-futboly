@@ -195,11 +195,25 @@ export const AddEditTeamModal = ({
     }
   };
 
-  const handlePlayerSearch = async (userValue?: string) => {
-    if (userValue) {
+  const debounce = (func: any, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return (...args: any) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
+
+  const handlePlayerSearch = async (userData: {
+    value: string;
+    isValid: boolean;
+  }) => {
+    if (!userData) return;
+    if (userData.isValid) {
       const response = await fetchSportmonksApi(
         `football/players/search`,
-        userValue,
+        userData.value,
       );
       const playersData: any[] = response.data;
 
@@ -216,6 +230,8 @@ export const AddEditTeamModal = ({
       getPlayers();
     }
   };
+
+  const debouncedFetchData = debounce(handlePlayerSearch, 700);
 
   return (
     <CustomModal
@@ -264,7 +280,7 @@ export const AddEditTeamModal = ({
               <div className="w-90">
                 <CustomInput
                   label="Search"
-                  handleChange={(data) => handlePlayerSearch(data.value)}
+                  handleChange={(data) => debouncedFetchData(data)}
                 />
               </div>
             </div>
