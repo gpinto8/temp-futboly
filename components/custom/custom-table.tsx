@@ -103,6 +103,8 @@ export function CustomTable<ColumnKeysProps>({
   };
 
   const Footer = () => {
+    if (avoidEndReload) return null;
+
     return typeof onEndReached === 'function' && !isComplete?.value ? (
       <div className="mt-5 flex justify-center items-center">
         <Loader color="main" />
