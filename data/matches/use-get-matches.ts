@@ -7,9 +7,12 @@ import {
 import { useAppSelector } from '@/store/hooks';
 import { useGetTeams } from '../teams/use-get-teams';
 import { DAY_OF_WEEK_MATCH, DEFAULT_SCORE } from '@/firebase/config';
-import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
 import { CompetitionsCollectionTeamsExtraProps } from '../teams/use-get-teams';
 import { useGetCompetitions } from '../competitions/use-get-competitions';
+import {
+  DateString,
+  fetchSportmonksFootballFixtureBetween,
+} from '@/sportmonks/fetch-data';
 
 export const useGetMatches = () => {
   const { getTeamByUid } = useGetTeams();
@@ -46,8 +49,8 @@ export const useGetMatches = () => {
           personalMatch.result.home > personalMatch.result.away
             ? 'Home'
             : personalMatch.result.home !== personalMatch.result.away
-              ? 'Away'
-              : 'Draw';
+            ? 'Away'
+            : 'Draw';
         if (winnerSide === matchSide) totalWins++;
         totalScore += personalMatch.result[matchSide.toLowerCase()];
         scoredThisWeek = personalMatch.result[matchSide.toLowerCase()];
@@ -144,6 +147,7 @@ export const useGetMatches = () => {
     const nextPersonalMatch: MatchScheduleProps | -1 = getUpcomingMatches(1)[0];
     if (!nextPersonalMatch) return;
     if (nextPersonalMatch === -1) return -1;
+
     // if (getTimeToNextMatch() === -1) {  // If the match is already started I check the ratings of the players --> Commented because I am checking in the component
     const matchRatings = await getMatchRatings(
       home,
@@ -151,6 +155,7 @@ export const useGetMatches = () => {
       nextPersonalMatch,
       true,
     );
+
     return {
       ...nextPersonalMatch,
       home: {
@@ -177,14 +182,17 @@ export const useGetMatches = () => {
       acc[player.teams[0]?.team_id].push(player.id);
       return acc;
     }, {});
+
     const awayTeamPlayersMap = away.reduce((acc: any, player: any) => {
       if (!acc[player.teams[0]?.team_id]) acc[player.teams[0]?.team_id] = [];
       acc[player.teams[0]?.team_id].push(player.id);
       return acc;
     }, {});
+
     // Given the match date I will extract the lower and upper bound
     const { previousFriday: startDate, nextFriday: endDate } =
       getFridaysFromDate(match.date);
+
     // I will get the rating of all the players
     home = await assignTeamRating(
       homeTeamPlayersMap,
@@ -200,6 +208,7 @@ export const useGetMatches = () => {
       endDate,
       isLive,
     );
+
     // After getting the rating of every player I calculate also the result
     const homeScore = home.reduce(
       (prev, curr) => prev + Number(curr.score || 0),
@@ -209,6 +218,7 @@ export const useGetMatches = () => {
       (prev, curr) => prev + Number(curr.score || 0),
       0,
     );
+
     return {
       ...match,
       home,
@@ -336,7 +346,7 @@ async function assignTeamRating(
       teamPlayersMap[team].forEach((playerId: any) => {
         originalTeam.forEach((originalPlayer: any) => {
           if (originalPlayer.id === playerId) {
-            originalPlayer.score = DEFAULT_MATCH_SCORE;
+            originalPlayer._score = DEFAULT_MATCH_SCORE;
           }
         });
       });
@@ -346,9 +356,10 @@ async function assignTeamRating(
       const teamLastResult = await getTeamLatestFixture(
         startDate,
         endDate,
-        Number.parseInt(team),
+        +team,
       );
-      if (teamLastResult !== -1) {
+
+      if (teamLastResult) {
         // Means Fixture Found
         teamPlayersMap[team].forEach((playerId: any) => {
           originalTeam.forEach((originalPlayer: any) => {
@@ -356,20 +367,24 @@ async function assignTeamRating(
               const playerLineup = teamLastResult.lineups?.filter(
                 (lineupPlayer: any) => lineupPlayer.player_id === playerId,
               );
+
               // If the player was in the lineup I check his details otherwise I will assign the default
               if (playerLineup?.length !== 0) {
                 const playerScoreDetails = playerLineup[0]?.details?.filter(
                   (detail: any) => detail.type_id === 118,
                 );
-                // If the player has a score I will extract it otherwise I will assign the default
+
+                // If the player has a _score I will extract it otherwise I will assign the default
                 if (playerScoreDetails?.length !== 0) {
                   const playerScore = playerScoreDetails[0].data?.value;
-                  originalPlayer.score = playerScore ?? DEFAULT_MATCH_SCORE;
+
+                  originalPlayer._match = teamLastResult.name;
+                  originalPlayer._score = playerScore ?? DEFAULT_MATCH_SCORE;
                 } else {
-                  originalPlayer.score = DEFAULT_MATCH_SCORE;
+                  originalPlayer._score = DEFAULT_MATCH_SCORE;
                 }
               } else {
-                originalPlayer.score = DEFAULT_MATCH_SCORE;
+                originalPlayer._score = DEFAULT_MATCH_SCORE;
               }
             }
           });
@@ -379,16 +394,18 @@ async function assignTeamRating(
         teamPlayersMap[team].forEach((playerId: any) => {
           originalTeam.forEach((originalPlayer: any) => {
             if (originalPlayer.id === playerId) {
-              originalPlayer.score = DEFAULT_MATCH_SCORE;
+              originalPlayer._score = DEFAULT_MATCH_SCORE;
             }
           });
         });
       }
+
       return Promise.resolve(); // Returns resolved promise
     }
   });
 
   await Promise.all(teamPromises);
+
   return originalTeam;
 }
 
@@ -398,34 +415,19 @@ async function getTeamLatestFixture(
   date2: DateString,
   teamId: number,
 ) {
-  if (date1 && !isValidDateString(date1)) {
-    console.error(`date1 non è una data valida: ${date1}`);
-  }
-  if (date2 && !isValidDateString(date2)) {
-    console.error(`date2 non è una data valida: ${date2}`);
-  }
-  const result = await fetchSportmonksApi(
-    'football/fixtures/between',
-    `${date1}/${date2}/${teamId}`,
-    undefined,
-    undefined,
-    'filters=lineupDetailTypes:118',
+  const result = await fetchSportmonksFootballFixtureBetween(
+    date1,
+    date2,
+    teamId,
   );
-  if (result.data && result.data?.length > 0) {
+
+  if (result?.data?.length) {
     // If I have a match I will sort them by date and pick the most recent otherwise return -1
     return Array.from(result.data).sort(
       (a: any, b: any) => b.starting_at_timestamp - a.starting_at_timestamp,
     )[0] as any;
-  } else {
-    return -1;
   }
 }
-
-type DateString = `${number}-${number}-${number}`;
-
-const isValidDateString = (date: string): date is DateString => {
-  return /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/.test(date);
-};
 
 export type MatchStatistics = {
   totalWins: number;

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { CustomButton } from '@/components/custom/custom-button';
 import { UpcomingMatch } from '@/components/tabs/live-match-tab/upcoming-match';
 import { LiveMatchSection } from '@/components/tabs/live-match-tab/live-match-section';
-import { useGetMatches } from '@/data/matches/use-get-matches';
+import { LiveMatchProps, useGetMatches } from '@/data/matches/use-get-matches';
 import { useSetMatches } from '@/data/matches/use-set-matches';
 import { EmptyMessage } from '../../empty-message';
 import { Loader } from '../../loader';
@@ -20,27 +20,34 @@ export const LiveMatch = () => {
   const { calculateMatches } = useSetMatches();
   const upcomingMatches = getUpcomingMatches(5);
 
-  const [nextMatchFound, setNextMatchFound] = useState<Boolean>(false);
-  const [nextMatchMapped, setNextMatchMapped] = useState<any>(null);
-  const [nextMatchWithRating, setNextMatchWithRating] = useState<any>(null);
+  const [nextMatchFound, setNextMatchFound] = useState(false);
+
+  const [nextMatchMapped, setNextMatchMapped] = useState<LiveMatchProps>();
+  const [nextMatchWithRating, setNextMatchWithRating] =
+    useState<LiveMatchProps>();
 
   useEffect(() => {
     (async () => {
       const nextMatch = getNextMatch();
       if (!nextMatch || nextMatch === -1) return;
       setNextMatchFound(true);
+
       const homePlayerIds = nextMatch.home.players.map(
         (player: any) => player.sportmonksId,
       );
       const awayPlayerIds = nextMatch.away.players.map(
         (player: any) => player.sportmonksId,
       );
-      const homeReturnAPIData =
-        await getSportmonksPlayersDataByIds(homePlayerIds);
-      const awayReturnAPIData =
-        await getSportmonksPlayersDataByIds(awayPlayerIds);
+
+      const homeReturnAPIData = await getSportmonksPlayersDataByIds(
+        homePlayerIds,
+      );
+      const awayReturnAPIData = await getSportmonksPlayersDataByIds(
+        awayPlayerIds,
+      );
       if (!homeReturnAPIData && !awayReturnAPIData) return;
-      const tempNextMatch = {
+
+      const tempNextMatch: LiveMatchProps = {
         ...nextMatch,
         home: {
           ...nextMatch.home,
@@ -52,13 +59,27 @@ export const LiveMatch = () => {
         },
       };
       setNextMatchMapped(tempNextMatch);
+
       const timeToStart = getTimeToNextMatch();
       if (timeToStart < 1) {
         const ratings = await getNextMatchRatings(
           homeReturnAPIData,
           awayReturnAPIData,
         );
-        setNextMatchWithRating(ratings);
+
+        if (ratings !== -1) {
+          const result = ratings?.result as LiveMatchProps['result'];
+          const home = {
+            ...tempNextMatch.home,
+            playersAPI: ratings?.home?.playersAPI,
+          };
+          const away = {
+            ...tempNextMatch.away,
+            playersAPI: ratings?.away?.playersAPI,
+          };
+
+          setNextMatchWithRating({ ...tempNextMatch, away, home, result });
+        }
       }
     })();
   }, []);
@@ -73,7 +94,7 @@ export const LiveMatch = () => {
               <CustomButton
                 label="Calculate Results"
                 className="rounded-full py-1 px-2 max-w-40"
-                handleClick={() => calculateMatches(nextMatchMapped)}
+                handleClick={() => calculateMatches(nextMatchMapped as any)}
               />
             )}
           </>

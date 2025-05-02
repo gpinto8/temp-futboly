@@ -108,7 +108,7 @@ export const CircleFieldMatchingFormation = ({
           />
         </div>
       )}
-      {formationArray.map((formationTotalPlayers, fieldRow) => {
+      {formationArray?.map((formationTotalPlayers, fieldRow) => {
         return (
           <div
             key={fieldRow}

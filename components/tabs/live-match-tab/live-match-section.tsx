@@ -49,21 +49,25 @@ export const LiveMatchSection = ({ nextMatch }: LiveMatchSectionProps) => {
   } = {
     home: {
       formation: home.formation,
-      players: home.players.map((player) => ({
-        ...player,
-        apiData: home.playersAPI.find(
-          (item: any) => player.sportmonksId === item?.id,
-        ),
-      })),
+      players: home.players?.length
+        ? home.players.map((player) => ({
+            ...player,
+            apiData: home.playersAPI.find(
+              (item: any) => player.sportmonksId === item?.id,
+            ),
+          }))
+        : [],
     },
     away: {
       formation: away.formation,
-      players: away.players.map((player) => ({
-        ...player,
-        apiData: away.playersAPI.find(
-          (item: any) => player.sportmonksId === item?.id,
-        ),
-      })),
+      players: away.players?.length
+        ? away.players.map((player) => ({
+            ...player,
+            apiData: away.playersAPI.find(
+              (item: any) => player.sportmonksId === item?.id,
+            ),
+          }))
+        : [],
     },
   };
 

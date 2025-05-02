@@ -14,6 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const additionalPath = req.query?.additionalPath as string;
   const page = req.query?.page as string;
   const includes = req.query.includes as string;
+  const filters = req.query.filters as string;
 
   let newPath = path;
   if (additionalPath) newPath += `/${additionalPath}`;
@@ -25,9 +26,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     api_token: apiToken,
     page,
     includes: includeQueryParams,
+    filters,
   });
 
-  const url = `${DATA.URL}/${newPath}${queryParameters}${req.query?.filters ? '&filters=' + req.query.filters : ''}`;
+  const url = `${DATA.URL}/${newPath}${queryParameters}`;
   const data = await fetch(url).then((response) => response.json());
+
   res.status(200).json(data);
 };

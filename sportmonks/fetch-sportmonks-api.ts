@@ -63,9 +63,11 @@ export const fetchSportmonksApi = async (
     additionalPath,
     page: newPage,
     includes: allIncludes,
+    filters,
   });
 
-  const url = `${baseUrl}${queryParameters}${filters ? '&' + filters : ''}`;
+  const url = `${baseUrl}${queryParameters}`;
   const data = await fetch(url).then((response) => response.json());
+
   return data as SportmonksResponseData;
 };

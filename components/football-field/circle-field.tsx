@@ -75,11 +75,14 @@ export const CircleField = ({
           {player?.apiData?.display_name}
         </div>
         <div
-          className={`w-max text-[10px] text-gray-600 ${getClassesByInnerKey(
+          className={`flex gap-1 items-baseline w-max text-[10px] text-gray-600 ${getClassesByInnerKey(
             'position',
           )}`}
         >
-          {player?.apiData?.position?.name}
+          {player?.apiData?.position?.developer_name?.slice(0, 3)}
+          {player?.apiData?._score ? (
+            <span className="text-error-500">({player?.apiData?._score})</span>
+          ) : null}
         </div>
       </div>
     </div>

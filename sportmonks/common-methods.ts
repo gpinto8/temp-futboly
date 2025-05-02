@@ -1,5 +1,6 @@
 import { fetchSportmonksApi } from './fetch-sportmonks-api';
 
+// Get player (average) rating (NOT BASED ON CURRENT TEAM OR CURRENT FIXTURE, JUST THE PLAYER OVERALL)
 export const getPlayerRating = (playerStatistics: any) => {
   const rating = playerStatistics // From the statistics
     ?.reverse() // Reverse the array since the last ones are the recent ones
