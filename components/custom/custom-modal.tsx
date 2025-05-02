@@ -29,7 +29,7 @@ const cssStylesDialog = {
 };
 
 type CustomModalProps = {
-  title: string | React.ReactNode; // Title is not necessary when hasOpenButton is false
+  title: string | React.ReactNode; // This is not necessary when "hasOpenButton" is false
   children: React.ReactNode;
   hasOpenButton?: boolean;
   externalStatus?: boolean;
@@ -57,6 +57,7 @@ type CustomModalProps = {
     hide?: boolean;
     style?: CustomButtonProps['style'];
   };
+  hideTitle?: boolean;
 };
 
 export const CustomModal = ({
@@ -73,6 +74,7 @@ export const CustomModal = ({
     value: false,
     style: 'large',
   },
+  hideTitle = false,
 }: CustomModalProps) => {
   const [open, setOpen] = useState(false);
 
@@ -94,16 +96,10 @@ export const CustomModal = ({
 
   const modalStatus = Boolean(hasOpenButton ? open : externalStatus);
 
-  const fullPageClasses =
-    'p-4 md:p-8 w-dvw h-dvh md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] overflow-auto' +
-    className;
+  const fullPageClasses = `p-4 md:p-8 w-dvw h-dvh md:w-[70dvw] 2xl:w-[60dvw] md:h-[80dvh] overflow-auto ${className}`;
   const dialogPageClasses = {
-    slim:
-      'p-4 md:p-10 min-w-[90vw] sm:min-w-[80vw] md:min-w-fit' + ' ' + className,
-    large:
-      'p-4 md:p-10 w-[90vw] sm:w-[85vw] md:w-[70dvw] xl:w-[60dvw]' +
-      ' ' +
-      className,
+    slim: `p-4 md:p-10 min-w-[90vw] sm:min-w-[80vw] md:min-w-fit ${className}`,
+    large: `p-4 md:p-10 w-[90vw] sm:w-[85vw] md:w-[70dvw] xl:w-[60dvw] ${className}`,
   };
 
   return (
@@ -151,7 +147,7 @@ export const CustomModal = ({
                   typeof title !== 'string' ? 'justify-between' : 'justify-end '
                 }`}
               >
-                {typeof title !== 'string' && title}
+                {!hideTitle ? typeof title !== 'string' && title : null}
                 <CustomImage
                   imageKey="CLOSE_ICON"
                   width={20}
@@ -161,12 +157,12 @@ export const CustomModal = ({
                 />
               </div>
               <div className="flex flex-col gap-6">
-                {typeof title === 'string' && (
+                {!hideTitle && typeof title === 'string' ? (
                   <div className="flex justify-center text-3xl">
                     <div className="font-bold">{title}</div>
                     {unboldedTitle}
                   </div>
-                )}
+                ) : null}
                 <div className="h-full">{children}</div>
               </div>
               {closeButton?.hide !== true && (
@@ -175,6 +171,7 @@ export const CustomModal = ({
                   handleClick={handleButtonClose}
                   disabled={closeButton?.disabled}
                   style={closeButton?.style || 'main'}
+                  className={closeButton?.className}
                 />
               )}
             </div>

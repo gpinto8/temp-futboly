@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { CustomButton } from '@/components/custom/custom-button';
 import { UpcomingMatch } from '@/components/tabs/live-match-tab/upcoming-match';
 import { LiveMatchSection } from '@/components/tabs/live-match-tab/live-match-section';
 import { LiveMatchProps, useGetMatches } from '@/data/matches/use-get-matches';
@@ -8,6 +7,7 @@ import { EmptyMessage } from '../../empty-message';
 import { Loader } from '../../loader';
 import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 import { TabSectionSpacer } from '../tab-section-spacer';
+import { CustomModal } from '@/components/custom/custom-modal';
 
 export const LiveMatch = () => {
   const {
@@ -90,13 +90,34 @@ export const LiveMatch = () => {
         title: 'Live Match',
         TitleEndComponent: () => (
           <>
-            {pastMatchesNotCalculated() && (
-              <CustomButton
-                label="Calculate Results"
-                className="rounded-full py-1 px-2 max-w-40"
-                handleClick={() => calculateMatches(nextMatchMapped as any)}
-              />
-            )}
+            <CustomModal
+              title=""
+              isDialog={{ style: 'slim', value: true }}
+              openButton={{
+                label: 'Save Results',
+                avoidFitWidth: true,
+                style: 'main',
+                className: 'rounded-full py-1 px-2 max-w-40',
+                disabled: !pastMatchesNotCalculated(),
+              }}
+              hideTitle
+              closeButton={{
+                label: 'Save Results',
+                handleClick: () => calculateMatches(nextMatchMapped as any),
+              }}
+            >
+              <div className="p-4 text-xl flex flex-col gap-4">
+                <p>
+                  Once you click this button, you'll{' '}
+                  <strong>calculate and save</strong> the current week results
+                  (and pasts if you didn't save them).
+                </p>
+                <p className="text-error-400 font-bold">
+                  You won't be able to click it until there is more data to
+                  save!
+                </p>
+              </div>
+            </CustomModal>
           </>
         ),
         Component: () =>

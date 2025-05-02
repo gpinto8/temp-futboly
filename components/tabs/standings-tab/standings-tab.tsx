@@ -74,7 +74,7 @@ export const StandingsTab = () => {
     'There are matches that have not been calculated yet. ';
   textForPastMatches +=
     leagueOwner === user.id
-      ? 'Go to Live Match and press Calculate Results.'
+      ? 'Go to Live Match and press "Save Results".'
       : 'Ask the Admin to confirm and save to update the standings.';
 
   useEffect(() => {
