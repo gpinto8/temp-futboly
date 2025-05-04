@@ -2,7 +2,7 @@ import { CustomCard } from '@/components/custom/custom-card';
 import { CustomImage } from '@/components/custom/custom-image';
 import { MatchScheduleProps } from '@/firebase/db-types';
 import { useAppSelector } from '@/store/hooks';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 
 type PersonalMatchProps = {
   type: 'past' | 'upcoming';
@@ -16,8 +16,8 @@ export const PersonalMatch = ({
   className,
 }: PersonalMatchProps) => {
   const user = useAppSelector((state) => state.user);
-  const homeLogo = getRealTeamLogoById(matchInfo?.home?.logoId);
-  const awayLogo = getRealTeamLogoById(matchInfo?.away?.logoId);
+  const homeLogo = getCustomTeamLogoById(matchInfo?.home?.logoId);
+  const awayLogo = getCustomTeamLogoById(matchInfo?.away?.logoId);
   return (
     <CustomCard style="gray" className={className}>
       <div className="flex flex-row gap-2 justify-around items-center p-1 md:p-0">

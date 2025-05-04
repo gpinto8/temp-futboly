@@ -15,7 +15,7 @@ import {
 } from '../table/selectable-table';
 import { TeamLogoPicker } from '../team-logo-picker';
 import { fetchSportmonksApi } from '@/sportmonks/fetch-sportmonks-api';
-import { RealTeamLogoIds } from '@/utils/real-team-logos';
+import { CustomTeamLogoIds } from '@/utils/real-team-logos';
 import { EmptyMessage } from '../empty-message';
 import {
   CompetitionsCollectionProps,
@@ -27,7 +27,7 @@ type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
 type PlayersColumnKeysProps = 'PLAYER' | 'POSITION' | 'RATING' | 'CLUB';
 
 export type AddEditTeamModalDataProps = {
-  logoId: RealTeamLogoIds;
+  logoId: CustomTeamLogoIds;
   name: string;
   owner?: string;
   coach: string;

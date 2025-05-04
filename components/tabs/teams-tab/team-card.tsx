@@ -1,6 +1,6 @@
 import { CustomImage } from '@/components/custom/custom-image';
 import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 
 type TeamCardProps = {
   team?: CompetitionsCollectionTeamsProps;
@@ -13,7 +13,7 @@ export const TeamCard = ({ team, hideLogo }: TeamCardProps) => {
       <div className="flex flex-row gap-8 justify-start items-center my-2">
         {!hideLogo && (
           <CustomImage
-            forceSrc={getRealTeamLogoById(team.logoId)?.src}
+            forceSrc={getCustomTeamLogoById(team.logoId)?.src}
             className="h-24 w-24"
           />
         )}

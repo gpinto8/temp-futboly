@@ -2,7 +2,7 @@ import {
   AllPosibleFormationsProps,
   FormationPosition,
 } from '@/utils/formations';
-import { RealTeamLogoIds } from '@/utils/real-team-logos';
+import { CustomTeamLogoIds } from '@/utils/real-team-logos';
 import { Timestamp } from 'firebase/firestore';
 import { DocumentReference } from 'firebase/firestore';
 
@@ -100,7 +100,7 @@ export type CompetitionsCollectionTeamsProps = {
   competitionRef: DocumentReference<CompetitionsCollectionProps>;
   name: string;
   coach: string;
-  logoId: RealTeamLogoIds; // TODO: To change in the future
+  logoId: CustomTeamLogoIds; // TODO: To change in the future
   formation?: AllPosibleFormationsProps;
   results?: StandingsResults;
   players: {
@@ -125,7 +125,7 @@ export type ShortTeamProps = {
   userId: string;
   ownerUsername: string;
   shortId: string;
-  logoId: RealTeamLogoIds;
+  logoId: CustomTeamLogoIds;
   /*players: any[];*/
 };
 

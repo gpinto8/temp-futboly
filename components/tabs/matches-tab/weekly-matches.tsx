@@ -1,7 +1,7 @@
 import { CustomSeparator } from '@/components/custom/custom-separator';
 import { CustomImage } from '@/components/custom/custom-image';
 import { MatchScheduleProps } from '@/firebase/db-types';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 import { useAppSelector } from '@/store/hooks';
 
 type MappedMatchScheduleProps = MatchScheduleProps & {
@@ -37,7 +37,7 @@ export const WeeklyMatches = ({
                 <div className="flex justify-center items-center gap-4">
                   <div className="flex justify-center items-center gap-2">
                     <CustomImage
-                      forceSrc={getRealTeamLogoById(match.home.logoId)?.src}
+                      forceSrc={getCustomTeamLogoById(match.home.logoId)?.src}
                       className="h-8 w-8"
                     />
                     <p
@@ -72,7 +72,7 @@ export const WeeklyMatches = ({
                       {match.away.name}
                     </p>
                     <CustomImage
-                      forceSrc={getRealTeamLogoById(match.away.logoId)?.src}
+                      forceSrc={getCustomTeamLogoById(match.away.logoId)?.src}
                       className="h-8 w-8"
                     />
                   </div>

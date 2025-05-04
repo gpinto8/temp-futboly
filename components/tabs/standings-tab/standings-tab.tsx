@@ -10,7 +10,7 @@ import { CustomImage } from '../../custom/custom-image';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
 import { useAppSelector } from '@/store/hooks';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 import { ShortTeamPropsStandings } from '@/firebase/db-types';
 import { EmptyMessage } from '../../empty-message';
 import { TabSectionSpacer } from '../tab-section-spacer';
@@ -50,7 +50,7 @@ const getLastMatchesIcons = (lastMatches: ('W' | 'D' | 'L')[]) => {
 };
 
 const getTeamLogo = (teamLogoId) => {
-  const teamLogo = getRealTeamLogoById(teamLogoId);
+  const teamLogo = getCustomTeamLogoById(teamLogoId);
   return (
     <CustomImage
       forceSrc={teamLogo?.src}

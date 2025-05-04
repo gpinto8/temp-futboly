@@ -1,4 +1,4 @@
-import { RealTeamLogoIds, realTeamLogos } from '@/utils/real-team-logos';
+import { CustomTeamLogoIds, customTeamLogos } from '@/utils/real-team-logos';
 import {
   FormControl,
   InputLabel,
@@ -10,9 +10,9 @@ import { useEffect, useState } from 'react';
 import { CustomImage } from './custom/custom-image';
 
 type IconPickerProps = {
-  initialValue?: RealTeamLogoIds;
+  initialValue?: CustomTeamLogoIds;
   className?: string;
-  getLogoId?: (selectedLogoId: RealTeamLogoIds) => void;
+  getLogoId?: (selectedLogoId: CustomTeamLogoIds) => void;
 };
 
 // This component is based on the "real-team-logos" file, that contains some real logos since we are not managing custom logos yet
@@ -22,11 +22,11 @@ export const TeamLogoPicker = ({
   getLogoId,
 }: IconPickerProps) => {
   const title = 'Logo';
-  const newInitialValue = initialValue || realTeamLogos[0].id;
+  const newInitialValue = initialValue || customTeamLogos[0].id;
 
   const [selectedLogo, setSelectedLogo] = useState(newInitialValue);
   const handleChange = (event: SelectChangeEvent) =>
-    setSelectedLogo(event.target.value as RealTeamLogoIds);
+    setSelectedLogo(event.target.value as CustomTeamLogoIds);
 
   useEffect(() => getLogoId?.(selectedLogo), [selectedLogo, getLogoId]);
 
@@ -39,7 +39,7 @@ export const TeamLogoPicker = ({
         onChange={handleChange}
         className="h-[58px]"
       >
-        {realTeamLogos.map((logo, i) => (
+        {customTeamLogos.map((logo, i) => (
           <MenuItem
             key={i}
             value={logo.id}

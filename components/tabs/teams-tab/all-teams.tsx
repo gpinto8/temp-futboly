@@ -13,7 +13,7 @@ import {
   RowsProps,
 } from '@/components/custom/custom-table';
 import { CustomImage } from '@/components/custom/custom-image';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 import {
   getPlayerRating,
   getSportmonksPlayersDataByIds,
@@ -103,7 +103,7 @@ export const AllTeams = () => {
               {/* TEAM OVERVIEW */}
               <div className="flex justify-start items-center gap-4 w-full">
                 <CustomImage
-                  forceSrc={getRealTeamLogoById(team.logoId)?.src}
+                  forceSrc={getCustomTeamLogoById(team.logoId)?.src}
                   className="h-16 w-16"
                 />
                 <p className="text-2xl md:text-3xl">

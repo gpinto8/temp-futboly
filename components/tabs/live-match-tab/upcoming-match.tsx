@@ -1,7 +1,7 @@
 import { CustomCard } from '@/components/custom/custom-card';
 import { CustomImage } from '@/components/custom/custom-image';
 import { MatchScheduleProps } from '@/firebase/db-types';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 import { useGetUsers } from '@/data/users/use-get-users';
 
 export const UpcomingMatch = ({
@@ -19,15 +19,15 @@ export const UpcomingMatch = ({
       <div className="text-center flex flex-col gap-4">
         <div className="flex flex-row gap-4 justify-center">
           <CustomImage
-            forceSrc={getRealTeamLogoById(matchInfo.home.logoId)?.src}
-            forcedAlt={getRealTeamLogoById(matchInfo.home.logoId)?.alt}
+            forceSrc={getCustomTeamLogoById(matchInfo.home.logoId)?.src}
+            forcedAlt={getCustomTeamLogoById(matchInfo.home.logoId)?.alt}
             className="h-12 lg:h-16 w-12 lg:w-16"
             width={32}
             height={32}
           />
           <CustomImage
-            forceSrc={getRealTeamLogoById(matchInfo.away.logoId)?.src}
-            forcedAlt={getRealTeamLogoById(matchInfo.away.logoId)?.alt}
+            forceSrc={getCustomTeamLogoById(matchInfo.away.logoId)?.src}
+            forcedAlt={getCustomTeamLogoById(matchInfo.away.logoId)?.alt}
             className="h-12 lg:h-16 w-12 lg:w-16"
             width={32}
             height={32}

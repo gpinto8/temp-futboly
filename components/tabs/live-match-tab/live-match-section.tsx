@@ -1,7 +1,7 @@
 import { CustomImage } from '@/components/custom/custom-image';
 import { LiveMatchProps } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
-import { getRealTeamLogoById } from '@/utils/real-team-logos';
+import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 import { FootballFieldHorizontal } from '@/components/football-field/football-field-horizontal';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { LineUpTable } from './lineup-table';
@@ -33,8 +33,8 @@ export const LiveMatchSection = ({ nextMatch }: LiveMatchSectionProps) => {
   const { getTeamPositionFromActiveCompetition } = useGetStandings();
 
   const { home, away, week, result } = nextMatch;
-  const homeTeamLogo = getRealTeamLogoById(home.logoId);
-  const awayTeamLogo = getRealTeamLogoById(away.logoId);
+  const homeTeamLogo = getCustomTeamLogoById(home.logoId);
+  const awayTeamLogo = getCustomTeamLogoById(away.logoId);
 
   const homeClass =
     nextMatch?.home?.userRef?.id === getUser().id ? 'text-main' : '';

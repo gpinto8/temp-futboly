@@ -8,7 +8,10 @@ import { CustomImage } from './custom/custom-image';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetTeams } from '@/data/teams/use-get-teams';
-import { getRealTeamLogoById, RealTeamLogoIds } from '@/utils/real-team-logos';
+import {
+  getCustomTeamLogoById,
+  CustomTeamLogoIds,
+} from '@/utils/real-team-logos';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useAppSelector } from '@/store/hooks';
 import { useTabContext } from '@/utils/tab-context';
@@ -16,7 +19,7 @@ import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 
 type BannerCardProps = {
   title: string;
-  logoId?: RealTeamLogoIds;
+  logoId?: CustomTeamLogoIds;
   entries: {
     key: string;
     value?: string | number;
@@ -25,7 +28,7 @@ type BannerCardProps = {
 };
 
 const BannerCard = ({ title, logoId, entries, avoidLogo }: BannerCardProps) => {
-  const realTeamLogosData = getRealTeamLogoById(logoId);
+  const customTeamLogo = getCustomTeamLogoById(logoId);
 
   return (
     <CustomCard
@@ -41,10 +44,10 @@ const BannerCard = ({ title, logoId, entries, avoidLogo }: BannerCardProps) => {
         {!avoidLogo && (
           <CustomImage
             className="rounded-full border object-cover shadow-md w-7 h-7 lg:w-10 lg:h-10"
-            {...(realTeamLogosData
+            {...(customTeamLogo
               ? {
-                  forceSrc: realTeamLogosData.src,
-                  forcedAlt: realTeamLogosData.alt,
+                  forceSrc: customTeamLogo.src,
+                  forcedAlt: customTeamLogo.alt,
                 }
               : { imageKey: 'AT_ICON' })}
           />
@@ -151,8 +154,8 @@ const GameSectionCard = ({
   isLive: Boolean;
 }) => {
   const user = useAppSelector((state) => state.user);
-  const homeTeamLogo = getRealTeamLogoById(nextMatch?.home?.logoId);
-  const awayTeamLogo = getRealTeamLogoById(nextMatch?.away?.logoId);
+  const homeTeamLogo = getCustomTeamLogoById(nextMatch?.home?.logoId);
+  const awayTeamLogo = getCustomTeamLogoById(nextMatch?.away?.logoId);
   const homeClass = nextMatch?.home?.userRef?.id === user.id ? 'text-main' : '';
   const awayClass = nextMatch?.away?.userRef?.id === user.id ? 'text-main' : '';
   return (
