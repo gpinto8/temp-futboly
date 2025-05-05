@@ -53,6 +53,7 @@ export const AddEditTeamModal = ({
   const [pageCounter, setPageCounter] = useState(1);
   const [rows, setRows] = useState<any>([]);
   const [players, setPlayers] = useState<any[]>([]);
+  const [avoidReload, setAvoidReload] = useState(false);
 
   const [logoId, setLogoId] = useState(data?.logoId);
   const [name, setName] = useState<HandleChangeParamProps>({
@@ -214,6 +215,44 @@ export const AddEditTeamModal = ({
     }
   };
 
+  const debounce = (func: any, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return (...args: any) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
+
+  const handlePlayerSearch = async (userData: {
+    value: string;
+    isValid: boolean;
+  }) => {
+    if (!userData) return;
+    if (userData.isValid) {
+      const response = await fetchSportmonksApi(
+        `football/players/search`,
+        userData.value,
+      );
+      const playersData: any[] = response.data;
+
+      setAvoidReload(true);
+
+      if (playersData) {
+        const mappedPlayers = playersData.map((player, i) =>
+          mapPlayerRow(player, i),
+        );
+        setRows(mappedPlayers);
+      }
+    } else {
+      setAvoidReload(false);
+      getPlayers();
+    }
+  };
+
+  const debouncedFetchData = debounce(handlePlayerSearch, 700);
+
   return (
     <CustomModal
       title={isEdit ? `${name.value}` : 'Create your team'}
@@ -268,13 +307,21 @@ export const AddEditTeamModal = ({
           </div>
           {/* PLAYERS */}
           <div className="flex flex-col gap-2 h-full">
-            <div className="font-bold">
-              Choose players:{' '}
-              {isEdit && (
-                <span className="text-sm font-normal">
-                  (only {TEAMS_PLAYERS_LIMIT})
-                </span>
-              )}
+            <div className="flex flex-col gap-2 justify-between md:flex-row md:items-center">
+              <div className="font-bold">
+                Choose players:{' '}
+                {isEdit && (
+                  <span className="text-sm font-normal">
+                    (only {TEAMS_PLAYERS_LIMIT})
+                  </span>
+                )}
+              </div>
+              <div className="w-90">
+                <CustomInput
+                  label="Search"
+                  handleChange={(data) => debouncedFetchData(data)}
+                />
+              </div>
             </div>
             {isEdit ? (
               <SelectableTable<PlayersColumnKeysProps>
@@ -283,6 +330,7 @@ export const AddEditTeamModal = ({
                 onEndReached={handleEndReached}
                 initialSelectedRows={initialSelectedPlayers}
                 getSelectedRows={handleSelectedRows}
+                avoidEndReload={avoidReload}
               />
             ) : (
               <EmptyMessage

@@ -30,6 +30,7 @@ export type CustomTableProps<ColumnsKeysProps> = {
     className?: string;
   };
   onEndReached?: () => void;
+  avoidEndReload?: boolean;
   elevation?: number;
   isComplete?: {
     value: boolean;
@@ -50,6 +51,7 @@ export function CustomTable<ColumnKeysProps>({
   customizeRows = {},
   customizeColumns = {},
   onEndReached,
+  avoidEndReload,
   elevation,
   isComplete,
   hideBackground,
@@ -101,6 +103,8 @@ export function CustomTable<ColumnKeysProps>({
   };
 
   const Footer = () => {
+    if (avoidEndReload) return null;
+
     return typeof onEndReached === 'function' && !isComplete?.value ? (
       <div className="mt-5 flex justify-center items-center">
         <Loader color="main" />
@@ -126,7 +130,12 @@ export function CustomTable<ColumnKeysProps>({
     if (once === items) return; // This is a fix since the "endReached" functions gets called multiple times for some reason
     setOnce(items);
 
-    onEndReached?.();
+    if (avoidEndReload) {
+      setOnce(0);
+      return;
+    } else {
+      onEndReached?.();
+    }
   };
 
   const newHeight = height ? `${height}px` : '100%';
