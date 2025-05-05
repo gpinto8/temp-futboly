@@ -89,4 +89,8 @@ export const IMG_URLS = {
     src: 'assets/football-field-horizontal.svg',
     alt: 'Football Field Horizontal Icon',
   },
+  MAGNIFYING_GLASS: {
+    src: 'assets/magnifying-glass.svg',
+    alt: 'Magnifying Glass Icon',
+  },
 };

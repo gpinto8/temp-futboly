@@ -230,6 +230,7 @@ export const AddEditTeamModal = ({
     isValid: boolean;
   }) => {
     if (!userData) return;
+
     if (userData.isValid) {
       const response = await fetchSportmonksApi(
         `football/players/search`,
@@ -306,7 +307,7 @@ export const AddEditTeamModal = ({
             </div>
           </div>
           {/* PLAYERS */}
-          <div className="flex flex-col gap-2 h-full">
+          <div className="flex flex-col gap-4 h-full">
             <div className="flex flex-col gap-2 justify-between md:flex-row md:items-center">
               <div className="font-bold">
                 Choose players:{' '}
@@ -320,6 +321,7 @@ export const AddEditTeamModal = ({
                 <CustomInput
                   label="Search"
                   handleChange={(data) => debouncedFetchData(data)}
+                  endAdorment={{img: "MAGNIFYING_GLASS"}}
                 />
               </div>
             </div>
