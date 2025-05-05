@@ -9,11 +9,14 @@ import { useBreakpoint } from '@/utils/use-breakpoint';
 import { CustomImage } from '../../custom/custom-image';
 import { useGetMatches } from '@/data/matches/use-get-matches';
 import { useGetStandings } from '@/data/standings/use-get-standings';
-import { useAppSelector } from '@/store/hooks';
 import { getCustomTeamLogoById } from '@/utils/real-team-logos';
 import { ShortTeamPropsStandings } from '@/firebase/db-types';
 import { EmptyMessage } from '../../empty-message';
 import { TabSectionSpacer } from '../tab-section-spacer';
+import { useGetUsers } from '@/data/users/use-get-users';
+import { useGetLeagues } from '@/data/leagues/use-get-leagues';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import { CompetitionFinishedMessage } from '@/components/message/competiton-finished-message';
 
 type ColumnKeysProps =
   | 'INDEX'
@@ -61,11 +64,14 @@ const getTeamLogo = (teamLogoId) => {
 };
 
 export const StandingsTab = () => {
-  const user = useAppSelector((state) => state.user);
-  const leagueOwner = useAppSelector((state) => state.league.owner);
-  const breakpoint = useBreakpoint();
+  const { getUser } = useGetUsers();
+  const { getLeague } = useGetLeagues();
+  const { getActiveCompetition } = useGetCompetitions();
   const { pastMatchesNotCalculated } = useGetMatches();
   const { getStandingsFromActiveCompetition } = useGetStandings();
+
+  const breakpoint = useBreakpoint();
+
   const [standings, setStandings] = useState<ShortTeamPropsStandings[] | null>(
     null,
   );
@@ -73,7 +79,7 @@ export const StandingsTab = () => {
   let textForPastMatches =
     'There are matches that have not been calculated yet. ';
   textForPastMatches +=
-    leagueOwner === user.id
+    getLeague().owner === getUser().id
       ? 'Go to Live Match and press "Save Results".'
       : 'Ask the Admin to confirm and save to update the standings.';
 
@@ -139,6 +145,9 @@ export const StandingsTab = () => {
     <TabSectionSpacer
       UniqueSection={() => (
         <div className="text-center">
+          {getActiveCompetition()?.competitionFinished && (
+            <CompetitionFinishedMessage className="mb-6" />
+          )}
           {pastMatchesNotCalculated() && (
             <p className="text-error-400 font-semibold mb-10">
               {textForPastMatches}

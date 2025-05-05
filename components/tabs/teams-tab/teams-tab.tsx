@@ -13,6 +13,7 @@ import { useGetLeagues } from '@/data/leagues/use-get-leagues';
 import { useGetUsers } from '@/data/users/use-get-users';
 import { EmptyMessage } from '../../empty-message';
 import { TabSectionSpacer } from '../tab-section-spacer';
+import { CompetitionFinishedMessage } from '@/components/message/competiton-finished-message';
 
 export const TeamsTab = () => {
   const { getCurrentUserRef, getUser } = useGetUsers();
@@ -59,13 +60,17 @@ export const TeamsTab = () => {
 
   return (
     <>
-      {getActiveCompetition()?.competitionStarted && (
-        <EmptyMessage
-          title="Your competition has started! 🎊"
-          description="It means that you no longer can modify your formation or player's position. Wait till the competition finishes!"
-          noSpaces
-          className="!bg-main-100 !p-10 !rounded-2xl"
-        />
+      {getActiveCompetition()?.competitionFinished ? (
+        <CompetitionFinishedMessage />
+      ) : (
+        getActiveCompetition()?.competitionStarted && (
+          <EmptyMessage
+            title="Your competition has started! 🎊"
+            description="It means that you no longer can modify your formation or player's position. Wait till the competition finishes!"
+            noSpaces
+            className="!bg-main-100 !p-10 !rounded-2xl"
+          />
+        )
       )}
       <TabSectionSpacer
         firstSection={{

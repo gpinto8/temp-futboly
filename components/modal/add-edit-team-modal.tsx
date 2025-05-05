@@ -21,6 +21,7 @@ import {
   CompetitionsCollectionProps,
   TEAMS_PLAYERS_LIMIT,
 } from '@/firebase/db-types';
+import { CompetitionFinishedMessage } from '../message/competiton-finished-message';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -33,6 +34,7 @@ export type AddEditTeamModalDataProps = {
   coach: string;
   selectedPlayerIds?: number[];
   competitionStarted?: CompetitionsCollectionProps['competitionStarted'];
+  competitionFinished?: CompetitionsCollectionProps['competitionFinished'];
 };
 
 export type AddEditTeamModalProps = {
@@ -126,7 +128,7 @@ export const AddEditTeamModal = ({
 
   // Disable the inputs if they are not valid
   useEffect(() => {
-    if (data?.competitionStarted) {
+    if (data?.competitionStarted || data?.competitionFinished) {
       setDisabled(true);
       return;
     }
@@ -197,7 +199,7 @@ export const AddEditTeamModal = ({
   };
 
   const handleSetTeam = () => {
-    if (data?.competitionStarted) return;
+    if (data?.competitionStarted || data?.competitionFinished) return;
 
     if (logoId && name?.isValid && coach?.isValid) {
       onSetData?.({
@@ -230,13 +232,17 @@ export const AddEditTeamModal = ({
       handleClose={handleClose}
     >
       <div className="flex flex-col gap-6 h-full">
-        {data?.competitionStarted && (
-          <EmptyMessage
-            title="This team's competition has started."
-            description="It means that you no longer can apply any modifications to its teams."
-            noSpaces
-            className="!bg-main-100 !p-8 !rounded-2xl"
-          />
+        {data?.competitionFinished ? (
+          <CompetitionFinishedMessage />
+        ) : (
+          data?.competitionStarted && (
+            <EmptyMessage
+              title="This team's competition has started."
+              description="It means that you no longer can apply any modifications to its teams."
+              noSpaces
+              className="!bg-main-100 !p-8 !rounded-2xl"
+            />
+          )
         )}
         <div className="flex flex-col gap-8 h-full">
           <div className="flex flex-col gap-4">

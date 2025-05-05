@@ -158,6 +158,18 @@ export const useGetCompetitions = () => {
     if (currentCompetition) return getCompetitionRefById(currentCompetition);
   };
 
+  // CHECKS IF THE ACTIVE COMPETITION CAN BE FINISHED OR NOT
+  const checkActiveCompetitionFinished = () => {
+    const activeCompetition = getActiveCompetition();
+
+    const id = activeCompetition?.id;
+    const currentWeek = activeCompetition?.currentWeek;
+    const maxWeek = activeCompetition?.maxWeek;
+    const competitionStarted = activeCompetition?.competitionStarted;
+
+    return !!(id && currentWeek === maxWeek && competitionStarted); // If the current week is the same as the last week AND the competiton has started AND this function gets executed -> it means the competition has ended
+  };
+
   return {
     getCompetitions,
     getCompetitionById,
@@ -168,5 +180,6 @@ export const useGetCompetitions = () => {
     getActiveCompetitionByUid,
     getCompetitionRefById,
     getCurrentActiveCompetitionRef,
+    checkActiveCompetitionFinished,
   };
 };

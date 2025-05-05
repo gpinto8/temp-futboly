@@ -34,8 +34,8 @@ export type LeaguesCollectionProps = {
 export type CompetitionsCollectionProps = {
   id: string;
   name: string;
-  competitionStarted: Boolean;
-  //  startDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
+  competitionStarted: boolean;
+  competitionFinished?: boolean;
   endDate: Timestamp; // (Use the "Timestamp.fromDate(new Date())" function to meet this type)
   specificPosition: boolean;
   league: DocumentReference<LeaguesCollectionProps>;
@@ -44,19 +44,6 @@ export type CompetitionsCollectionProps = {
   players: DocumentReference<UsersCollectionProps>[];
   teams: CompetitionsCollectionTeamsProps[];
   standings: ShortTeamPropsStandings[] | null;
-  /*matchSchedule: Teams are not anymore just references but they are an array with all the informations
-   * I will leave it commented because in the future we will create and apposite collection for Teams
-    | {
-        week: number;
-        home: DocumentReference<CompetitionsCollectionTeamsProps>;
-        away: DocumentReference<CompetitionsCollectionTeamsProps>;
-        result?: {
-          home: number;
-          away: number;
-        };
-      }[]
-    | null;
-    */
   matchSchedule: MatchScheduleProps[] | null;
 };
 

@@ -144,7 +144,8 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
   useEffect(() => {
     const competitionStarted = getActiveCompetition()?.competitionStarted;
-    if (competitionStarted) {
+    const competitionFinished = getActiveCompetition()?.competitionFinished;
+    if (competitionStarted || competitionFinished) {
       setDisabled(true);
       return;
     }

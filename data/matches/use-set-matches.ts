@@ -1,7 +1,4 @@
-import {
-  MappedCompetitionsProps,
-  UsersCollectionProps,
-} from '@/firebase/db-types';
+import { UsersCollectionProps } from '@/firebase/db-types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { firestoreMethods } from '@/firebase/firestore-methods';
 import { competitionActions } from '@/store/slices/competitions';
@@ -10,12 +7,13 @@ import { useGetTeams } from '@/data/teams/use-get-teams';
 import { useSetStandings } from '@/data/standings/use-set-standings';
 import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 import cloneDeep from 'lodash/cloneDeep';
+import { useGetCompetitions } from '../competitions/use-get-competitions';
 
 export const useSetMatches = () => {
-  // Initial variable an functions setup
-  const activeCompetition = useAppSelector(
-    (state) => state.competition.activeCompetition,
-  ) as MappedCompetitionsProps;
+  const { getActiveCompetition, checkActiveCompetitionFinished } =
+    useGetCompetitions();
+  const activeCompetition = getActiveCompetition();
+
   const user = useAppSelector((state) => state.user) as UsersCollectionProps;
   const leagueOwner = useAppSelector((state) => state.league.owner);
   const dispatch = useAppDispatch();
@@ -64,14 +62,14 @@ export const useSetMatches = () => {
     // Here I write on the db the updatedMatches and the current week and then if no errors are found I dispatch the updated competition
     const scheduleResult = await firestoreMethods(
       'competitions',
-      activeCompetition.id as any,
+      activeCompetition?.id as any,
     ).replaceField('matchSchedule', updatedMatches);
     if (!scheduleResult) {
       console.error('Updating matches failed');
     }
     const currentWeekResult = await firestoreMethods(
       'competitions',
-      activeCompetition.id as any,
+      activeCompetition?.id as any,
     ).replaceField('currentWeek', week + 1);
     if (!currentWeekResult) {
       console.error('Error while updating currentWeek');
@@ -83,13 +81,11 @@ export const useSetMatches = () => {
 
   // Calculate matches result and then writes them in DB and finally updates the standings
   const calculateMatches = async (nextMatchMapped: any[]) => {
-    if (!activeCompetition) return;
-    if (!nextMatchMapped) {
-      console.error("Can't calculate score without mapped players");
-      return;
-    }
+    if (!activeCompetition || !nextMatchMapped) return;
+
     const allTeams = await getAllTeams();
     if (!allTeams) return;
+
     // Create a Map for each team and assigns all the players
     const teamPlayersMap: Map<String, any[]> = new Map();
     await Promise.all(
@@ -100,6 +96,7 @@ export const useSetMatches = () => {
         teamPlayersMap.set(team.shortId, players);
       }),
     );
+
     // Retrieve all the previous matches with no score
     const pastMatchesWithoutScore = getAllPastMatchesWithoutResult();
     const resultsByWeek: Record<string, GameResult[]> = {};
@@ -107,6 +104,7 @@ export const useSetMatches = () => {
       // For each week I get the matches and I check the rating of Home and Away using false in getMatchRatings because this is not LIVE
       const weekMatches = pastMatchesWithoutScore[week];
       const weekResult: GameResult[] = [];
+
       for (const match of weekMatches) {
         const matchResult = await getMatchRatings(
           teamPlayersMap.get(match.home.shortId) as any,
@@ -114,6 +112,7 @@ export const useSetMatches = () => {
           match,
           false,
         );
+
         const gameResult: GameResult = {
           home: {
             shortId: match.home.shortId,
@@ -124,17 +123,30 @@ export const useSetMatches = () => {
             result: matchResult.result.away,
           },
         };
+
         weekResult.push(gameResult);
       }
+
       resultsByWeek[week] = weekResult;
     }
+
     // Now that all week result are obtained I cycle on the results and for each week I update the game results calling writeGameResults
     for (const week of Object.keys(resultsByWeek)) {
       const weekGameResult = resultsByWeek[week];
       await writeGameResults(weekGameResult, Number(week));
     }
+
     // Finally once everything is done I save all the informations in the standings
     await calculateAndSaveStandings(activeCompetition.id);
+
+    // Finish the competition if it can be
+    const competitionCanBeFinished = checkActiveCompetitionFinished();
+    if (competitionCanBeFinished) {
+      await firestoreMethods(
+        'competitions',
+        activeCompetition?.id as any,
+      ).replaceField('competitionFinished', true);
+    }
   };
 
   return {

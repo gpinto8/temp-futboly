@@ -8,8 +8,11 @@ import { Loader } from '../../loader';
 import { getSportmonksPlayersDataByIds } from '@/sportmonks/common-methods';
 import { TabSectionSpacer } from '../tab-section-spacer';
 import { CustomModal } from '@/components/custom/custom-modal';
+import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
+import { CompetitionFinishedMessage } from '@/components/message/competiton-finished-message';
 
 export const LiveMatch = () => {
+  const { getActiveCompetition } = useGetCompetitions();
   const {
     getUpcomingMatches,
     getTimeToNextMatch,
@@ -25,6 +28,8 @@ export const LiveMatch = () => {
   const [nextMatchMapped, setNextMatchMapped] = useState<LiveMatchProps>();
   const [nextMatchWithRating, setNextMatchWithRating] =
     useState<LiveMatchProps>();
+
+  const competitionFinished = !!getActiveCompetition()?.competitionFinished;
 
   useEffect(() => {
     (async () => {
@@ -146,13 +151,18 @@ export const LiveMatch = () => {
         ),
       }}
       emptyMessage={{
-        condition: !nextMatchFound,
-        Component: () => (
-          <EmptyMessage
-            title="Match not found 🤷‍♂️"
-            description="Ask your admin to generate the matches to start following the live results."
-          />
-        ),
+        condition: !nextMatchFound || competitionFinished,
+        Component: () =>
+          competitionFinished ? (
+            <CompetitionFinishedMessage description='Check your results on the "Standings" tab! (and laugh at your peers if you won 😂)' />
+          ) : !nextMatchFound ? (
+            <EmptyMessage
+              title="Match not found 🤷‍♂️"
+              description="Ask your admin to generate the matches to start following the live results."
+            />
+          ) : (
+            <div />
+          ),
       }}
     />
   );

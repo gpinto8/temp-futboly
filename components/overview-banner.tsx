@@ -279,7 +279,7 @@ export const OverviewBanner = () => {
       {/* CARDS */}
       <div className="w-full flex flex-col gap-10">
         <div className="flex flex-col xl:flex-row gap-4 2xl:gap-12 items-center">
-          <div className="w-full flex flex-row overflow-x-scroll md:overflow-hidden p-4 sm:flex-nowrap md:justify-center items-center gap-4 2xl:gap-6">
+          <div className="w-full flex flex-row overflow-auto md:overflow-hidden p-4 sm:flex-nowrap md:justify-center items-center gap-4 2xl:gap-6">
             {[overviewLeague!, overviewCompetition!, overviewTeam!]?.map(
               (data, index) => (
                 <BannerCard key={index} {...data} />
@@ -295,9 +295,7 @@ export const OverviewBanner = () => {
 };
 
 const TimerSection = () => {
-  const competition = useAppSelector(
-    (state) => state.competition.activeCompetition,
-  );
+  const { getActiveCompetition } = useGetCompetitions();
   const { getTimeToNextMatch } = useGetMatches();
   const [timeLeftToNextMatch, setTimeLeftToNextMatch] = useState(
     getTimeToNextMatch(),
@@ -318,7 +316,8 @@ const TimerSection = () => {
 
   return (
     <div className="w-full flex justify-around flex-wrap sm:justify-center items-center gap-2 mt-2">
-      {competition?.competitionStarted ? (
+      {getActiveCompetition()?.competitionStarted &&
+      !getActiveCompetition()?.competitionFinished ? (
         timeLeftToNextMatch > 0 ? (
           <div className="flex flex-wrap justify-center">
             <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
@@ -336,16 +335,27 @@ const TimerSection = () => {
           </div>
         )
       ) : null}
-      {timeLeftToNextMatch > 0 && (
+      {getActiveCompetition()?.competitionFinished ? (
         <CustomButton
-          label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
-          style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
-          handleClick={() =>
-            setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
-          }
-          className="rounded-full mt-3"
+          label="Check results"
+          style="main"
+          handleClick={() => setCurrentTab('Standings')}
+          className="rounded-full px-20 md:w-fit w-full"
+          avoidDisabledStyles
           disableElevation
         />
+      ) : (
+        timeLeftToNextMatch > 0 && (
+          <CustomButton
+            label={timeLeftToNextMatch > 0 ? 'Insert Lineups' : 'Check Match'}
+            style={timeLeftToNextMatch > 0 ? 'outlineMain' : 'main'}
+            handleClick={() =>
+              setCurrentTab(timeLeftToNextMatch > 0 ? 'Teams' : 'Live Match')
+            }
+            className="rounded-full mt-3"
+            disableElevation
+          />
+        )
       )}
     </div>
   );

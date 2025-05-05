@@ -56,6 +56,7 @@ export const AdminTabTeams = () => {
       const teamCompetitionId = competitionRef.id;
       const competition = await getCompetitionById(teamCompetitionId);
       const competitionStarted = competition?.competitionStarted;
+      const competitionFinished = competition?.competitionFinished;
 
       const selectedPlayerIds = players?.map((player) => player.sportmonksId);
       const data: Partial<AddEditTeamModalDataProps> = {
@@ -65,6 +66,7 @@ export const AdminTabTeams = () => {
         coach,
         selectedPlayerIds,
         competitionStarted,
+        competitionFinished,
       };
 
       const handleEditTeam = (team: AddEditTeamModalDataProps) => {
