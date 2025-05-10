@@ -321,7 +321,7 @@ export const AddEditTeamModal = ({
                 <CustomInput
                   label="Search"
                   handleChange={(data) => debouncedFetchData(data)}
-                  endAdorment={{img: "MAGNIFYING_GLASS"}}
+                  endAdorment={{ img: 'MAGNIFYING_GLASS' }}
                 />
               </div>
             </div>

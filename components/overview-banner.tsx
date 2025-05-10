@@ -172,7 +172,7 @@ const GameSectionCard = ({
         id="gameLiveResults"
         className="mt-8 mb-4 flex flex-row justify-around"
       >
-        <div className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2 w-max overflow-auto">
           <CustomImage
             forceSrc={homeTeamLogo?.src}
             forcedAlt={homeTeamLogo?.alt}
@@ -180,7 +180,7 @@ const GameSectionCard = ({
             width={32}
             height={32}
           />
-          <span className={homeClass + ' text-center'}>
+          <span className={`${homeClass} text-center`}>
             {nextMatch.home.name}
           </span>
         </div>
@@ -193,7 +193,7 @@ const GameSectionCard = ({
             <div className="text-xl md:text-2xl font-bold text-nowrap">VS</div>
           )}
         </div>
-        <div className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2 w-max overflow-auto">
           <CustomImage
             forceSrc={awayTeamLogo?.src}
             forcedAlt={awayTeamLogo?.alt}
@@ -201,7 +201,7 @@ const GameSectionCard = ({
             width={32}
             height={32}
           />
-          <span className={awayClass + ' text-center'}>
+          <span className={`${awayClass} text-center`}>
             {nextMatch.away.name}
           </span>
         </div>
@@ -319,7 +319,7 @@ const TimerSection = () => {
       {getActiveCompetition()?.competitionStarted &&
       !getActiveCompetition()?.competitionFinished ? (
         timeLeftToNextMatch > 0 ? (
-          <div className="flex flex-wrap justify-center">
+          <div className="flex flex-col sm:flex-row justify-center">
             <h3 className="text-center sm:text-left text-lg text-nowrap font-bold text-error sm:text-xl mx-2">
               {formatDateDiffToDate(timeLeftToNextMatch)}
             </h3>
