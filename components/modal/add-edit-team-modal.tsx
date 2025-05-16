@@ -19,6 +19,10 @@ import { CustomTeamLogoIds } from '@/utils/real-team-logos';
 import { EmptyMessage } from '../empty-message';
 import {
   CompetitionsCollectionProps,
+  TEAM_PLAYERS_ATTACKER_LIMIT,
+  TEAM_PLAYERS_DEFENDER_LIMIT,
+  TEAM_PLAYERS_GOALKEEPER_LIMIT,
+  TEAM_PLAYERS_MIDFIELDER_LIMIT,
   TEAMS_PLAYERS_LIMIT,
 } from '@/firebase/db-types';
 import { CompetitionFinishedMessage } from '../message/competiton-finished-message';
@@ -72,6 +76,11 @@ export const AddEditTeamModal = ({
   const [initialSelectedPlayers, setInitialSelectedPlayers] = useState<
     RowsProps<PlayersColumnKeysProps>
   >([]);
+
+  const [goalkeepersCounter, setGoalkeepersCounter] = useState(0);
+  const [defendersCounter, setDefendersCounter] = useState(0);
+  const [midfieldersCounter, setMidfieldersCounter] = useState(0);
+  const [attackersCounter, setAttackersCounter] = useState(0);
 
   const columns: ColumnsProps<PlayersColumnKeysProps> = [
     { label: 'Player', id: 'PLAYER', minWidth: 200 },
@@ -140,8 +149,25 @@ export const AddEditTeamModal = ({
       shouldDisable &&= selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT;
     }
 
+    // The selected players need to have the right position
+    const playersRightPosition =
+      goalkeepersCounter === TEAM_PLAYERS_GOALKEEPER_LIMIT &&
+      defendersCounter === TEAM_PLAYERS_DEFENDER_LIMIT &&
+      midfieldersCounter === TEAM_PLAYERS_MIDFIELDER_LIMIT &&
+      attackersCounter === TEAM_PLAYERS_ATTACKER_LIMIT;
+    shouldDisable &&= playersRightPosition;
+
     setDisabled(!shouldDisable);
-  }, [logoId, name, coach, selectedPlayerIds]);
+  }, [
+    logoId,
+    name,
+    coach,
+    selectedPlayerIds,
+    goalkeepersCounter,
+    defendersCounter,
+    midfieldersCounter,
+    attackersCounter,
+  ]);
 
   // When opening the edit modal, we fetch all the first x players
   const getPlayers = async () => {
@@ -197,6 +223,24 @@ export const AddEditTeamModal = ({
   ) => {
     const playerIds = selectedRows.map((row) => row.ID);
     setSelectedPlayerIds(playerIds);
+
+    let _goalkeepersCounter = 0,
+      _defendersCounter = 0,
+      _midfieldersCounter = 0,
+      _attackersCounter = 0;
+
+    selectedRows.forEach((row) => {
+      const playerPosition = row?.POSITION;
+      if (playerPosition === 'Goalkeeper') _goalkeepersCounter++;
+      if (playerPosition === 'Defender') _defendersCounter++;
+      if (playerPosition === 'Midfielder') _midfieldersCounter++;
+      if (playerPosition === 'Attacker') _attackersCounter++;
+    });
+
+    setGoalkeepersCounter(_goalkeepersCounter);
+    setDefendersCounter(_defendersCounter);
+    setMidfieldersCounter(_midfieldersCounter);
+    setAttackersCounter(_attackersCounter);
   };
 
   const handleSetTeam = () => {
@@ -308,22 +352,87 @@ export const AddEditTeamModal = ({
           </div>
           {/* PLAYERS */}
           <div className="flex flex-col gap-4 h-full">
-            <div className="flex flex-col gap-2 justify-between md:flex-row md:items-center">
-              <div className="font-bold">
-                Choose players:{' '}
-                {isEdit && (
-                  <span className="text-sm font-normal">
-                    (only {TEAMS_PLAYERS_LIMIT})
-                  </span>
-                )}
+            <div className="flex flex-col gap-4 justify-between md:flex-row md:items-center">
+              <div className="font-bold flex flex-col gap-2">
+                <div>
+                  Choose players:{' '}
+                  {isEdit && (
+                    <span className="text-sm font-normal">
+                      <span>only {TEAMS_PLAYERS_LIMIT} </span>
+                      <span
+                        className={`font-bold 
+                          ${
+                            selectedPlayerIds?.length === TEAMS_PLAYERS_LIMIT
+                              ? 'text-success-400'
+                              : ''
+                          }
+                        `}
+                      >
+                        ({selectedPlayerIds?.length})
+                      </span>
+                    </span>
+                  )}
+                </div>
+                <div className="font-normal text-sm">
+                  <div>
+                    <span>● {TEAM_PLAYERS_GOALKEEPER_LIMIT} goalkeepers </span>
+                    <span
+                      className={`font-bold ${
+                        goalkeepersCounter === TEAM_PLAYERS_GOALKEEPER_LIMIT
+                          ? 'text-success-400'
+                          : ''
+                      }`}
+                    >
+                      ({goalkeepersCounter})
+                    </span>
+                  </div>
+                  <div>
+                    <span>● {TEAM_PLAYERS_DEFENDER_LIMIT} defenders </span>
+                    <span
+                      className={`font-bold ${
+                        defendersCounter === TEAM_PLAYERS_DEFENDER_LIMIT
+                          ? 'text-success-400'
+                          : ''
+                      }`}
+                    >
+                      ({defendersCounter})
+                    </span>
+                  </div>
+                  <div>
+                    <span>● {TEAM_PLAYERS_MIDFIELDER_LIMIT} midfielders </span>
+                    <span
+                      className={`font-bold ${
+                        midfieldersCounter === TEAM_PLAYERS_MIDFIELDER_LIMIT
+                          ? 'text-success-400'
+                          : ''
+                      }`}
+                    >
+                      ({midfieldersCounter})
+                    </span>
+                  </div>
+                  <div>
+                    <span>● {TEAM_PLAYERS_ATTACKER_LIMIT} attackers </span>
+                    <span
+                      className={`font-bold ${
+                        attackersCounter === TEAM_PLAYERS_ATTACKER_LIMIT
+                          ? 'text-success-400'
+                          : ''
+                      }`}
+                    >
+                      ({attackersCounter})
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="w-90">
-                <CustomInput
-                  label="Search"
-                  handleChange={(data) => debouncedFetchData(data)}
-                  endAdorment={{ img: 'MAGNIFYING_GLASS' }}
-                />
-              </div>
+              {isEdit && (
+                <div className="w-90">
+                  <CustomInput
+                    label="Search"
+                    handleChange={(data) => debouncedFetchData(data)}
+                    endAdorment={{ img: 'MAGNIFYING_GLASS' }}
+                  />
+                </div>
+              )}
             </div>
             {isEdit ? (
               <SelectableTable<PlayersColumnKeysProps>

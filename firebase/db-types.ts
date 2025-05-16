@@ -78,7 +78,11 @@ export type PlayerType = {
 
 /****************************************  TEAMS  ****************************************/
 export const TEAMS_GOALKEEPER_FORMATION_POSITION = '1';
-export const TEAMS_PLAYERS_LIMIT = 11;
+export const TEAMS_PLAYERS_LIMIT = 25;
+export const TEAM_PLAYERS_GOALKEEPER_LIMIT = 3;
+export const TEAM_PLAYERS_DEFENDER_LIMIT = 8;
+export const TEAM_PLAYERS_MIDFIELDER_LIMIT = 8;
+export const TEAM_PLAYERS_ATTACKER_LIMIT = 6;
 
 export type CompetitionsCollectionTeamsProps = {
   shortId: string;
