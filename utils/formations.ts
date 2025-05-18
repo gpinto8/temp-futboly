@@ -5,10 +5,6 @@ const formationMap = [
     title: 'Classic Positions',
     formations: ['442', '451', '433', '343', '352', '361', '424', '334'], // MAKE SURE YOU DONT REPEAT THE SAME FORMATION (HERE AND IN THE OTHER ARRAY BELOW)
   },
-  {
-    title: 'Speficic Positions',
-    formations: ['3412', '3421', '3511', '4312', '4141', '4411', '4231'], // MAKE SURE YOU DONT REPEAT THE SAME FORMATION (HERE AND IN THE OTHER ARRAY ABOVE)
-  },
 ] as const;
 
 const allFormationsMap = formationMap.map((item) => item.formations).flat();
