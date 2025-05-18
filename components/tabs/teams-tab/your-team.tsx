@@ -23,13 +23,18 @@ import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 
-type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
+export type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
 
 export type TeamPlayersData =
   (CompetitionsCollectionTeamsProps['players'][0] & {
     apiData?: any;
   })[];
+
+export const TEAM_GOALKEEPER_NAME = 'Goalkeeper';
+export const TEAM_DEFENDER_NAME = 'Defender';
+export const TEAM_MIDFIELDER_NAME = 'Midfielder';
+export const TEAM_ATTACKER_NAME = 'Attacker';
 
 export const YourTeam = ({ team }: YourTeamProps) => {
   const { getActiveCompetition } = useGetCompetitions();
@@ -217,6 +222,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <FootballField
             formation={formation}
             fieldPlayers={playersData}
+            selectedPlayer={tablePosition}
             getSelectedPlayerPosition={handlePlayerSelected}
             emptyFormationMessage="Select a formation."
             resetField={resetField}
@@ -225,7 +231,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
 
         {/* TEAM PLAYERS */}
         <div className="lg:w-[60%] flex flex-col justify-between">
-          <div className="h-[580px]">
+          <div className="h-[540px]">
             <div className="text-xl font-bold pb-2">Team Players</div>
             <div className="text-xs pb-4">
               * Click "<strong>Save</strong>" to confirm your changes.

@@ -7,6 +7,7 @@ export type CircleFieldProps = {
   isSelected?: boolean;
   selectedPlayerPosition?: string;
   avoidResponsiveClasses?: boolean;
+  isAble?: boolean;
 };
 
 export const CircleField = ({
@@ -14,6 +15,7 @@ export const CircleField = ({
   handleClick,
   isSelected,
   avoidResponsiveClasses,
+  isAble,
 }: CircleFieldProps) => {
   const classes = [
     {
@@ -56,8 +58,12 @@ export const CircleField = ({
 
   return (
     <div
-      onClick={handleClick}
-      className={`gap-2 !bg-white hover:bg-lightGray w-16 h-16 md:w-20 md:h-20 cursor-pointer text-center text-black rounded-full border-black border-2 ${
+      onClick={isAble ? handleClick : undefined}
+      className={`${
+        isAble
+          ? 'bg-white cursor-pointer hover:bg-lightGray'
+          : 'bg-gray-300 cursor-not-allowed'
+      } gap-2 w-16 h-16 md:w-20 md:h-20 text-center text-black rounded-full border-black border-2 ${
         isSelected ? 'border-[6px]' : ''
       } ${getClassesByInnerKey('container')}`}
     >

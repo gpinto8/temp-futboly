@@ -5,7 +5,9 @@ import {
   FormationPosition,
 } from '@/utils/formations';
 import { CircleFieldMatchingFormation } from './circle-field-matching-formation';
-import { TeamPlayersData } from '../tabs/teams-tab/your-team';
+import { TeamPlayersData, YourTeamKeyProps } from '../tabs/teams-tab/your-team';
+import { RowsProps } from '../custom/custom-table';
+import { SelectableTableColumnKeysProps } from '../table/selectable-table';
 
 export type FootballFieldProps = {
   formation?: AllPosibleFormationsProps;
@@ -13,6 +15,9 @@ export type FootballFieldProps = {
   getSelectedPlayerPosition?: (position: FormationPosition) => void;
   emptyFormationMessage: string;
   resetField?: number; // Reset it with "Math.random()" to trigger the useEffect hook
+  selectedPlayer?: RowsProps<
+    SelectableTableColumnKeysProps<YourTeamKeyProps>
+  >[0];
 };
 
 export const FootballField = ({
@@ -21,6 +26,7 @@ export const FootballField = ({
   getSelectedPlayerPosition,
   emptyFormationMessage,
   resetField,
+  selectedPlayer,
 }: FootballFieldProps) => {
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState<
     FormationPosition | ''
@@ -53,6 +59,7 @@ export const FootballField = ({
               handleClick: handleCircleField,
               selectedPlayerPosition,
             }}
+            selectedPlayer={selectedPlayer}
           />
         ) : (
           <div className="font-bold m-auto pb-14">{emptyFormationMessage}</div>

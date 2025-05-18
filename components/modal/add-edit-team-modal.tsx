@@ -26,6 +26,12 @@ import {
   TEAMS_PLAYERS_LIMIT,
 } from '@/firebase/db-types';
 import { CompetitionFinishedMessage } from '../message/competiton-finished-message';
+import {
+  TEAM_ATTACKER_NAME,
+  TEAM_DEFENDER_NAME,
+  TEAM_GOALKEEPER_NAME,
+  TEAM_MIDFIELDER_NAME,
+} from '../tabs/teams-tab/your-team';
 
 // @ts-ignore
 type HandleChangeParamProps = Parameters<InputProps['handleChange']>[0];
@@ -231,10 +237,10 @@ export const AddEditTeamModal = ({
 
     selectedRows.forEach((row) => {
       const playerPosition = row?.POSITION;
-      if (playerPosition === 'Goalkeeper') _goalkeepersCounter++;
-      if (playerPosition === 'Defender') _defendersCounter++;
-      if (playerPosition === 'Midfielder') _midfieldersCounter++;
-      if (playerPosition === 'Attacker') _attackersCounter++;
+      if (playerPosition === TEAM_GOALKEEPER_NAME) _goalkeepersCounter++;
+      if (playerPosition === TEAM_DEFENDER_NAME) _defendersCounter++;
+      if (playerPosition === TEAM_MIDFIELDER_NAME) _midfieldersCounter++;
+      if (playerPosition === TEAM_ATTACKER_NAME) _attackersCounter++;
     });
 
     setGoalkeepersCounter(_goalkeepersCounter);

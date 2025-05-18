@@ -5,13 +5,24 @@ import {
   mapFormationPosition,
 } from '@/utils/formations';
 import { CircleField, CircleFieldProps } from './circle-field';
-import { TeamPlayersData } from '../tabs/teams-tab/your-team';
+import {
+  TEAM_ATTACKER_NAME,
+  TEAM_DEFENDER_NAME,
+  TEAM_MIDFIELDER_NAME,
+  TeamPlayersData,
+  YourTeamKeyProps,
+} from '../tabs/teams-tab/your-team';
+import { RowsProps } from '../custom/custom-table';
+import { SelectableTableColumnKeysProps } from '../table/selectable-table';
 
 type MappedCircleFieldProps = {
   player: TeamPlayersData[0];
   currentPosition: FormationPosition;
   circleFieldProps: CircleFieldMatchingFormationProps['circleFieldProps'];
   avoidResponsiveClasses: CircleFieldProps['avoidResponsiveClasses'];
+  selectedPlayer?: RowsProps<
+    SelectableTableColumnKeysProps<YourTeamKeyProps>
+  >[0];
 };
 
 const MappedCircleField = ({
@@ -19,9 +30,35 @@ const MappedCircleField = ({
   currentPosition,
   circleFieldProps,
   avoidResponsiveClasses,
+  selectedPlayer,
 }: MappedCircleFieldProps) => {
   const isSelected =
     circleFieldProps?.selectedPlayerPosition === currentPosition;
+
+  let isAble: boolean;
+
+  const alreadyInField = player?.position;
+  if (alreadyInField) isAble = true;
+  else {
+    const selectedPlayerPosition = selectedPlayer?.POSITION;
+    const selectedCurrentPosition = currentPosition.slice(-1);
+
+    const isGoalkeeper =
+      selectedPlayerPosition === TEAMS_GOALKEEPER_FORMATION_POSITION &&
+      currentPosition === '1';
+    const isAttacker =
+      selectedPlayerPosition === TEAM_ATTACKER_NAME &&
+      currentPosition !== '1' && // Because the {TEAM_ATTACKER_NAME} and the {TEAM_GOALKEEPER_NAME} have the same row position number ("1")
+      selectedCurrentPosition === '1';
+    const isMidfielder =
+      selectedPlayerPosition === TEAM_MIDFIELDER_NAME &&
+      selectedCurrentPosition === '2';
+    const isDefender =
+      selectedPlayerPosition === TEAM_DEFENDER_NAME &&
+      selectedCurrentPosition === '3';
+
+    isAble = isGoalkeeper || isAttacker || isMidfielder || isDefender;
+  }
 
   return (
     <CircleField
@@ -29,6 +66,7 @@ const MappedCircleField = ({
       handleClick={() => circleFieldProps?.handleClick?.(currentPosition)}
       isSelected={isSelected}
       avoidResponsiveClasses={avoidResponsiveClasses}
+      isAble={isAble}
     />
   );
 };
@@ -45,6 +83,9 @@ type CircleFieldMatchingFormationProps = {
     selectedPlayerPosition?: CircleFieldProps['selectedPlayerPosition'];
   };
   avoidResponsiveClasses?: CircleFieldProps['avoidResponsiveClasses'];
+  selectedPlayer?: RowsProps<
+    SelectableTableColumnKeysProps<YourTeamKeyProps>
+  >[0];
 };
 
 export const CircleFieldMatchingFormation = ({
@@ -53,6 +94,7 @@ export const CircleFieldMatchingFormation = ({
   orientation = 'bottom-to-top', // This is the default
   circleFieldProps,
   avoidResponsiveClasses,
+  selectedPlayer,
 }: CircleFieldMatchingFormationProps) => {
   let mainClassName: string;
   let goalkeeperClassName: string;
@@ -105,6 +147,7 @@ export const CircleFieldMatchingFormation = ({
             currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
             circleFieldProps={circleFieldProps}
             avoidResponsiveClasses={avoidResponsiveClasses}
+            selectedPlayer={selectedPlayer}
           />
         </div>
       )}
@@ -145,6 +188,7 @@ export const CircleFieldMatchingFormation = ({
                     currentPosition={currentPosition}
                     circleFieldProps={circleFieldProps}
                     avoidResponsiveClasses={avoidResponsiveClasses}
+                    selectedPlayer={selectedPlayer}
                   />
                 );
               })}
@@ -158,6 +202,7 @@ export const CircleFieldMatchingFormation = ({
             currentPosition={TEAMS_GOALKEEPER_FORMATION_POSITION}
             circleFieldProps={circleFieldProps}
             avoidResponsiveClasses={avoidResponsiveClasses}
+            selectedPlayer={selectedPlayer}
           />
         </div>
       )}
