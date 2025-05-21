@@ -8,6 +8,7 @@ import { CircleField, CircleFieldProps } from './circle-field';
 import {
   TEAM_ATTACKER_NAME,
   TEAM_DEFENDER_NAME,
+  TEAM_GOALKEEPER_NAME,
   TEAM_MIDFIELDER_NAME,
   TeamPlayersData,
   YourTeamKeyProps,
@@ -44,7 +45,7 @@ const MappedCircleField = ({
     const selectedCurrentPosition = currentPosition.slice(-1);
 
     const isGoalkeeper =
-      selectedPlayerPosition === TEAMS_GOALKEEPER_FORMATION_POSITION &&
+      selectedPlayerPosition === TEAM_GOALKEEPER_NAME &&
       currentPosition === '1';
     const isAttacker =
       selectedPlayerPosition === TEAM_ATTACKER_NAME &&
