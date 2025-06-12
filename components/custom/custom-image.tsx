@@ -8,7 +8,7 @@ type CustomImageProps = {
   width?: number;
   height?: number;
   className?: string;
-  onClick?: () => void;
+  onClick?: (event?: any) => void;
 };
 
 export const CustomImage = ({

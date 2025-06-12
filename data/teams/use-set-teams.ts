@@ -96,9 +96,18 @@ export const useSetTeams = () => {
           };
         }
 
+        const newTeamWithBench = {
+          ...newTeam,
+          players:
+            newTeam?.players?.map((team) => ({
+              ...team,
+              bench: team.bench?.filter(Boolean) || [],
+            })) ?? [],
+        };
+
         const mergedTeam: CompetitionsCollectionTeamsProps = {
           ...foundTeam,
-          ...newTeam,
+          ...newTeamWithBench,
         };
 
         if (mergedTeam) {

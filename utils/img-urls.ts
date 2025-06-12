@@ -93,4 +93,16 @@ export const IMG_URLS = {
     src: 'assets/magnifying-glass.svg',
     alt: 'Magnifying Glass Icon',
   },
+  RECYCLE: {
+    src: 'assets/recycle.svg',
+    alt: 'Recycle Icon',
+  },
+  ARROW_UP: {
+    src: 'assets/arrow-up.svg',
+    alt: 'Arrow Up Icon',
+  },
+  ARROW_DOWN: {
+    src: 'assets/arrow-down.svg',
+    alt: 'Arrow Down Icon',
+  },
 };

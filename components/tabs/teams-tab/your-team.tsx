@@ -6,7 +6,10 @@ import {
   getSportmonksPlayersDataByIds,
 } from '@/sportmonks/common-methods';
 import { Avatar } from '@mui/material';
-import { CompetitionsCollectionTeamsProps } from '@/firebase/db-types';
+import {
+  CompetitionsCollectionTeamsProps,
+  TEAMS_MAX_BENCH_PLAYERS,
+} from '@/firebase/db-types';
 import {
   SelectableTable,
   SelectableTableColumnKeysProps,
@@ -22,6 +25,7 @@ import { useSetTeams } from '@/data/teams/use-set-teams';
 import { useGetCompetitions } from '@/data/competitions/use-get-competitions';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
+import { useAppSelector } from '@/store/hooks';
 
 export type YourTeamKeyProps = 'PLAYER' | 'POSITION' | 'RATING';
 type YourTeamProps = { team: CompetitionsCollectionTeamsProps };
@@ -37,6 +41,7 @@ export const TEAM_MIDFIELDER_NAME = 'Midfielder';
 export const TEAM_ATTACKER_NAME = 'Attacker';
 
 export const YourTeam = ({ team }: YourTeamProps) => {
+  const benchMode = useAppSelector((state) => state.team.benchMode);
   const { getActiveCompetition } = useGetCompetitions();
   const { editTeam } = useSetTeams();
 
@@ -69,6 +74,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
       const newTeamPlayers: TeamPlayersData = teamPlayers.map((player) => ({
         ...player,
         apiData: apiData.find((item) => item?.id === player.sportmonksId),
+        bench: Array.from({ length: TEAMS_MAX_BENCH_PLAYERS }, (_, i) =>
+          player.bench ? player.bench[i] : undefined,
+        ),
       }));
 
       setPlayersData(newTeamPlayers);
@@ -76,12 +84,18 @@ export const YourTeam = ({ team }: YourTeamProps) => {
   }, []);
 
   useEffect(() => {
+    const allBenchPlayers = playersData
+      .map((player) => player.bench)
+      ?.flat(Infinity)
+      .filter(Boolean);
+
     const rows: RowsProps<YourTeamKeyProps> = playersData
       .map((player) => {
         const id = player.sportmonksId;
-        const isInitiallySelected = !!playersData.find(
-          (player) => player?.sportmonksId === id,
-        )?.position;
+        const isInitiallySelected = !!(
+          playersData.find((player) => player?.sportmonksId === id)?.position ||
+          allBenchPlayers.includes(id)
+        );
 
         if (!player?.apiData) return {} as any; // To avoid to see empty data, we rather show the default empty message instead
 
@@ -105,12 +119,13 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           ),
           POSITION: player?.apiData?.position?.name,
           RATING: getPlayerRating(player?.apiData?.statistics),
+          METADATA: { notAllowed: benchMode && isInitiallySelected },
         };
       })
       .filter(Boolean);
 
     setRows(rows);
-  }, [playersData]);
+  }, [playersData, benchMode]);
 
   useEffect(() => {
     (async () => {
@@ -121,6 +136,7 @@ export const YourTeam = ({ team }: YourTeamProps) => {
             .map((player) => {
               if (player.position === fieldPosition) {
                 return {
+                  ...player,
                   apiData: player.apiData,
                   sportmonksId: player.sportmonksId,
                 };
@@ -222,7 +238,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           <FootballField
             formation={formation}
             fieldPlayers={playersData}
+            setFieldPlayers={setPlayersData}
             selectedPlayer={tablePosition}
+            setSelectedPlayer={setResetTable as any}
             getSelectedPlayerPosition={handlePlayerSelected}
             emptyFormationMessage="Select a formation."
             resetField={resetField}

@@ -14,7 +14,8 @@ export type SelectableTableColumnKeysProps<ColumnKeysProps> =
   | 'INDEX'
   | 'ID'
   | ColumnKeysProps
-  | 'ACTIONS';
+  | 'ACTIONS'
+  | 'METADATA';
 
 type SelectableTableProps<ColumnKeysProps> = {
   rows: CustomTableProps<ColumnKeysProps>['rows'];
@@ -63,13 +64,19 @@ const SelectIcon = function <ColumnKeysProps>({
     else setSelectedRows([...(selectedRows || []), row]); // Multi-selection
   };
 
+  const notAllowed = row?.METADATA?.notAllowed;
+
   return (
-    <div className="flex justify-center items-center cursor-pointer w-6 h-8">
+    <div
+      className={`flex justify-center items-center w-6 h-8 ${
+        notAllowed ? 'cursor-not-allowed' : 'cursor-pointer'
+      }`}
+    >
       <CustomImage
         imageKey={icon}
         width={25}
         height={25}
-        onClick={handleSelect}
+        onClick={!notAllowed ? handleSelect : undefined}
       />
     </div>
   );

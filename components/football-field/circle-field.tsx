@@ -1,5 +1,6 @@
 import { Avatar } from '@mui/material';
 import { TeamPlayersData } from '../tabs/teams-tab/your-team';
+import { CustomImage } from '../custom/custom-image';
 
 export type CircleFieldProps = {
   player?: TeamPlayersData[0];
@@ -8,6 +9,7 @@ export type CircleFieldProps = {
   selectedPlayerPosition?: string;
   avoidResponsiveClasses?: boolean;
   isAble?: boolean;
+  getPlayerBenchSelected?: (sportmonksId: number) => void;
 };
 
 export const CircleField = ({
@@ -16,6 +18,7 @@ export const CircleField = ({
   isSelected,
   avoidResponsiveClasses,
   isAble,
+  getPlayerBenchSelected,
 }: CircleFieldProps) => {
   const classes = [
     {
@@ -56,41 +59,66 @@ export const CircleField = ({
       : '';
   };
 
+  const handleBenchSelection = () => {
+    const sportmonksId = player?.sportmonksId;
+    if (sportmonksId) getPlayerBenchSelected?.(sportmonksId);
+  };
+
   return (
-    <div
-      onClick={isAble ? handleClick : undefined}
-      className={`${
-        isAble
-          ? 'bg-white cursor-pointer hover:bg-lightGray'
-          : 'bg-gray-300 cursor-not-allowed'
-      } gap-2 w-16 h-16 md:w-20 md:h-20 text-center text-black rounded-full border-black border-2 ${
-        isSelected ? 'border-[6px]' : ''
-      } ${getClassesByInnerKey('container')}`}
-    >
-      <div className="w-full h-full flex flex-col items-center justify-center overflow-hidden">
-        {player?.apiData?.image_path ? (
-          <Avatar
-            src={player?.apiData?.image_path}
-            alt={player?.apiData?.display_name}
-            className={`w-4 h-4 md:w-6 md:h-6 ${getClassesByInnerKey(
-              'avatar',
-            )}`}
-          />
-        ) : null}
-        <div className={`w-max text-xs ${getClassesByInnerKey('name')}`}>
-          {player?.apiData?.display_name}
-        </div>
-        <div
-          className={`flex gap-1 items-baseline w-max text-[10px] text-gray-600 ${getClassesByInnerKey(
-            'position',
-          )}`}
-        >
-          {player?.apiData?.position?.developer_name?.slice(0, 3)}
-          {player?.apiData?._score ? (
-            <span className="text-error-500">({player?.apiData?._score})</span>
+    <div className="relative">
+      <div
+        onClick={isAble ? handleClick : undefined}
+        className={`${
+          isAble
+            ? 'bg-white cursor-pointer hover:bg-lightGray'
+            : 'bg-gray-300 cursor-not-allowed'
+        } gap-2 w-16 h-16 md:w-20 md:h-20 text-center text-black rounded-full border-black border-2 ${
+          isSelected ? 'border-[6px]' : ''
+        } ${getClassesByInnerKey('container')}`}
+      >
+        <div className="w-full h-full flex flex-col items-center justify-center overflow-hidden">
+          {player?.apiData?.image_path ? (
+            <Avatar
+              src={player?.apiData?.image_path}
+              alt={player?.apiData?.display_name}
+              className={`w-4 h-4 md:w-6 md:h-6 ${getClassesByInnerKey(
+                'avatar',
+              )}`}
+            />
           ) : null}
+          <div className={`w-max text-xs ${getClassesByInnerKey('name')}`}>
+            {player?.apiData?.display_name}
+          </div>
+          <div
+            className={`flex gap-1 items-baseline w-max text-[10px] text-gray-600 ${getClassesByInnerKey(
+              'position',
+            )}`}
+          >
+            {player?.apiData?.position?.developer_name?.slice(0, 3)}
+            {player?.apiData?._score ? (
+              <span className="text-error-500">
+                ({player?.apiData?._score})
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
+      {player?.apiData && (
+        <div
+          className={`absolute top-0 right-0 bg-white rounded-full p-1 flex flex-col justify-center items-center ${
+            isAble
+              ? 'bg-white cursor-pointer hover:bg-lightGray border-2 border-black'
+              : ''
+          }`}
+        >
+          <CustomImage
+            imageKey="RECYCLE"
+            height={16}
+            width={16}
+            onClick={handleBenchSelection}
+          />
+        </div>
+      )}
     </div>
   );
 };

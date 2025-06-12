@@ -4,11 +4,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 type InitialStateProps = {
   currentTeam?: CompetitionsCollectionTeamsProps; // Based on current competition
   refreshAdminTeams?: number; // Instead of saving all teams from all competitions, we just have a flag to signal if it has to be refresh or not
+  benchMode?: boolean;
 };
 
 const initialState: InitialStateProps = {
   currentTeam: undefined,
   refreshAdminTeams: 0,
+  benchMode: false,
 };
 
 const teamSlice = createSlice({
@@ -25,6 +27,9 @@ const teamSlice = createSlice({
     deleteCurrentTeam: (state) => (state.currentTeam = undefined),
     refreshAdminTeams: (state) => {
       state.refreshAdminTeams = Math.random();
+    },
+    setBenchMode: (state, action: PayloadAction<boolean>) => {
+      state.benchMode = action.payload;
     },
   },
 });

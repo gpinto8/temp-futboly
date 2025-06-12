@@ -83,6 +83,7 @@ export const TEAM_PLAYERS_GOALKEEPER_LIMIT = 3;
 export const TEAM_PLAYERS_DEFENDER_LIMIT = 8;
 export const TEAM_PLAYERS_MIDFIELDER_LIMIT = 8;
 export const TEAM_PLAYERS_ATTACKER_LIMIT = 6;
+export const TEAMS_MAX_BENCH_PLAYERS = 3;
 
 export type CompetitionsCollectionTeamsProps = {
   shortId: string;
@@ -97,6 +98,7 @@ export type CompetitionsCollectionTeamsProps = {
   players: {
     sportmonksId: number;
     position?: FormationPosition; // Look at the "mapFormationPosition" function for the mapping format
+    bench?: (number | undefined)[]; // An array of sportmonksId's, limit of {TEAMS_MAX_BENCH_PLAYERS}, and the order is based on the array index
   }[]; // Only {TEAMS_PLAYERS_LIMIT} players per team (for now)
 };
 

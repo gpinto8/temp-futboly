@@ -15,6 +15,18 @@ export const getPlayerRating = (playerStatistics: any) => {
   return displayedRating;
 };
 
+// Get Sportmonks player data based on its id
+export const getSportmonksPlayerDataById = async (playerId: number) => {
+  if (playerId) {
+    const response = await fetchSportmonksApi(
+      'football/players',
+      `${playerId}`,
+    );
+    const data = response.data;
+    if (data) return data;
+  }
+};
+
 // Get Sportmonks players data based on an array of its ids asynchronously
 export const getSportmonksPlayersDataByIds = async (playerIds: number[]) => {
   let playersData: any[] = [];

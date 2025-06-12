@@ -1,5 +1,5 @@
 import { CustomImage } from '../custom/custom-image';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   AllPosibleFormationsProps,
   FormationPosition,
@@ -12,21 +12,25 @@ import { SelectableTableColumnKeysProps } from '../table/selectable-table';
 export type FootballFieldProps = {
   formation?: AllPosibleFormationsProps;
   fieldPlayers?: TeamPlayersData;
+  setFieldPlayers?: Dispatch<SetStateAction<TeamPlayersData>>;
   getSelectedPlayerPosition?: (position: FormationPosition) => void;
   emptyFormationMessage: string;
   resetField?: number; // Reset it with "Math.random()" to trigger the useEffect hook
   selectedPlayer?: RowsProps<
     SelectableTableColumnKeysProps<YourTeamKeyProps>
   >[0];
+  setSelectedPlayer?: Dispatch<SetStateAction<number>>;
 };
 
 export const FootballField = ({
   formation,
   fieldPlayers,
+  setFieldPlayers,
   getSelectedPlayerPosition,
   emptyFormationMessage,
   resetField,
   selectedPlayer,
+  setSelectedPlayer,
 }: FootballFieldProps) => {
   const [selectedPlayerPosition, setSelectedPlayerPosition] = useState<
     FormationPosition | ''
@@ -50,16 +54,18 @@ export const FootballField = ({
 
   return (
     <div className="relative w-full overflow-auto">
-      <div className="absolute w-full h-full flex flex-col justify-between gap-2 p-2">
+      <div className="absolute w-full h-full flex flex-col justify-between gap-2">
         {formation && fieldPlayers?.length ? (
           <CircleFieldMatchingFormation
             formation={formation}
             players={fieldPlayers}
+            setPlayers={setFieldPlayers!}
             circleFieldProps={{
               handleClick: handleCircleField,
               selectedPlayerPosition,
             }}
             selectedPlayer={selectedPlayer}
+            setSelectedPlayer={setSelectedPlayer}
           />
         ) : (
           <div className="font-bold m-auto pb-14">{emptyFormationMessage}</div>
