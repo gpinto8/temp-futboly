@@ -286,13 +286,14 @@ export const CircleFieldMatchingFormation = ({
                   ?.bench?.map((sportmonksId, index) =>
                     sportmonksId ? (
                       <BenchRow
+                        key={index}
                         sportmonksId={sportmonksId}
                         handleClose={() => deletePlayerFromBench(sportmonksId)}
                         movePlayerUp={() => movePlayer(sportmonksId, 'up')}
                         movePlayerDown={() => movePlayer(sportmonksId, 'down')}
                       />
                     ) : (
-                      <div className="w-full flex justify-center">
+                      <div key={index} className="w-full flex justify-center">
                         <CustomImage
                           imageKey={
                             index === benchPlayerPosition
