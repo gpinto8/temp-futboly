@@ -115,8 +115,6 @@ export const CircleFieldMatchingFormation = ({
 }: CircleFieldMatchingFormationProps) => {
   const benchMode = useAppSelector((state) => state.team.benchMode);
   const dispatch = useAppDispatch();
-  const setBenchMode = (mode: boolean) =>
-    dispatch(teamActions.setBenchMode(mode));
 
   const [benchPlayer, setBenchPlayer] = useState<any>();
   const [benchPlayerPosition, setBenchPlayerPosition] = useState<
@@ -195,10 +193,13 @@ export const CircleFieldMatchingFormation = ({
 
   const getPlayerBenchSelected = async (sportmonksId: number) => {
     if (sportmonksId) {
-      setBenchMode(true);
+      dispatch(teamActions.setBenchMode(true));
 
       const playerData = await getSportmonksPlayerDataById(sportmonksId);
-      if (playerData) setBenchPlayer(playerData);
+      if (playerData) {
+        dispatch(teamActions.setBenchPlayer(playerData));
+        setBenchPlayer(playerData);
+      }
     }
   };
 
@@ -275,7 +276,7 @@ export const CircleFieldMatchingFormation = ({
                   imageKey="CLOSE_ICON"
                   width={16}
                   height={16}
-                  onClick={() => setBenchMode(false)}
+                  onClick={() => dispatch(teamActions.setBenchMode(false))}
                   className="cursor-pointer"
                 />
               </div>

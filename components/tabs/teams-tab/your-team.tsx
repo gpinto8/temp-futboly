@@ -42,6 +42,7 @@ export const TEAM_ATTACKER_NAME = 'Attacker';
 
 export const YourTeam = ({ team }: YourTeamProps) => {
   const benchMode = useAppSelector((state) => state.team.benchMode);
+  const benchPlayer = useAppSelector((state) => state.team.benchPlayer);
   const { getActiveCompetition } = useGetCompetitions();
   const { editTeam } = useSetTeams();
 
@@ -92,6 +93,9 @@ export const YourTeam = ({ team }: YourTeamProps) => {
     const rows: RowsProps<YourTeamKeyProps> = playersData
       .map((player) => {
         const id = player.sportmonksId;
+        const position = player?.apiData?.position?.name;
+        const benchPlayerPosition = benchPlayer?.position?.name;
+        const samePosition = position === benchPlayerPosition;
         const isInitiallySelected = !!(
           playersData.find((player) => player?.sportmonksId === id)?.position ||
           allBenchPlayers.includes(id)
@@ -119,13 +123,15 @@ export const YourTeam = ({ team }: YourTeamProps) => {
           ),
           POSITION: player?.apiData?.position?.name,
           RATING: getPlayerRating(player?.apiData?.statistics),
-          METADATA: { notAllowed: benchMode && isInitiallySelected },
+          METADATA: {
+            notAllowed: benchMode && (isInitiallySelected || !samePosition),
+          },
         };
       })
       .filter(Boolean);
 
     setRows(rows);
-  }, [playersData, benchMode]);
+  }, [playersData, benchMode, benchPlayer]);
 
   useEffect(() => {
     (async () => {
