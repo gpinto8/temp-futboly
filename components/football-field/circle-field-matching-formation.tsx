@@ -184,7 +184,7 @@ export const CircleFieldMatchingFormation = ({
       );
 
       newPlayers[index] = { ...foundPlayer, bench } as any;
-      setPlayers(newPlayers);
+      setPlayers?.(newPlayers);
 
       setBenchPlayerPosition(null);
       setTimeout(() => setSelectedPlayer?.(Math.random()), 250);
@@ -234,7 +234,7 @@ export const CircleFieldMatchingFormation = ({
         (player) => player.sportmonksId === benchPlayerSportmonksId,
       );
       newPlayers[index] = { ...foundPlayer, bench: newPlayersInBench } as any;
-      setPlayers(newPlayers);
+      setPlayers?.(newPlayers);
     }
   };
 
@@ -254,7 +254,7 @@ export const CircleFieldMatchingFormation = ({
         (player) => player.sportmonksId === benchPlayerSportmonksId,
       );
       newPlayers[index] = { ...foundPlayer, bench: newBench } as any;
-      setPlayers(newPlayers);
+      setPlayers?.(newPlayers);
     }
   };
 
