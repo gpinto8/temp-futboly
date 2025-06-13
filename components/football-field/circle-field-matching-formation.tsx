@@ -86,7 +86,7 @@ const MappedCircleField = ({
 type CircleFieldMatchingFormationProps = {
   formation: AllPosibleFormationsProps;
   players: TeamPlayersData;
-  setPlayers: Dispatch<SetStateAction<TeamPlayersData>>;
+  setPlayers?: Dispatch<SetStateAction<TeamPlayersData>>;
   orientation?:
     | 'bottom-to-top'
     | 'right-to-left'
