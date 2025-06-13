@@ -86,8 +86,10 @@ export const useSetTeams = () => {
       // First find the team to change from all the competitions and edit it
       let foundTeam = allTeams.find((team) => team.shortId === shortId);
       if (foundTeam) {
+        const isNewFormation = newTeam.formation !== foundTeam.formation;
+
         // If there is a new formation, then reset the players, so they dont keep the old reference
-        if (newTeam.formation !== foundTeam.formation) {
+        if (isNewFormation) {
           foundTeam = {
             ...foundTeam,
             players: foundTeam.players.map((player) => ({
@@ -96,12 +98,13 @@ export const useSetTeams = () => {
           };
         }
 
+        // Only add the bench when the formation is the same .. (so we also reset the "bench" when changing formation)
         const newTeamWithBench = {
           ...newTeam,
           players:
             newTeam?.players?.map((team) => ({
               ...team,
-              bench: team.bench?.filter(Boolean) || [],
+              bench: isNewFormation ? [] : team.bench?.filter(Boolean) || [],
             })) ?? [],
         };
 
