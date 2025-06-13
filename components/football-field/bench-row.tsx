@@ -41,20 +41,20 @@ export const BenchRow = ({
         alt={playerData?.display_name}
         className="w-4 h-4"
       />
-      <div className="line-clamp-1 w-3/5">{playerData?.display_name || ''}</div>
+      <div className="line-clamp-1 w-2/5">{playerData?.display_name || ''}</div>
       <div className="line-clamp-1 w-1/5">
         {playerData?.position?.developer_name.slice(0, 3) || ''}
       </div>
       <div className="flex">
         <CustomImage
-          className="cursor-pointer"
+          className="w-4 h-4 cursor-pointer"
           imageKey="ARROW_UP"
           height={16}
           width={16}
           onClick={movePlayerUp}
         />
         <CustomImage
-          className="cursor-pointer"
+          className="w-4 h-4 cursor-pointer"
           imageKey="ARROW_DOWN"
           height={16}
           width={16}

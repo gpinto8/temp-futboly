@@ -265,7 +265,7 @@ export const CircleFieldMatchingFormation = ({
         <div className="relative w-full h-full">
           <div className="absolute bg-gray-300 opacity-40 z-50 w-full h-full" />
           <div className="absolute z-50 w-full h-full flex justify-center items-center">
-            <div className="w-[65%] h-[30%] rounded-2xl bg-white p-4 flex flex-col gap-6">
+            <div className="w-[95%] rounded-2xl bg-white p-4 flex flex-col gap-6">
               {/* TITLE */}
               <div className="flex justify-between">
                 <span className="font-bold">
@@ -281,7 +281,7 @@ export const CircleFieldMatchingFormation = ({
                 />
               </div>
               {/* PLAYERS */}
-              <div className="flex flex-col gap-3 overflow-auto">
+              <div className="flex flex-col gap-3 overflow-auto w-full h-full">
                 {players
                   ?.find((player) => player.sportmonksId === benchPlayer?.id)
                   ?.bench?.map((sportmonksId, index) =>
